@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+/*
+ * LifeCome Live design tokens (blueprint §6.3).
+ * Brand colours are exact. Lime, Cyan and Gold do not have enough contrast for text on white:
+ * use them for fills, borders and graphics, and pair with --ink. Use --brand-blue for actions
+ * and links, and --green-strong for positive text.
+ */
+:root {
+  --brand-lime: #a2e10d;
+  --brand-cyan: #3de5f8;
+  --brand-green: #45af03;
+  --brand-blue: #0667b8;
+  --brand-gold: #b58a35;
+  --white: #ffffff;
+
+  --blue-strong: #054e8e; /* hover/pressed for blue actions */
+  --green-strong: #2f7d00; /* accessible green for text */
+  --ink: #0b2540;
+  --ink-muted: #435a70;
+  --surface: #f4f9fc;
+  --line: #d8e4ee;
+
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-lime: var(--brand-lime);
+  --color-cyan: var(--brand-cyan);
+  --color-green: var(--brand-green);
+  --color-blue: var(--brand-blue);
+  --color-gold: var(--brand-gold);
+  --color-blue-strong: var(--blue-strong);
+  --color-green-strong: var(--green-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+
+  --font-sans: var(--font-sans-body);
+
+  --radius-card: 1.25rem;
+  --radius-control: 0.75rem;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-sans-body), system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+:focus-visible {
+  outline: 3px solid var(--brand-blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
