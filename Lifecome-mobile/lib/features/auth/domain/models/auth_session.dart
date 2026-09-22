@@ -4,14 +4,7 @@
 /// Lifecome-backend's blueprint-derived state machines): explicit named
 /// states rather than a set of booleans, so "not started" and "failed" can
 /// never be confused with each other.
-enum AuthStatus {
-  initial,
-  submitting,
-  codeSent,
-  verifying,
-  verified,
-  failed,
-}
+enum AuthStatus { initial, submitting, codeSent, verifying, verified, failed }
 
 /// Which screen the user came from, so the verify screen can send them back
 /// to the right place and use the right wording.

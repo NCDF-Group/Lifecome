@@ -13,11 +13,46 @@ class AuthController extends Notifier<AuthSessionState> {
   @override
   AuthSessionState build() => AuthSessionState.empty();
 
+  /// Email + password sign in. Unlike [requestCode], this resolves
+  /// immediately, there is no separate verification step.
+  Future<bool> signIn({required String email, required String password}) async {
+    state = state.copyWith(
+      status: AuthStatus.submitting,
+      flow: AuthFlow.signIn,
+      email: email,
+      clearError: true,
+    );
+
+    try {
+      await ref
+          .read(authRepositoryProvider)
+          .signInWithPassword(email: email, password: password);
+      state = state.copyWith(status: AuthStatus.verified);
+      return true;
+    } on AuthException catch (error) {
+      state = state.copyWith(
+        status: AuthStatus.failed,
+        errorMessage: error.message,
+      );
+      return false;
+    } catch (_) {
+      state = state.copyWith(
+        status: AuthStatus.failed,
+        errorMessage: 'Something went wrong. Please try again.',
+      );
+      return false;
+    }
+  }
+
   Future<bool> requestCode({
     required AuthFlow flow,
     required String email,
     String? fullName,
     String? phoneNumber,
+    DateTime? dateOfBirth,
+    String? gender,
+    String? region,
+    String? city,
   }) async {
     state = state.copyWith(
       status: AuthStatus.submitting,
@@ -29,10 +64,16 @@ class AuthController extends Notifier<AuthSessionState> {
     );
 
     try {
-      await ref.read(authRepositoryProvider).requestEmailCode(
+      await ref
+          .read(authRepositoryProvider)
+          .requestEmailCode(
             email: email,
             fullName: fullName,
             phoneNumber: phoneNumber,
+            dateOfBirth: dateOfBirth,
+            gender: gender,
+            state: region,
+            city: city,
           );
       state = state.copyWith(
         status: AuthStatus.codeSent,
@@ -40,7 +81,10 @@ class AuthController extends Notifier<AuthSessionState> {
       );
       return true;
     } on AuthException catch (error) {
-      state = state.copyWith(status: AuthStatus.failed, errorMessage: error.message);
+      state = state.copyWith(
+        status: AuthStatus.failed,
+        errorMessage: error.message,
+      );
       return false;
     } catch (_) {
       state = state.copyWith(
@@ -55,11 +99,16 @@ class AuthController extends Notifier<AuthSessionState> {
     state = state.copyWith(status: AuthStatus.verifying, clearError: true);
 
     try {
-      await ref.read(authRepositoryProvider).verifyEmailCode(email: state.email, code: code);
+      await ref
+          .read(authRepositoryProvider)
+          .verifyEmailCode(email: state.email, code: code);
       state = state.copyWith(status: AuthStatus.verified);
       return true;
     } on AuthException catch (error) {
-      state = state.copyWith(status: AuthStatus.codeSent, errorMessage: error.message);
+      state = state.copyWith(
+        status: AuthStatus.codeSent,
+        errorMessage: error.message,
+      );
       return false;
     } catch (_) {
       state = state.copyWith(
@@ -72,7 +121,9 @@ class AuthController extends Notifier<AuthSessionState> {
 
   Future<void> resendCode() async {
     try {
-      await ref.read(authRepositoryProvider).resendEmailCode(email: state.email);
+      await ref
+          .read(authRepositoryProvider)
+          .resendEmailCode(email: state.email);
       state = state.copyWith(
         resendAvailableAt: DateTime.now().add(_resendCooldown),
         clearError: true,
@@ -80,7 +131,9 @@ class AuthController extends Notifier<AuthSessionState> {
     } on AuthException catch (error) {
       state = state.copyWith(errorMessage: error.message);
     } catch (_) {
-      state = state.copyWith(errorMessage: 'Could not resend the code. Please try again.');
+      state = state.copyWith(
+        errorMessage: 'Could not resend the code. Please try again.',
+      );
     }
   }
 
@@ -89,6 +142,5 @@ class AuthController extends Notifier<AuthSessionState> {
   }
 }
 
-final authControllerProvider = NotifierProvider<AuthController, AuthSessionState>(
-  AuthController.new,
-);
+final authControllerProvider =
+    NotifierProvider<AuthController, AuthSessionState>(AuthController.new);

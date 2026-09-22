@@ -32,6 +32,7 @@ flutter:
 
   assets:
     - assets/images/logo/
+    - assets/images/onboarding/
 
   # Manrope is declared here once the .ttf files are added to assets/fonts/Manrope/
   # (see Lifecome-mobile/README.md, "Font: Manrope"). Until then, google_fonts fetches

@@ -38,7 +38,9 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     final code = completedCode ?? _code;
     if (code.length != 6) return;
 
-    final verified = await ref.read(authControllerProvider.notifier).verifyCode(code);
+    final verified = await ref
+        .read(authControllerProvider.notifier)
+        .verifyCode(code);
     if (!mounted) return;
 
     if (verified) {
@@ -72,8 +74,9 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
               FadeIn(
                 child: Center(
                   child: SvgPicture.asset(
-                    'assets/images/logo/lifecome-live-logo.svg',
-                    height: 30,
+                    'assets/images/logo/lifecome-live-mark.svg',
+                    height: 44,
+                    width: 44,
                     semanticsLabel: 'LifeCome Live',
                   ),
                 ),
@@ -89,7 +92,11 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                       color: AppColors.blue.withValues(alpha: 0.08),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.mark_email_read_outlined, color: AppColors.blue, size: 40),
+                    child: const Icon(
+                      Icons.mark_email_read_outlined,
+                      color: AppColors.blue,
+                      size: 40,
+                    ),
                   ),
                 ),
               ),
@@ -99,7 +106,11 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                 child: Text(
                   'Verify your email',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.ink),
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.ink,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
@@ -108,7 +119,11 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                 child: Text(
                   'Enter the 6-digit code sent to ${widget.args.email}',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 14, color: AppColors.inkMuted, height: 1.4),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.inkMuted,
+                    height: 1.4,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -130,7 +145,6 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                   label: 'Verify and continue',
                   loading: verifying,
                   onPressed: _code.length == 6 ? () => _submit() : null,
-                  icon: Icons.arrow_forward,
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -139,7 +153,11 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                   onPressed: () => context.pop(),
                   child: const Text(
                     'Change email',
-                    style: TextStyle(color: AppColors.blue, fontWeight: FontWeight.w700, fontSize: 14),
+                    style: TextStyle(
+                      color: AppColors.blue,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ),
@@ -148,7 +166,9 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                 child: authState.resendAvailableAt != null
                     ? OtpTimer(
                         availableAt: authState.resendAvailableAt!,
-                        onResend: () => ref.read(authControllerProvider.notifier).resendCode(),
+                        onResend: () => ref
+                            .read(authControllerProvider.notifier)
+                            .resendCode(),
                       )
                     : const SizedBox.shrink(),
               ),
@@ -157,7 +177,11 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.lock_outline, size: 16, color: AppColors.inkMuted),
+                    Icon(
+                      Icons.lock_outline,
+                      size: 16,
+                      color: AppColors.inkMuted,
+                    ),
                     SizedBox(width: 6),
                     Text(
                       'Never share your verification code.',

@@ -23,7 +23,11 @@ class TermsConsentCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const bodyStyle = TextStyle(color: AppColors.inkMuted, fontSize: 14, height: 1.4);
+    const bodyStyle = TextStyle(
+      color: AppColors.inkMuted,
+      fontSize: 14,
+      height: 1.4,
+    );
     const linkStyle = TextStyle(
       color: AppColors.blue,
       fontWeight: FontWeight.w700,

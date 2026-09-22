@@ -78,62 +78,108 @@ class OtpInputState extends State<OtpInput> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: List.generate(widget.length, (index) {
-            return SizedBox(
-              width: 48,
-              height: 56,
-              child: TextField(
-                controller: _controllers[index],
-                focusNode: _focusNodes[index],
-                textAlign: TextAlign.center,
-                keyboardType: TextInputType.number,
-                maxLength: 1,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.ink,
-                ),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: InputDecoration(
-                  counterText: '',
-                  contentPadding: EdgeInsets.zero,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.control),
-                    borderSide: BorderSide(
-                      color: hasError ? AppColors.error : AppColors.line,
-                      width: 1.5,
-                    ),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            // Sizes each box from the space actually available, so this
+            // never overflows on a narrow phone and never looks
+            // stretched-out on a tablet.
+            const gap = 8.0;
+            final totalGap = gap * (widget.length - 1);
+            final boxSize = ((constraints.maxWidth - totalGap) / widget.length)
+                .clamp(40.0, 56.0);
+
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                for (var index = 0; index < widget.length; index++) ...[
+                  if (index > 0) const SizedBox(width: gap),
+                  _OtpBox(
+                    size: boxSize,
+                    controller: _controllers[index],
+                    focusNode: _focusNodes[index],
+                    hasError: hasError,
+                    onChanged: (value) => _handleChanged(index, value),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.control),
-                    borderSide: BorderSide(
-                      color: hasError ? AppColors.error : AppColors.line,
-                      width: 1.5,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.control),
-                    borderSide: BorderSide(
-                      color: hasError ? AppColors.error : AppColors.blue,
-                      width: 2,
-                    ),
-                  ),
-                ),
-                onChanged: (value) => _handleChanged(index, value),
-              ),
+                ],
+              ],
             );
-          }),
+          },
         ),
         if (hasError) ...[
           const SizedBox(height: 8),
           Text(
             widget.errorText!,
-            style: const TextStyle(color: AppColors.error, fontSize: 13, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              color: AppColors.error,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ],
+    );
+  }
+}
+
+class _OtpBox extends StatelessWidget {
+  const _OtpBox({
+    required this.size,
+    required this.controller,
+    required this.focusNode,
+    required this.hasError,
+    required this.onChanged,
+  });
+
+  final double size;
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final bool hasError;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size + 8,
+      child: TextField(
+        controller: controller,
+        focusNode: focusNode,
+        textAlign: TextAlign.center,
+        keyboardType: TextInputType.number,
+        maxLength: 1,
+        style: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: AppColors.ink,
+        ),
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        decoration: InputDecoration(
+          counterText: '',
+          contentPadding: EdgeInsets.zero,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppRadius.control),
+            borderSide: BorderSide(
+              color: hasError ? AppColors.error : AppColors.line,
+              width: 1.5,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppRadius.control),
+            borderSide: BorderSide(
+              color: hasError ? AppColors.error : AppColors.line,
+              width: 1.5,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppRadius.control),
+            borderSide: BorderSide(
+              color: hasError ? AppColors.error : AppColors.blue,
+              width: 2,
+            ),
+          ),
+        ),
+        onChanged: onChanged,
+      ),
     );
   }
 }

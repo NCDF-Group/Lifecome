@@ -32,7 +32,11 @@ class DashboardScreen extends StatelessWidget {
                 const SizedBox(height: AppSpacing.lg),
                 const Text(
                   "You're signed in",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.ink),
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.ink,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 const Text(

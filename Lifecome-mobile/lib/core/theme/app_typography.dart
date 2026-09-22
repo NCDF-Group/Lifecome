@@ -12,8 +12,6 @@ import 'app_colors.dart';
 /// prepared in pubspec.yaml (see assets/fonts/Manrope and this app's
 /// README), so the app never depends on a font CDN being reachable.
 TextTheme buildAppTextTheme(TextTheme base) {
-  return GoogleFonts.manropeTextTheme(base).apply(
-    bodyColor: AppColors.ink,
-    displayColor: AppColors.ink,
-  );
+  return GoogleFonts.manropeTextTheme(base)
+      .apply(bodyColor: AppColors.ink, displayColor: AppColors.ink);
 }

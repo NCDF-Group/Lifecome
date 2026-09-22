@@ -59,7 +59,9 @@ ThemeData buildAppTheme() {
     checkboxTheme: CheckboxThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       fillColor: WidgetStateProperty.resolveWith(
-        (states) => states.contains(WidgetState.selected) ? AppColors.blue : AppColors.white,
+        (states) => states.contains(WidgetState.selected)
+            ? AppColors.blue
+            : AppColors.white,
       ),
       side: const BorderSide(color: AppColors.line, width: 1.5),
     ),

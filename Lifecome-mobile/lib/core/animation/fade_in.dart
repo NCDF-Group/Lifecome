@@ -25,9 +25,15 @@ class _FadeInState extends State<FadeIn> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: MotionTokens.slow);
-    final curved = CurvedAnimation(parent: _controller, curve: MotionTokens.easeSmooth);
+    final curved = CurvedAnimation(
+      parent: _controller,
+      curve: MotionTokens.easeSmooth,
+    );
     _opacity = curved;
-    _offset = Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero).animate(curved);
+    _offset = Tween<Offset>(
+      begin: const Offset(0, 0.06),
+      end: Offset.zero,
+    ).animate(curved);
 
     Future<void>.delayed(widget.delay, () {
       if (mounted) _controller.forward();

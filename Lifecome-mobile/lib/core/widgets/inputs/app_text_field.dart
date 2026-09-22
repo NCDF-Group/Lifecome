@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 import '../../theme/app_colors.dart';
 
 /// The one text field style used everywhere in the app: a label above the
-/// field (matching the website's form fields), consistent border and error
-/// handling from the app theme.
+/// field (matching the website's form fields), an optional leading icon,
+/// and consistent border and error handling from the app theme.
 class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
@@ -17,8 +17,13 @@ class AppTextField extends StatelessWidget {
     this.autofillHints,
     this.errorText,
     this.enabled = true,
+    this.readOnly = false,
+    this.obscureText = false,
+    this.prefixIcon,
+    this.suffixIcon,
     this.onChanged,
     this.onSubmitted,
+    this.onTap,
     this.inputFormatters,
   });
 
@@ -30,8 +35,16 @@ class AppTextField extends StatelessWidget {
   final Iterable<String>? autofillHints;
   final String? errorText;
   final bool enabled;
+
+  /// True for a field that opens a picker (e.g. date of birth) rather than
+  /// accepting typed input directly.
+  final bool readOnly;
+  final bool obscureText;
+  final IconData? prefixIcon;
+  final Widget? suffixIcon;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onTap;
   final List<TextInputFormatter>? inputFormatters;
 
   @override
@@ -41,7 +54,11 @@ class AppTextField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.ink),
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppColors.ink,
+          ),
         ),
         const SizedBox(height: 8),
         TextField(
@@ -50,11 +67,21 @@ class AppTextField extends StatelessWidget {
           textInputAction: textInputAction,
           autofillHints: autofillHints,
           enabled: enabled,
+          readOnly: readOnly,
+          obscureText: obscureText,
           onChanged: onChanged,
           onSubmitted: onSubmitted,
+          onTap: onTap,
           inputFormatters: inputFormatters,
           style: const TextStyle(fontSize: 16, color: AppColors.ink),
-          decoration: InputDecoration(hintText: hintText, errorText: errorText),
+          decoration: InputDecoration(
+            hintText: hintText,
+            errorText: errorText,
+            prefixIcon: prefixIcon != null
+                ? Icon(prefixIcon, size: 20, color: AppColors.inkMuted)
+                : null,
+            suffixIcon: suffixIcon,
+          ),
         ),
       ],
     );

@@ -8,7 +8,11 @@ import '../../../../core/theme/app_colors.dart';
 /// before that, matching the wording used on the website and in the
 /// inspiration screens ("Resend code in 00:28").
 class OtpTimer extends StatefulWidget {
-  const OtpTimer({super.key, required this.availableAt, required this.onResend});
+  const OtpTimer({
+    super.key,
+    required this.availableAt,
+    required this.onResend,
+  });
 
   final DateTime availableAt;
   final VoidCallback onResend;
@@ -66,7 +70,11 @@ class _OtpTimerState extends State<OtpTimer> {
         onPressed: widget.onResend,
         child: const Text(
           'Resend code',
-          style: TextStyle(color: AppColors.blue, fontWeight: FontWeight.w700, fontSize: 14),
+          style: TextStyle(
+            color: AppColors.blue,
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
+          ),
         ),
       );
     }
