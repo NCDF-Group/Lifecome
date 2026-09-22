@@ -3,6 +3,7 @@ import type { Bodies } from "../types";
 export const access: Bodies = {
   "/access": {
     lead: "Choose the way that works for you. However you pay, you get the same doctors, the same consultation and the same care plan and health record.",
+    image: { src: "/images/access-overview.webp", alt: "A man smiling at his phone at a sunny café table", fade: 24, position: "50% 15%" },
     blocks: [
       {
         type: "cards",
@@ -27,6 +28,7 @@ export const access: Bodies = {
 
   "/access/use-your-hmo": {
     lead: "If your HMO participates in LifeCome Live, you can use your membership to fund eligible consultations. Your HMO decides what is covered, and we show you the result before you confirm.",
+    image: { src: "/images/hmo.webp", alt: "A woman holding a membership card and her phone at a desk at home", fade: 24, position: "50% 0%" },
     blocks: [
       {
         type: "steps",
@@ -57,6 +59,7 @@ export const access: Bodies = {
 
   "/access/participating-hmos": {
     lead: "The HMOs and health plans you can use with LifeCome Live.",
+    image: { src: "/images/hmos.webp", alt: "Two professionals shaking hands across a table in a modern office", fade: 22, position: "50% 10%" },
     blocks: [
       { type: "hmo-directory" },
       {
@@ -78,6 +81,7 @@ export const access: Bodies = {
 
   "/access/check-your-cover": {
     lead: "Check your HMO membership and what your plan covers on LifeCome Live before you book.",
+    image: { src: "/images/check-cover.webp", alt: "A man smiling at his phone on a sofa at home", fade: 20, position: "50% 0%" },
     blocks: [
       {
         type: "steps",

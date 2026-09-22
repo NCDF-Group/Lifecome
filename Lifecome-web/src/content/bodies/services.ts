@@ -10,6 +10,7 @@ const notForEmergencies = {
 export const services: Bodies = {
   "/services": {
     lead: "Everything you need for everyday healthcare, from a first consultation to results, referrals and medicines, connected through one care plan and one health record.",
+    image: { src: "/images/services-overview.webp", alt: "A desk with a stethoscope, smartphone, tablet and a plant", fade: 30 },
     blocks: [
       {
         type: "cards",
@@ -85,6 +86,7 @@ export const services: Bodies = {
 
   "/services/follow-up-care": {
     lead: "Care does not end when the call does. Follow-up consultations let you and your doctor check progress and adjust your care plan.",
+    image: { src: "/images/follow-up.webp", alt: "A woman in a headwrap smiling at her phone at a kitchen table", fade: 26, position: "50% 0%" },
     blocks: [
       {
         type: "checklist",
