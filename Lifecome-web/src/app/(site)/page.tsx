@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { AppStoreBadge, GooglePlayBadge } from "@/components/ui/store-badges";
 import { Container } from "@/components/ui/container";
 import { Icon, type IconName } from "@/components/ui/icons";
 import { StatusChip } from "@/components/ui/status-chip";
@@ -234,6 +235,26 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
+        </Container>
+      </section>
+
+      {/* App coming soon */}
+      <section className="border-y border-line bg-surface py-16 sm:py-20">
+        <Container className="flex flex-col items-center gap-6 text-center">
+          <p className="reveal text-sm font-bold uppercase tracking-wider text-positive">Coming soon</p>
+          <h2 className="reveal max-w-xl text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">
+            The LifeCome Live app is on its way
+          </h2>
+          <p className="reveal max-w-lg text-lg leading-relaxed text-ink-muted">
+            Book visits, join consultations and check your care plan from your phone. The app is in development for iOS and Android.
+          </p>
+          <div className="reveal mt-2 flex flex-wrap items-center justify-center gap-4">
+            <AppStoreBadge />
+            <GooglePlayBadge />
+          </div>
+          <ButtonLink href="/help/support-feedback-complaints" variant="secondary" className="reveal mt-2">
+            Get notified at launch
+          </ButtonLink>
         </Container>
       </section>
 
