@@ -2,7 +2,6 @@
   <img src="brand/logo/lifecome-live-logo.svg" alt="LifeCome Live" width="420" />
 </p>
 
-<p align="center"><strong>A Healthier You, Brighter Tomorrow</strong></p>
 
 # LifeCome Live
 
@@ -111,7 +110,6 @@ Lime, Cyan and Gold do not have enough contrast for text on white, so they are u
 ## Important notes
 
 - LifeCome Live is not for emergencies. The site directs people to urgent in-person care.
-- Photos in the repository are illustrative. Replace them with approved photography of real clinicians before launch.
 - Legal documents, clinical safety copy and security statements need review by the appropriate owners before go-live.
 
 ## License
