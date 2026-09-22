@@ -1,0 +1,50 @@
+name: lifecome_mobile
+description: "LifeCome Live patient app: online consultations, care plans and health records."
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Navigation
+  go_router: ^18.0.1
+
+  # State management
+  flutter_riverpod: ^3.4.3
+
+  # Brand font, loaded locally (see assets/fonts/Manrope) rather than fetched at runtime
+  google_fonts: ^8.2.1
+
+  # SVG logo assets, shared with the website
+  flutter_svg: ^2.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/logo/
+
+  # Manrope is declared here once the .ttf files are added to assets/fonts/Manrope/
+  # (see Lifecome-mobile/README.md, "Font: Manrope"). Until then, google_fonts fetches
+  # and caches Manrope on first run, so screens already render in the right typeface.
+  # fonts:
+  #   - family: Manrope
+  #     fonts:
+  #       - asset: assets/fonts/Manrope/Manrope-Regular.ttf
+  #       - asset: assets/fonts/Manrope/Manrope-Medium.ttf
+  #         weight: 500
+  #       - asset: assets/fonts/Manrope/Manrope-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Manrope/Manrope-Bold.ttf
+  #         weight: 700
+  #       - asset: assets/fonts/Manrope/Manrope-ExtraBold.ttf
+  #         weight: 800
