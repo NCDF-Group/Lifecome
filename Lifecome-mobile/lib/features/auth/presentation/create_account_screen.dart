@@ -240,7 +240,38 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     FadeIn(
+                      delay: const Duration(milliseconds: 320),
+                      child: Row(
+                        children: const [
+                          Expanded(child: Divider(color: AppColors.line)),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm,
+                            ),
+                            child: Text(
+                              'or continue with',
+                              style: TextStyle(
+                                color: AppColors.inkMuted,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                          Expanded(child: Divider(color: AppColors.line)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    FadeIn(
                       delay: const Duration(milliseconds: 340),
+                      child: SocialButton(
+                        icon: const GoogleMark(),
+                        label: 'Continue with Google',
+                        onPressed: _continueWithGoogle,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    FadeIn(
+                      delay: const Duration(milliseconds: 360),
                       child: Center(
                         child: Wrap(
                           alignment: WrapAlignment.center,
