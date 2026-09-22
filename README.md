@@ -15,7 +15,7 @@ LifeCome Live is the healthcare delivery and coordination platform. It is separa
 |---|---|
 | Public website (`Lifecome-web`) | Built: home page plus the full 36-page site map, with content, images and animation |
 | Backend API (`Lifecome-backend`) | Built: 19 domain modules (identity, payer, eligibility, booking, payment, clinical records and more), a 29-table database schema, and a working payer-adapter pattern |
-| Patient app (Flutter) | Not started — see [Building the mobile app](#building-the-mobile-app) before committing to it |
+| Patient app (Flutter) | Scaffolded only: the full folder and file map for all 22 views plus supporting screens, no code yet. See [`Lifecome-mobile/README.md`](Lifecome-mobile/README.md) and [Building the mobile app](#building-the-mobile-app) |
 | Provider portal and operations console | Planned |
 
 See the [phased backlog](docs/planning/phased-backlog.md) for the delivery plan.
@@ -38,8 +38,10 @@ seconds). Data lives in **PostgreSQL**, accessed through **Drizzle ORM** (SQL-fi
 entities). Background jobs (notifications, reconciliation) run on **BullMQ** over **Redis**. Requests are validated with
 **Zod**. See [`Lifecome-backend/README.md`](Lifecome-backend/README.md) for the full reasoning and every module.
 
-**Not started:** Flutter for the patient app. See [Building the mobile app](#building-the-mobile-app) below before
-starting it — there are real prerequisites (a Mac, developer-program accounts) worth knowing about first.
+**Scaffolded, not built:** Flutter for the patient app — `Lifecome-mobile/` has the intended folder structure and an
+empty file for every screen and widget, mapped to the blueprint's 22 views in
+[its README](Lifecome-mobile/README.md), but no Dart code yet. See [Building the mobile app](#building-the-mobile-app)
+below before writing any — there are real prerequisites (a Mac, developer-program accounts) worth knowing about first.
 
 The full comparison of options considered is in the [tech stack recommendation](docs/architecture/tech-stack-recommendation.md).
 
@@ -47,6 +49,7 @@ The full comparison of options considered is in the [tech stack recommendation](
 
 ```
 .
+├── Lifecome-mobile/     Flutter patient app (scaffold only — folders and file map, no code yet)
 ├── Lifecome-web/        Next.js public website
 │   ├── public/          Images and brand assets
 │   └── src/
@@ -250,6 +253,7 @@ Lime, Cyan and Gold do not have enough contrast for text on white, so they are u
 - [Tech stack recommendation](docs/architecture/tech-stack-recommendation.md)
 - [Phased backlog](docs/planning/phased-backlog.md)
 - [Backend README](Lifecome-backend/README.md) — module layout, the payer-adapter pattern, conventions
+- [Mobile app README](Lifecome-mobile/README.md) — the full screen map, shared widgets, animation and font plan
 
 ## Important notes
 
