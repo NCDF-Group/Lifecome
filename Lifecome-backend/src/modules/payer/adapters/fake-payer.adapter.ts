@@ -26,35 +26,39 @@ export class FakePayerAdapter implements PayerAdapter {
 
   private readonly authorisations = new Map<string, AuthorisationStatusResult>();
 
-  async verifyMember(input: VerifyMemberInput): Promise<VerifyMemberResult> {
+  // These are synchronous under the hood (no network call to fake), but the interface is async
+  // because every real adapter's implementation will be — hence `Promise.resolve(...)` rather
+  // than `async`/`await` with nothing to actually await.
+
+  verifyMember(input: VerifyMemberInput): Promise<VerifyMemberResult> {
     if (input.memberId.trim().length === 0) {
-      return { status: 'not_found' };
+      return Promise.resolve({ status: 'not_found' });
     }
     // A member id ending in the digit 9 exercises the "needs manual review" state.
     if (input.memberId.endsWith('9')) {
-      return { status: 'manual_review' };
+      return Promise.resolve({ status: 'manual_review' });
     }
-    return { status: 'verified', planId: 'FAKE-STANDARD' };
+    return Promise.resolve({ status: 'verified', planId: 'FAKE-STANDARD' });
   }
 
-  async checkEligibility(input: CheckEligibilityInput): Promise<CheckEligibilityResult> {
+  checkEligibility(input: CheckEligibilityInput): Promise<CheckEligibilityResult> {
     if (input.clinicalServiceCode === 'SPECIALIST') {
-      return { status: 'pre_authorisation_required' };
+      return Promise.resolve({ status: 'pre_authorisation_required' });
     }
     if (input.clinicalServiceCode === 'COSMETIC') {
-      return { status: 'excluded' };
+      return Promise.resolve({ status: 'excluded' });
     }
-    return { status: 'covered' };
+    return Promise.resolve({ status: 'covered' });
   }
 
-  async requestAuthorisation(input: RequestAuthorisationInput): Promise<RequestAuthorisationResult> {
+  requestAuthorisation(_input: RequestAuthorisationInput): Promise<RequestAuthorisationResult> {
     const payerReference = `FAKE-AUTH-${randomUUID().slice(0, 8).toUpperCase()}`;
     const result: AuthorisationStatusResult = { status: 'approved', payerReference };
     this.authorisations.set(payerReference, result);
-    return { status: 'approved', payerReference };
+    return Promise.resolve({ status: 'approved', payerReference });
   }
 
-  async getAuthorisationStatus(payerReference: string): Promise<AuthorisationStatusResult> {
-    return this.authorisations.get(payerReference) ?? { status: 'expired' };
+  getAuthorisationStatus(payerReference: string): Promise<AuthorisationStatusResult> {
+    return Promise.resolve(this.authorisations.get(payerReference) ?? { status: 'expired' });
   }
 }

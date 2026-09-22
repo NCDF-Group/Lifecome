@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { nanoid } from 'nanoid';
 import { LoggerModule } from 'nestjs-pino';
-import { ZodValidationPipe } from 'nestjs-zod';
 
 import { ConfigModule } from './common/config/config.module';
 import { AppConfigService } from './common/config/configuration';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { IdempotencyInterceptor } from './common/interceptors/idempotency.interceptor';
+import { ZodValidationPipe } from './common/validation/zod-validation.pipe';
 import { DrizzleModule } from './db/client';
 import { QueueModule } from './queue/queue.module';
 import { RedisModule } from './queue/redis.module';

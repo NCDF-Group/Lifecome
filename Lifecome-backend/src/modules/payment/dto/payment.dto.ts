@@ -1,4 +1,4 @@
-import { createZodDto } from 'nestjs-zod';
+import { createZodDto } from '../../../common/validation/zod-dto';
 import { z } from 'zod';
 
 export const CreatePaymentIntentSchema = z.object({

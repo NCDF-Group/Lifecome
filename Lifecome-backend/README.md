@@ -28,8 +28,11 @@ cp .env.example .env
 docker compose up -d          # Postgres on :5432, Redis on :6379
 npm install
 npm run db:migrate            # applies the SQL migrations in drizzle/
-npm run dev                   # http://localhost:3001, docs at /docs
+npm run dev                   # API at http://localhost:3001/api/v1, Swagger UI at /api/docs
 ```
+
+Every route is served under `/api/v1` (a global prefix plus URI versioning, so the API can add a
+`v2` later without breaking `v1` clients — blueprint §7.1). `/api/docs` is disabled in production.
 
 | Command | What it does |
 |---|---|

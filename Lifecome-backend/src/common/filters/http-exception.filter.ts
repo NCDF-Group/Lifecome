@@ -1,9 +1,9 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { PinoLogger } from 'nestjs-pino';
-import { ZodValidationException } from 'nestjs-zod';
 
 import { AppException, CommonErrorCodes } from '../errors/app-exception';
+import { ZodValidationException } from '../validation/zod-validation.exception';
 
 interface ErrorBody {
   error: { code: string; message: string; details?: unknown };
@@ -25,11 +25,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
     const request = ctx.getRequest<FastifyRequest>();
-    const correlationId = (request.id as string) ?? 'unknown';
+    const correlationId = request.id;
 
     const { status, body } = this.resolve(exception, correlationId);
 
-    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+    if (status >= 500) {
       this.logger.error({ err: exception, correlationId }, 'Unhandled exception');
     } else {
       this.logger.warn({ correlationId, code: body.error.code }, 'Request failed');
