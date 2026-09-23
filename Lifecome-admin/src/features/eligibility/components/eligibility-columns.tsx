@@ -1,34 +1,33 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { DemoEligibilityCheck } from "@/lib/demo/eligibility";
+import type { EligibilityCheck, EligibilityStatus } from "@/features/eligibility/types";
 import { StatusPill } from "@/components/shared/status-pill";
 
-const resultLabel: Record<DemoEligibilityCheck["result"], string> = {
-  eligible: "Eligible",
-  not_eligible: "Not eligible",
-  pending: "Pending",
+const resultLabel: Record<EligibilityStatus, string> = {
+  covered: "Covered",
+  co_pay: "Co-pay",
+  pre_authorisation_required: "Pre-authorisation required",
+  excluded: "Excluded",
+  benefit_limit_reached: "Benefit limit reached",
+  payer_unavailable: "Payer unavailable",
 };
 
-const resultTone: Record<
-  DemoEligibilityCheck["result"],
-  "success" | "destructive" | "warning"
-> = {
-  eligible: "success",
-  not_eligible: "destructive",
-  pending: "warning",
+const resultTone: Record<EligibilityStatus, "success" | "warning" | "destructive"> = {
+  covered: "success",
+  co_pay: "warning",
+  pre_authorisation_required: "warning",
+  excluded: "destructive",
+  benefit_limit_reached: "destructive",
+  payer_unavailable: "destructive",
 };
 
-export const eligibilityColumns: ColumnDef<DemoEligibilityCheck, unknown>[] = [
+export const eligibilityColumns: ColumnDef<EligibilityCheck, unknown>[] = [
   {
     accessorKey: "patientName",
     header: "Patient",
-    cell: (info) => (
-      <span className="font-medium text-ink">
-        {info.getValue() as string}
-      </span>
-    ),
+    cell: (info) => <span className="font-medium text-ink">{info.getValue() as string}</span>,
   },
   { accessorKey: "payerName", header: "Payer" },
-  { accessorKey: "serviceType", header: "Service" },
+  { accessorKey: "serviceName", header: "Service" },
   {
     accessorKey: "checkedAt",
     header: "Checked",
@@ -41,19 +40,19 @@ export const eligibilityColumns: ColumnDef<DemoEligibilityCheck, unknown>[] = [
       }),
   },
   {
-    accessorKey: "turnaroundSeconds",
-    header: "Turnaround",
+    accessorKey: "coPayKobo",
+    header: "Co-pay",
     cell: (info) => {
-      const seconds = info.getValue() as number;
-      return seconds > 0 ? `${seconds}s` : "—";
+      const value = info.getValue() as string | null;
+      return value ? `₦${(Number(value) / 100).toLocaleString("en-NG")}` : "-";
     },
   },
   {
-    accessorKey: "result",
+    accessorKey: "status",
     header: "Result",
     cell: (info) => {
-      const result = info.getValue() as DemoEligibilityCheck["result"];
-      return <StatusPill tone={resultTone[result]} label={resultLabel[result]} />;
+      const status = info.getValue() as EligibilityStatus;
+      return <StatusPill tone={resultTone[status]} label={resultLabel[status]} />;
     },
   },
 ];

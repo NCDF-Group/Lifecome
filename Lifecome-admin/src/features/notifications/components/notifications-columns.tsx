@@ -1,31 +1,44 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { DemoNotification } from "@/lib/demo/notifications";
+import type { NotificationChannel, NotificationDeliveryStatus, NotificationLog } from "@/features/notifications/types";
 import { StatusPill } from "@/components/shared/status-pill";
 
-const channelLabel: Record<DemoNotification["channel"], string> = {
-  push: "Push",
-  email: "Email",
+const channelLabel: Record<NotificationChannel, string> = {
   sms: "SMS",
+  email: "Email",
+  push: "Push",
+  in_app: "In-app",
 };
 
-export const notificationsColumns: ColumnDef<DemoNotification, unknown>[] = [
+const statusLabel: Record<NotificationDeliveryStatus, string> = {
+  queued: "Queued",
+  sent: "Sent",
+  failed: "Failed",
+};
+
+const statusTone: Record<NotificationDeliveryStatus, "success" | "warning" | "destructive"> = {
+  queued: "warning",
+  sent: "success",
+  failed: "destructive",
+};
+
+export const notificationsColumns: ColumnDef<NotificationLog, unknown>[] = [
   {
-    accessorKey: "title",
-    header: "Title",
-    cell: (info) => (
-      <span className="font-medium text-ink">
-        {info.getValue() as string}
-      </span>
-    ),
+    accessorKey: "template",
+    header: "Template",
+    cell: (info) => <span className="font-medium text-ink">{info.getValue() as string}</span>,
   },
-  { accessorKey: "audience", header: "Audience" },
+  {
+    id: "recipient",
+    header: "Recipient",
+    accessorFn: (row) => row.recipientEmail ?? row.recipientPhoneNumber,
+  },
   {
     accessorKey: "channel",
     header: "Channel",
-    cell: (info) => channelLabel[info.getValue() as DemoNotification["channel"]],
+    cell: (info) => channelLabel[info.getValue() as NotificationChannel],
   },
   {
-    accessorKey: "sentAt",
+    accessorKey: "createdAt",
     header: "Sent",
     cell: (info) =>
       new Date(info.getValue() as string).toLocaleString("en-GB", {
@@ -36,16 +49,11 @@ export const notificationsColumns: ColumnDef<DemoNotification, unknown>[] = [
       }),
   },
   {
-    accessorKey: "deliveryRate",
-    header: "Delivered",
+    accessorKey: "status",
+    header: "Status",
     cell: (info) => {
-      const rate = info.getValue() as number;
-      return (
-        <StatusPill
-          tone={rate >= 98 ? "success" : rate >= 90 ? "warning" : "destructive"}
-          label={`${rate}%`}
-        />
-      );
+      const status = info.getValue() as NotificationDeliveryStatus;
+      return <StatusPill tone={statusTone[status]} label={statusLabel[status]} />;
     },
   },
 ];

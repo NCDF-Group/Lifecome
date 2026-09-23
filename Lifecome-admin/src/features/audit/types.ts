@@ -1,5 +1,24 @@
-// Types for the "audit" feature, mirroring Lifecome-backend/src/modules/audit.
-// Once src/lib/api/generated/schema.d.ts exists (npm run generate:api),
-// prefer re-exporting/narrowing those generated types here rather than
-// hand-writing duplicates that can drift from the real API contract.
-export {};
+// Mirrors Lifecome-backend's `auditEvents` table (src/db/schema/audit.schema.ts).
+export type ActorType = "patient" | "provider" | "staff" | "system";
+
+export type AuditAction =
+  | "record_viewed"
+  | "record_downloaded"
+  | "record_shared"
+  | "clinical_note_signed"
+  | "clinical_note_amended"
+  | "payer_decision"
+  | "payment_state_change"
+  | "admin_action";
+
+export interface AuditEvent {
+  id: string;
+  actorType: ActorType;
+  actorId: string;
+  action: AuditAction;
+  resourceType: string;
+  resourceId: string;
+  correlationId: string | null;
+  metadata: Record<string, unknown>;
+  occurredAt: string;
+}

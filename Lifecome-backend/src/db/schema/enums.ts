@@ -110,3 +110,19 @@ export const auditActionEnum = pgEnum('audit_action', [
   'payment_state_change',
   'admin_action',
 ]);
+
+/** The operations-console personas (blueprint §2.3) — see `staff.schema.ts`. */
+export const staffRoleEnum = pgEnum('staff_role', [
+  'platform_administrator',
+  'clinical_administrator',
+  'hmo_operations',
+  'support_agent',
+]);
+
+export const staffAccountStatusEnum = pgEnum('staff_account_status', ['active', 'suspended']);
+
+export const notificationDeliveryStatusEnum = pgEnum('notification_delivery_status', [
+  'queued',
+  'sent',
+  'failed',
+]);

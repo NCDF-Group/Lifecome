@@ -1,4 +1,9 @@
-// Route/permission guards (e.g. a `requireRole()` used in server components
-// or middleware.ts) once staff roles exist on the backend. Not implemented
-// — see README.md "Known gap: admin auth".
-export {};
+import { redirect } from "next/navigation";
+import { getSession, type StaffSession } from "./session";
+
+/** Server-component guard: redirects to `/login` if there's no valid staff session. */
+export async function requireStaffSession(): Promise<StaffSession> {
+  const session = await getSession();
+  if (!session) redirect("/login");
+  return session;
+}

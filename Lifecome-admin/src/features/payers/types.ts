@@ -1,5 +1,19 @@
-// Types for the "payers" feature, mirroring Lifecome-backend/src/modules/payers.
-// Once src/lib/api/generated/schema.d.ts exists (npm run generate:api),
-// prefer re-exporting/narrowing those generated types here rather than
-// hand-writing duplicates that can drift from the real API contract.
-export {};
+// Mirrors Lifecome-backend's `payers` table (src/db/schema/payer.schema.ts). Real fields only -
+// the backend has no supportPhone/activeMembers/integrationStatus columns, so those demo-only
+// fields are gone rather than shown as fabricated data.
+export type PayerIntegrationMode =
+  | "realtime_api"
+  | "secure_batch_file"
+  | "operations_portal"
+  | "rules_configuration";
+
+export interface Payer {
+  id: string;
+  code: string;
+  name: string;
+  integrationMode: PayerIntegrationMode;
+  isLive: boolean;
+  displayOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}

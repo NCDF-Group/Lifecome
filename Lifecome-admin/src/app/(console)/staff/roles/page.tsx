@@ -1,5 +1,5 @@
 import { Check, ShieldEllipsis } from "lucide-react";
-import { rolePermissions } from "@/lib/demo/roles";
+import { rolePermissions } from "@/features/staff/roles";
 import { PageHeader } from "@/components/shared/page-header";
 
 export default function StaffRolesPage() {

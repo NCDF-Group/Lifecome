@@ -1,5 +1,25 @@
-// Types for the "payments" feature, mirroring Lifecome-backend/src/modules/payments.
-// Once src/lib/api/generated/schema.d.ts exists (npm run generate:api),
-// prefer re-exporting/narrowing those generated types here rather than
-// hand-writing duplicates that can drift from the real API contract.
-export {};
+// Mirrors Lifecome-backend's `AdminPaymentRow` (src/modules/payment/payment.service.ts).
+export type PaymentStatus =
+  | "initiated"
+  | "pending"
+  | "successful"
+  | "failed"
+  | "cancelled"
+  | "refunded"
+  | "partially_refunded";
+
+export interface PaymentTransaction {
+  id: string;
+  appointmentId: string;
+  amountKobo: number;
+  currency: string;
+  status: PaymentStatus;
+  gateway: string;
+  gatewayReference: string | null;
+  receiptNumber: string | null;
+  idempotencyKey: string;
+  createdAt: string;
+  updatedAt: string;
+  patientName: string;
+  serviceName: string;
+}

@@ -1,5 +1,11 @@
 import { createZodDto } from '../../../common/validation/zod-dto';
+import { PaginationQuerySchema } from '../../../common/dto/pagination.dto';
 import { z } from 'zod';
+
+export const ListPatientsQuerySchema = PaginationQuerySchema.extend({
+  search: z.string().min(1).max(200).optional(),
+});
+export class ListPatientsQueryDto extends createZodDto(ListPatientsQuerySchema) {}
 
 export const CreatePatientProfileSchema = z.object({
   userAccountId: z.uuid(),
@@ -8,6 +14,7 @@ export const CreatePatientProfileSchema = z.object({
   dateOfBirth: z.iso.date(),
   sex: z.string().max(30).optional(),
   city: z.string().max(100).optional(),
+  state: z.string().max(100).optional(),
 });
 export class CreatePatientProfileDto extends createZodDto(CreatePatientProfileSchema) {}
 

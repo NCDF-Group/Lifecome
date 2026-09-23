@@ -1,5 +1,11 @@
-// Types for the "service-catalogue" feature, mirroring Lifecome-backend/src/modules/service-catalogue.
-// Once src/lib/api/generated/schema.d.ts exists (npm run generate:api),
-// prefer re-exporting/narrowing those generated types here rather than
-// hand-writing duplicates that can drift from the real API contract.
-export {};
+// Mirrors Lifecome-backend's `clinicalServices` table (src/db/schema/catalogue.schema.ts).
+export interface ClinicalService {
+  id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  defaultDurationMinutes: number;
+  basePriceKobo: number;
+  isActive: boolean;
+  createdAt: string;
+}

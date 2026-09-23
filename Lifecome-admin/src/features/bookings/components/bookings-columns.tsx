@@ -1,39 +1,36 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { BookingStatus, DemoBooking } from "@/lib/demo/bookings";
+import type { Appointment, BookingStatus } from "@/features/bookings/types";
 import { StatusPill } from "@/components/shared/status-pill";
 
 const statusLabel: Record<BookingStatus, string> = {
-  pending_payment: "Awaiting payment",
+  slot_held: "Slot held",
   confirmed: "Confirmed",
-  completed: "Completed",
+  rescheduled: "Rescheduled",
   cancelled: "Cancelled",
+  doctor_unavailable: "Doctor unavailable",
+  patient_no_show: "Patient no-show",
 };
 
-const statusTone: Record<
-  BookingStatus,
-  "success" | "warning" | "destructive" | "neutral"
-> = {
-  pending_payment: "warning",
+const statusTone: Record<BookingStatus, "success" | "warning" | "destructive" | "neutral"> = {
+  slot_held: "warning",
   confirmed: "success",
-  completed: "neutral",
+  rescheduled: "warning",
   cancelled: "destructive",
+  doctor_unavailable: "destructive",
+  patient_no_show: "neutral",
 };
 
-export const bookingsColumns: ColumnDef<DemoBooking, unknown>[] = [
+export const bookingsColumns: ColumnDef<Appointment, unknown>[] = [
   {
     accessorKey: "patientName",
     header: "Patient",
-    cell: (info) => (
-      <span className="font-medium text-ink">
-        {info.getValue() as string}
-      </span>
-    ),
+    cell: (info) => <span className="font-medium text-ink">{info.getValue() as string}</span>,
   },
-  { accessorKey: "doctorName", header: "Doctor" },
-  { accessorKey: "service", header: "Service" },
+  { accessorKey: "providerName", header: "Provider" },
+  { accessorKey: "serviceName", header: "Service" },
   {
-    accessorKey: "scheduledAt",
-    header: "Scheduled",
+    accessorKey: "createdAt",
+    header: "Booked",
     cell: (info) =>
       new Date(info.getValue() as string).toLocaleString("en-GB", {
         day: "2-digit",
@@ -43,9 +40,9 @@ export const bookingsColumns: ColumnDef<DemoBooking, unknown>[] = [
       }),
   },
   {
-    accessorKey: "fee",
+    accessorKey: "feeKobo",
     header: "Fee",
-    cell: (info) => `₦${(info.getValue() as number).toLocaleString("en-NG")}`,
+    cell: (info) => `₦${((info.getValue() as number) / 100).toLocaleString("en-NG")}`,
   },
   {
     accessorKey: "status",

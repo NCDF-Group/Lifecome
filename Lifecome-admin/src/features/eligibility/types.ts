@@ -1,5 +1,20 @@
-// Types for the "eligibility" feature, mirroring Lifecome-backend/src/modules/eligibility.
-// Once src/lib/api/generated/schema.d.ts exists (npm run generate:api),
-// prefer re-exporting/narrowing those generated types here rather than
-// hand-writing duplicates that can drift from the real API contract.
-export {};
+// Mirrors Lifecome-backend's `AdminEligibilityCheckRow` (src/modules/eligibility/eligibility.service.ts).
+export type EligibilityStatus =
+  | "covered"
+  | "co_pay"
+  | "pre_authorisation_required"
+  | "excluded"
+  | "benefit_limit_reached"
+  | "payer_unavailable";
+
+export interface EligibilityCheck {
+  id: string;
+  membershipId: string;
+  clinicalServiceId: string;
+  status: EligibilityStatus;
+  coPayKobo: string | null;
+  checkedAt: string;
+  patientName: string;
+  payerName: string;
+  serviceName: string;
+}

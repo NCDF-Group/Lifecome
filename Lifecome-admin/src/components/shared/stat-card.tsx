@@ -1,22 +1,20 @@
-import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
-import type { DashboardStat } from "@/lib/demo/dashboard";
-import { cn } from "@/lib/utils";
+import type { LucideIcon } from "lucide-react";
 
-const trendIcon = {
-  up: ArrowUpRight,
-  down: ArrowDownRight,
-  flat: ArrowRight,
-} as const;
-
-const trendColor = {
-  up: "text-positive",
-  down: "text-destructive",
-  flat: "text-ink-muted",
-} as const;
-
-export function StatCard({ label, value, delta, trend, icon: Icon }: DashboardStat) {
-  const TrendIcon = trendIcon[trend];
-
+/** A single dashboard number. No trend arrow/delta - the backend's `/admin/dashboard` aggregate
+ * is a point-in-time count, not a comparison against a prior period, so showing "+8% vs
+ * yesterday" would be fabricated rather than computed. `hint` is an optional plain-text second
+ * line for extra context (e.g. a transaction count next to a currency total). */
+export function StatCard({
+  label,
+  value,
+  icon: Icon,
+  hint,
+}: {
+  label: string;
+  value: string;
+  icon: LucideIcon;
+  hint?: string;
+}) {
   return (
     <div className="flex flex-col gap-3 rounded-card border border-line bg-card p-5">
       <div className="flex items-center justify-between">
@@ -26,15 +24,7 @@ export function StatCard({ label, value, delta, trend, icon: Icon }: DashboardSt
         </div>
       </div>
       <span className="text-3xl font-bold text-ink">{value}</span>
-      <span
-        className={cn(
-          "flex items-center gap-1 text-xs font-semibold",
-          trendColor[trend],
-        )}
-      >
-        <TrendIcon className="size-3.5" />
-        {delta}
-      </span>
+      {hint && <span className="text-xs font-medium text-ink-muted">{hint}</span>}
     </div>
   );
 }

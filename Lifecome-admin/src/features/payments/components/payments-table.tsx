@@ -1,14 +1,10 @@
 "use client";
 
 import { DataTable } from "@/components/data-table/data-table";
-import type { DemoTransaction } from "@/lib/demo/payments";
+import type { PaymentTransaction } from "@/features/payments/types";
 import { paymentsColumns } from "@/features/payments/components/payments-columns";
 
-export function PaymentsTable({
-  transactions,
-}: {
-  transactions: DemoTransaction[];
-}) {
+export function PaymentsTable({ transactions }: { transactions: PaymentTransaction[] }) {
   return (
     <DataTable
       columns={paymentsColumns}

@@ -8,7 +8,7 @@ const toneClasses = {
   neutral: "bg-surface text-ink-muted",
 } as const;
 
-/** The small coloured status badge used across every list/detail page —
+/** The small coloured status badge used across every list/detail page -
  * the web equivalent of Lifecome-mobile's `StatusChip`. */
 export function StatusPill({
   label,

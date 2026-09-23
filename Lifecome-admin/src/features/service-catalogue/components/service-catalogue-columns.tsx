@@ -1,36 +1,34 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { DemoService } from "@/lib/demo/service-catalogue";
+import type { ClinicalService } from "@/features/service-catalogue/types";
 import { StatusPill } from "@/components/shared/status-pill";
 
-export const serviceCatalogueColumns: ColumnDef<DemoService, unknown>[] = [
+export const serviceCatalogueColumns: ColumnDef<ClinicalService, unknown>[] = [
   {
     accessorKey: "name",
     header: "Service",
-    cell: (info) => (
-      <span className="font-medium text-ink">
-        {info.getValue() as string}
-      </span>
-    ),
+    cell: (info) => <span className="font-medium text-ink">{info.getValue() as string}</span>,
   },
-  { accessorKey: "description", header: "Description" },
+  { accessorKey: "code", header: "Code" },
   {
-    accessorKey: "basePrice",
+    accessorKey: "description",
+    header: "Description",
+    cell: (info) => (info.getValue() as string | null) ?? "-",
+  },
+  {
+    accessorKey: "basePriceKobo",
     header: "Price",
-    cell: (info) => `₦${(info.getValue() as number).toLocaleString("en-NG")}`,
+    cell: (info) => `₦${((info.getValue() as number) / 100).toLocaleString("en-NG")}`,
   },
   {
-    accessorKey: "durationMinutes",
+    accessorKey: "defaultDurationMinutes",
     header: "Duration",
     cell: (info) => `${info.getValue() as number} min`,
   },
   {
-    accessorKey: "active",
+    accessorKey: "isActive",
     header: "Status",
     cell: (info) => (
-      <StatusPill
-        tone={info.getValue() ? "success" : "neutral"}
-        label={info.getValue() ? "Active" : "Inactive"}
-      />
+      <StatusPill tone={info.getValue() ? "success" : "neutral"} label={info.getValue() ? "Active" : "Inactive"} />
     ),
   },
 ];

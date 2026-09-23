@@ -1,11 +1,15 @@
 import { createHash } from 'node:crypto';
 
 import { Inject, Injectable } from '@nestjs/common';
-import { desc } from 'drizzle-orm';
+import { and, count, desc, eq } from 'drizzle-orm';
 
+import { paginate, type PaginatedResult } from '../../common/dto/pagination.dto';
 import { DRIZZLE, type Database } from '../../db/client';
 import { auditEvents } from '../../db/schema';
 import type { auditActionEnum } from '../../db/schema';
+import type { ListAuditEventsQueryDto } from './dto/audit.dto';
+
+export type AuditEvent = typeof auditEvents.$inferSelect;
 
 export interface RecordAuditEventInput {
   actorType: 'patient' | 'provider' | 'staff' | 'system';
@@ -52,5 +56,27 @@ export class AuditService {
       previousHash,
       hash,
     });
+  }
+
+  /**
+   * `/admin/audit-events` — the "Audit log" page in the operations console. Read-only, same as
+   * every other method here: nothing in this service ever updates or deletes a row.
+   */
+  async list(query: ListAuditEventsQueryDto): Promise<PaginatedResult<AuditEvent>> {
+    const conditions = [];
+    if (query.actorType) conditions.push(eq(auditEvents.actorType, query.actorType));
+    if (query.resourceType) conditions.push(eq(auditEvents.resourceType, query.resourceType));
+    const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const [{ total }] = await this.db.select({ total: count() }).from(auditEvents).where(where);
+    const items = await this.db
+      .select()
+      .from(auditEvents)
+      .where(where)
+      .orderBy(desc(auditEvents.occurredAt))
+      .limit(query.pageSize)
+      .offset((query.page - 1) * query.pageSize);
+
+    return paginate(items, total, query.page, query.pageSize);
   }
 }

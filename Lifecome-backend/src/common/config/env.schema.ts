@@ -18,6 +18,10 @@ export const envSchema = z.object({
 
   SESSION_JWT_SECRET: z.string().min(16, 'SESSION_JWT_SECRET must be at least 16 characters'),
 
+  // Signs the operations-console staff JWT (see common/auth/) — deliberately a separate secret
+  // from SESSION_JWT_SECRET, which is only ever an OTP-hashing pepper for patient sign-in.
+  STAFF_JWT_SECRET: z.string().min(16, 'STAFF_JWT_SECRET must be at least 16 characters'),
+
   // Integration credentials are optional in every environment except production, where the
   // relevant module (payment, notifications, consultation) fails fast if it is actually used
   // without one configured — see each module's README.

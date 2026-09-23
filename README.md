@@ -14,9 +14,9 @@ LifeCome Live is the healthcare delivery and coordination platform. It is separa
 | Area | State |
 |---|---|
 | Public website (`Lifecome-web`) | Built: home page plus the full 36-page site map, with content, images and animation |
-| Backend API (`Lifecome-backend`) | Built: 19 domain modules (identity, payer, eligibility, booking, payment, clinical records and more), a 29-table database schema, and a working payer-adapter pattern |
+| Backend API (`Lifecome-backend`) | Built: 22 domain modules (identity, staff/auth, payer, eligibility, booking, payment, clinical records and more), a 31-table database schema, a working payer-adapter pattern, and a guarded `/admin/*` API (staff JWT + roles) backing the operations console — patients, providers, bookings, payments, eligibility, audit log, consent, notifications, staff, plus cross-module dashboard/locations aggregates |
 | Patient app (Flutter) | Built: the auth flow (splash, onboarding, sign in/up, email verification, password reset). The rest of the 22 views are scaffolded — folders and files, no code yet. See [`Lifecome-mobile/README.md`](Lifecome-mobile/README.md) and [Building the mobile app](#building-the-mobile-app) |
-| Operations console (`Lifecome-admin`) | Scaffolded, with Dashboard, Patients, Bookings and Payments built against demo data as the reference pattern. Every other section (Providers, Payers, Audit log, ...) is a labelled placeholder. Needs staff auth on the backend before it can do anything real — see [`Lifecome-admin/README.md`](Lifecome-admin/README.md) |
+| Operations console (`Lifecome-admin`) | Wired to the real backend: staff sign-in, a guarded `(console)` layout, and Dashboard, Patients, Providers, Bookings, Payments, Payers, Eligibility, Audit log, Consent, Notifications, Service catalogue, Staff & roles and Locations all fetch live data - no demo data remains. The rest (Scheduling, Consultations, Clinical records, Documents, Care coordination, Authorisations, Messaging, Settings) are labelled placeholders, since the backend has no admin endpoints for those modules yet. See [`Lifecome-admin/README.md`](Lifecome-admin/README.md) |
 | Provider portal | Planned |
 
 See the [phased backlog](docs/planning/phased-backlog.md) for the delivery plan.

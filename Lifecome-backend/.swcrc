@@ -16,6 +16,6 @@
     "baseUrl": "./"
   },
   "module": {
-    "type": "nodenext"
+    "type": "commonjs"
   }
 }

@@ -1,6 +1,18 @@
-// Re-exported so the rest of the `patients` feature imports from here
-// rather than reaching into `lib/demo` directly — once a real `Patient`
-// type is generated from the backend's OpenAPI contract
-// (src/lib/api/generated/schema.d.ts), swap the source of this re-export
-// without touching any importer.
-export type { DemoPatient as Patient } from "@/lib/demo/patients";
+// Mirrors Lifecome-backend's `AdminPatientRow` (src/modules/patient/patient.service.ts) -
+// a patients row joined with its account's contact details and status.
+export interface Patient {
+  id: string;
+  userAccountId: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  sex: string | null;
+  city: string | null;
+  state: string | null;
+  country: string;
+  createdAt: string;
+  updatedAt: string;
+  phoneNumber: string;
+  email: string | null;
+  accountStatus: "pending_verification" | "active" | "suspended" | "closed";
+}

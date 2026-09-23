@@ -1,16 +1,23 @@
 import { randomUUID } from 'node:crypto';
 
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { count, desc, eq, getTableColumns, sql } from 'drizzle-orm';
 
+import { paginate, type PaginatedResult } from '../../common/dto/pagination.dto';
 import { DRIZZLE, type Database } from '../../db/client';
-import { clinicalServices, paymentTransactions } from '../../db/schema';
+import { appointments, clinicalServices, patients, paymentTransactions } from '../../db/schema';
 import { AppException, NotFoundAppException } from '../../common/errors/app-exception';
 import { AuditService } from '../audit/audit.service';
 import { BookingService } from '../booking/booking.service';
-import type { CreatePaymentIntentDto } from './dto/payment.dto';
+import type { CreatePaymentIntentDto, ListPaymentsQueryDto } from './dto/payment.dto';
 
 export type PaymentTransaction = typeof paymentTransactions.$inferSelect;
+
+/** A payment row joined with the names `/admin/payments` shows instead of raw foreign keys. */
+export type AdminPaymentRow = PaymentTransaction & {
+  patientName: string;
+  serviceName: string;
+};
 
 /**
  * Payment intents, gateway abstraction and idempotent confirmation (blueprint §13). The amount is
@@ -49,6 +56,35 @@ export class PaymentService {
       .returning();
 
     return transaction;
+  }
+
+  async getById(id: string): Promise<PaymentTransaction> {
+    const [transaction] = await this.db.select().from(paymentTransactions).where(eq(paymentTransactions.id, id));
+    if (!transaction) throw new NotFoundAppException('Payment transaction');
+    return transaction;
+  }
+
+  /** `/admin/payments` — the "Payments" page in the operations console. */
+  async adminList(query: ListPaymentsQueryDto): Promise<PaginatedResult<AdminPaymentRow>> {
+    const where = query.status ? eq(paymentTransactions.status, query.status) : undefined;
+
+    const [{ total }] = await this.db.select({ total: count() }).from(paymentTransactions).where(where);
+    const items = await this.db
+      .select({
+        ...getTableColumns(paymentTransactions),
+        patientName: sql<string>`${patients.firstName} || ' ' || ${patients.lastName}`,
+        serviceName: clinicalServices.name,
+      })
+      .from(paymentTransactions)
+      .innerJoin(appointments, eq(paymentTransactions.appointmentId, appointments.id))
+      .innerJoin(patients, eq(appointments.patientId, patients.id))
+      .innerJoin(clinicalServices, eq(appointments.clinicalServiceId, clinicalServices.id))
+      .where(where)
+      .orderBy(desc(paymentTransactions.createdAt))
+      .limit(query.pageSize)
+      .offset((query.page - 1) * query.pageSize);
+
+    return paginate(items, total, query.page, query.pageSize);
   }
 
   async getByGatewayReference(gatewayReference: string): Promise<PaymentTransaction> {

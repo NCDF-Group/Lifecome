@@ -10,6 +10,9 @@ export const providers = pgTable('providers', {
   languages: text('languages').array().notNull().default([]),
   consultationModes: consultationModeEnum('consultation_modes').array().notNull().default(['video']),
   networkStatus: text('network_status').notNull().default('active'),
+  // Optional hub/clinic location — null for a video/audio-only provider with no physical base.
+  city: text('city'),
+  state: text('state'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 

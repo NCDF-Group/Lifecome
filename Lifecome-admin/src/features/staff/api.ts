@@ -1,5 +1,10 @@
-// TanStack Query hooks for the "staff" feature (useQuery/useMutation wrapping
-// src/lib/api/client.ts calls to Lifecome-backend's staff module). Not
-// implemented yet — this file exists so the feature folder's shape is
-// settled before the real data-fetching code is written.
-export {};
+import { adminFetch } from "@/lib/api/admin";
+import type { PaginatedResult } from "@/lib/api/pagination";
+import { toQueryString } from "@/lib/api/pagination";
+import type { StaffMember, StaffRole } from "./types";
+
+export function listStaff(
+  params: { page?: number; pageSize?: number; role?: StaffRole; status?: "active" | "suspended" } = {},
+): Promise<PaginatedResult<StaffMember>> {
+  return adminFetch(`/admin/staff${toQueryString(params)}`);
+}

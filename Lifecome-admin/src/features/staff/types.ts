@@ -1,5 +1,14 @@
-// Types for the "staff" feature, mirroring Lifecome-backend/src/modules/staff.
-// Once src/lib/api/generated/schema.d.ts exists (npm run generate:api),
-// prefer re-exporting/narrowing those generated types here rather than
-// hand-writing duplicates that can drift from the real API contract.
-export {};
+export { staffRoleLabel, type StaffRole } from "@/lib/auth/roles";
+
+// Mirrors Lifecome-backend's `StaffSummary` (src/modules/staff/staff.service.ts).
+import type { StaffRole } from "@/lib/auth/roles";
+
+export interface StaffMember {
+  id: string;
+  email: string;
+  fullName: string;
+  role: StaffRole;
+  status: "active" | "suspended";
+  lastLoginAt: string | null;
+  createdAt: string;
+}

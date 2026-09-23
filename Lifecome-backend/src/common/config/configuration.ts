@@ -39,6 +39,10 @@ export class AppConfigService {
     return this.config.get('SESSION_JWT_SECRET', { infer: true });
   }
 
+  get staffJwtSecret(): string {
+    return this.config.get('STAFF_JWT_SECRET', { infer: true });
+  }
+
   get paystackSecretKey(): string | undefined {
     return this.config.get('PAYSTACK_SECRET_KEY', { infer: true });
   }

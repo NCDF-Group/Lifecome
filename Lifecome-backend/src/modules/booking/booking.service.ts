@@ -1,13 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, count, desc, eq, getTableColumns, sql } from 'drizzle-orm';
 
+import { paginate, type PaginatedResult } from '../../common/dto/pagination.dto';
 import { DRIZZLE, type Database } from '../../db/client';
-import { appointments } from '../../db/schema';
+import { appointments, clinicalServices, patients, providers } from '../../db/schema';
 import { AppException, NotFoundAppException } from '../../common/errors/app-exception';
 import { SchedulingService } from '../scheduling/scheduling.service';
-import type { CreateAppointmentDto } from './dto/booking.dto';
+import type { CreateAppointmentDto, ListAppointmentsQueryDto } from './dto/booking.dto';
 
 export type Appointment = typeof appointments.$inferSelect;
+
+/** An appointment row joined with the names `/admin/bookings` shows instead of raw foreign keys. */
+export type AdminAppointmentRow = Appointment & {
+  patientName: string;
+  providerName: string;
+  serviceName: string;
+  feeKobo: number;
+};
 
 const CANCELLABLE_STATUSES: Appointment['status'][] = ['slot_held', 'confirmed'];
 
@@ -42,6 +51,35 @@ export class BookingService {
     const [appointment] = await this.db.select().from(appointments).where(eq(appointments.id, id));
     if (!appointment) throw new NotFoundAppException('Appointment');
     return appointment;
+  }
+
+  /** `/admin/bookings` — the "Bookings" page in the operations console. */
+  async adminList(query: ListAppointmentsQueryDto): Promise<PaginatedResult<AdminAppointmentRow>> {
+    const conditions = [];
+    if (query.status) conditions.push(eq(appointments.status, query.status));
+    if (query.patientId) conditions.push(eq(appointments.patientId, query.patientId));
+    if (query.providerId) conditions.push(eq(appointments.providerId, query.providerId));
+    const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const [{ total }] = await this.db.select({ total: count() }).from(appointments).where(where);
+    const items = await this.db
+      .select({
+        ...getTableColumns(appointments),
+        patientName: sql<string>`${patients.firstName} || ' ' || ${patients.lastName}`,
+        providerName: providers.displayName,
+        serviceName: clinicalServices.name,
+        feeKobo: clinicalServices.basePriceKobo,
+      })
+      .from(appointments)
+      .innerJoin(patients, eq(appointments.patientId, patients.id))
+      .innerJoin(providers, eq(appointments.providerId, providers.id))
+      .innerJoin(clinicalServices, eq(appointments.clinicalServiceId, clinicalServices.id))
+      .where(where)
+      .orderBy(desc(appointments.createdAt))
+      .limit(query.pageSize)
+      .offset((query.page - 1) * query.pageSize);
+
+    return paginate(items, total, query.page, query.pageSize);
   }
 
   /** View 17 — Booking Confirmation. Called once payment succeeds or HMO authorisation is approved. */

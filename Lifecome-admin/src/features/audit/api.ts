@@ -1,5 +1,10 @@
-// TanStack Query hooks for the "audit" feature (useQuery/useMutation wrapping
-// src/lib/api/client.ts calls to Lifecome-backend's audit module). Not
-// implemented yet — this file exists so the feature folder's shape is
-// settled before the real data-fetching code is written.
-export {};
+import { adminFetch } from "@/lib/api/admin";
+import type { PaginatedResult } from "@/lib/api/pagination";
+import { toQueryString } from "@/lib/api/pagination";
+import type { ActorType, AuditEvent } from "./types";
+
+export function listAuditEvents(
+  params: { page?: number; pageSize?: number; actorType?: ActorType; resourceType?: string } = {},
+): Promise<PaginatedResult<AuditEvent>> {
+  return adminFetch(`/admin/audit-events${toQueryString(params)}`);
+}

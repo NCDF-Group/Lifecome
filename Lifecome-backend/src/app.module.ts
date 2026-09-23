@@ -3,6 +3,7 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { nanoid } from 'nanoid';
 import { LoggerModule } from 'nestjs-pino';
 
+import { CommonAuthModule } from './common/auth/common-auth.module';
 import { ConfigModule } from './common/config/config.module';
 import { AppConfigService } from './common/config/configuration';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -12,7 +13,9 @@ import { DrizzleModule } from './db/client';
 import { QueueModule } from './queue/queue.module';
 import { RedisModule } from './queue/redis.module';
 
+import { AdminDashboardModule } from './modules/admin-dashboard/admin-dashboard.module';
 import { AuditModule } from './modules/audit/audit.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { AuthorisationModule } from './modules/authorisation/authorisation.module';
 import { BookingModule } from './modules/booking/booking.module';
 import { CareCoordinationModule } from './modules/care-coordination/care-coordination.module';
@@ -31,6 +34,7 @@ import { PaymentModule } from './modules/payment/payment.module';
 import { ProviderDirectoryModule } from './modules/provider-directory/provider-directory.module';
 import { SchedulingModule } from './modules/scheduling/scheduling.module';
 import { ServiceCatalogueModule } from './modules/service-catalogue/service-catalogue.module';
+import { StaffModule } from './modules/staff/staff.module';
 
 @Module({
   imports: [
@@ -64,6 +68,7 @@ import { ServiceCatalogueModule } from './modules/service-catalogue/service-cata
     DrizzleModule,
     RedisModule,
     QueueModule,
+    CommonAuthModule,
 
     // --- Domain modules (blueprint §7) ---
     AuditModule,
@@ -84,6 +89,11 @@ import { ServiceCatalogueModule } from './modules/service-catalogue/service-cata
     NotificationsModule,
     DocumentsModule,
     ConsentModule,
+
+    // --- Operations console (blueprint §2.3 — Lifecome-admin) ---
+    StaffModule,
+    AuthModule,
+    AdminDashboardModule,
 
     HealthModule,
   ],

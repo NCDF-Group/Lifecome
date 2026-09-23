@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/data-table/data-table";
-import type { DemoPayer } from "@/lib/demo/payers";
+import type { Payer } from "@/features/payers/types";
 import { payersColumns } from "@/features/payers/components/payers-columns";
 
-export function PayersTable({ payers }: { payers: DemoPayer[] }) {
+export function PayersTable({ payers }: { payers: Payer[] }) {
   const router = useRouter();
 
   return (

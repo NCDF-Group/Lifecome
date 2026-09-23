@@ -1,5 +1,21 @@
 import { createZodDto } from '../../../common/validation/zod-dto';
+import { PaginationQuerySchema } from '../../../common/dto/pagination.dto';
 import { z } from 'zod';
+
+export const PaymentStatusSchema = z.enum([
+  'initiated',
+  'pending',
+  'successful',
+  'failed',
+  'cancelled',
+  'refunded',
+  'partially_refunded',
+]);
+
+export const ListPaymentsQuerySchema = PaginationQuerySchema.extend({
+  status: PaymentStatusSchema.optional(),
+});
+export class ListPaymentsQueryDto extends createZodDto(ListPaymentsQuerySchema) {}
 
 export const CreatePaymentIntentSchema = z.object({
   appointmentId: z.uuid(),

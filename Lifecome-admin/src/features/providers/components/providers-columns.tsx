@@ -1,52 +1,47 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { DemoProvider } from "@/lib/demo/providers";
+import type { NetworkStatus, Provider } from "@/features/providers/types";
+import { Avatar } from "@/components/shared/avatar";
 import { StatusPill } from "@/components/shared/status-pill";
 
-const statusLabel: Record<DemoProvider["status"], string> = {
+const statusLabel: Record<NetworkStatus, string> = {
   active: "Active",
   suspended: "Suspended",
   pending_review: "Pending review",
 };
 
-const statusTone: Record<
-  DemoProvider["status"],
-  "success" | "warning" | "destructive"
-> = {
+const statusTone: Record<NetworkStatus, "success" | "warning" | "destructive"> = {
   active: "success",
   suspended: "destructive",
   pending_review: "warning",
 };
 
-export const providersColumns: ColumnDef<DemoProvider, unknown>[] = [
+export const providersColumns: ColumnDef<Provider, unknown>[] = [
   {
-    accessorKey: "name",
+    accessorKey: "displayName",
     header: "Name",
     cell: (info) => (
-      <span className="font-medium text-ink">
-        {info.getValue() as string}
-      </span>
+      <div className="flex items-center gap-2.5">
+        <Avatar name={info.getValue() as string} size={30} />
+        <span className="font-medium text-ink">{info.getValue() as string}</span>
+      </div>
     ),
   },
   { accessorKey: "specialty", header: "Specialty" },
-  { accessorKey: "clinicName", header: "Clinic" },
   {
-    accessorKey: "rating",
-    header: "Rating",
-    cell: (info) => {
-      const row = info.row.original;
-      return `${row.rating} (${row.reviewCount})`;
-    },
+    accessorKey: "consultationModes",
+    header: "Modes",
+    cell: (info) => (info.getValue() as string[]).join(", "),
   },
   {
-    accessorKey: "yearsOfExperience",
-    header: "Experience",
-    cell: (info) => `${info.getValue() as number} yrs`,
+    id: "location",
+    header: "Location",
+    accessorFn: (row) => (row.city && row.state ? `${row.city}, ${row.state}` : "Virtual only"),
   },
   {
-    accessorKey: "status",
+    accessorKey: "networkStatus",
     header: "Status",
     cell: (info) => {
-      const status = info.getValue() as DemoProvider["status"];
+      const status = info.getValue() as NetworkStatus;
       return <StatusPill tone={statusTone[status]} label={statusLabel[status]} />;
     },
   },

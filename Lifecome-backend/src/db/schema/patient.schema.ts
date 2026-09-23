@@ -14,6 +14,7 @@ export const patients = pgTable('patients', {
   dateOfBirth: date('date_of_birth').notNull(),
   sex: text('sex'),
   city: text('city'),
+  state: text('state'),
   country: text('country').notNull().default('NG'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

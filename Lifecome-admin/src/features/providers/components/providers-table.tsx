@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/data-table/data-table";
-import type { DemoProvider } from "@/lib/demo/providers";
+import type { Provider } from "@/features/providers/types";
 import { providersColumns } from "@/features/providers/components/providers-columns";
 
-export function ProvidersTable({ providers }: { providers: DemoProvider[] }) {
+export function ProvidersTable({ providers }: { providers: Provider[] }) {
   const router = useRouter();
 
   return (

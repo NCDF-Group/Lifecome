@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/data-table/data-table";
-import type { DemoPatient } from "@/lib/demo/patients";
+import type { Patient } from "@/features/patients/types";
 import { patientsColumns } from "@/features/patients/components/patients-columns";
 
-export function PatientsTable({ patients }: { patients: DemoPatient[] }) {
+export function PatientsTable({ patients }: { patients: Patient[] }) {
   const router = useRouter();
 
   return (

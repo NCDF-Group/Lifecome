@@ -1,5 +1,14 @@
-// TanStack Query hooks for the "payers" feature (useQuery/useMutation wrapping
-// src/lib/api/client.ts calls to Lifecome-backend's payers module). Not
-// implemented yet — this file exists so the feature folder's shape is
-// settled before the real data-fetching code is written.
-export {};
+import { adminFetch } from "@/lib/api/admin";
+import type { Payer } from "./types";
+
+/** `GET /payers` has no admin guard and returns a plain array, not a paginated envelope - the
+ * same list the patient app's HMO-selection screen uses. */
+export function listPayers(): Promise<Payer[]> {
+  return adminFetch("/payers");
+}
+
+/** No single-payer endpoint exists yet - find within the (small) full list instead. */
+export async function getPayer(id: string): Promise<Payer | undefined> {
+  const payers = await listPayers();
+  return payers.find((payer) => payer.id === id);
+}

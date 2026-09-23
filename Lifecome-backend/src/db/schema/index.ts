@@ -13,3 +13,5 @@ export * from './care-coordination.schema';
 export * from './messaging.schema';
 export * from './consent.schema';
 export * from './audit.schema';
+export * from './staff.schema';
+export * from './notification.schema';

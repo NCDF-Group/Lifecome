@@ -1,37 +1,47 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { DemoTransaction, PaymentStatus } from "@/lib/demo/payments";
+import type { PaymentStatus, PaymentTransaction } from "@/features/payments/types";
 import { StatusPill } from "@/components/shared/status-pill";
 
-const statusTone: Record<
-  PaymentStatus,
-  "success" | "warning" | "destructive" | "neutral"
-> = {
-  successful: "success",
-  pending: "warning",
-  failed: "destructive",
-  refunded: "neutral",
+const statusLabel: Record<PaymentStatus, string> = {
+  initiated: "Initiated",
+  pending: "Pending",
+  successful: "Successful",
+  failed: "Failed",
+  cancelled: "Cancelled",
+  refunded: "Refunded",
+  partially_refunded: "Partially refunded",
 };
 
-export const paymentsColumns: ColumnDef<DemoTransaction, unknown>[] = [
-  { accessorKey: "reference", header: "Reference" },
+const statusTone: Record<PaymentStatus, "success" | "warning" | "destructive" | "neutral"> = {
+  initiated: "neutral",
+  pending: "warning",
+  successful: "success",
+  failed: "destructive",
+  cancelled: "neutral",
+  refunded: "neutral",
+  partially_refunded: "warning",
+};
+
+export const paymentsColumns: ColumnDef<PaymentTransaction, unknown>[] = [
+  {
+    id: "reference",
+    header: "Reference",
+    accessorFn: (row) => row.receiptNumber ?? row.gatewayReference ?? row.id,
+  },
   {
     accessorKey: "patientName",
     header: "Patient",
-    cell: (info) => (
-      <span className="font-medium text-ink">
-        {info.getValue() as string}
-      </span>
-    ),
+    cell: (info) => <span className="font-medium text-ink">{info.getValue() as string}</span>,
   },
-  { accessorKey: "description", header: "Description" },
-  { accessorKey: "method", header: "Method" },
+  { accessorKey: "serviceName", header: "Service" },
+  { accessorKey: "gateway", header: "Method" },
   {
-    accessorKey: "amount",
+    accessorKey: "amountKobo",
     header: "Amount",
-    cell: (info) => `₦${(info.getValue() as number).toLocaleString("en-NG")}`,
+    cell: (info) => `₦${((info.getValue() as number) / 100).toLocaleString("en-NG")}`,
   },
   {
-    accessorKey: "date",
+    accessorKey: "createdAt",
     header: "Date",
     cell: (info) =>
       new Date(info.getValue() as string).toLocaleDateString("en-GB", {
@@ -45,12 +55,7 @@ export const paymentsColumns: ColumnDef<DemoTransaction, unknown>[] = [
     header: "Status",
     cell: (info) => {
       const status = info.getValue() as PaymentStatus;
-      return (
-        <StatusPill
-          tone={statusTone[status]}
-          label={status.charAt(0).toUpperCase() + status.slice(1)}
-        />
-      );
+      return <StatusPill tone={statusTone[status]} label={statusLabel[status]} />;
     },
   },
 ];

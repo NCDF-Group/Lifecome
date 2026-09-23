@@ -18,20 +18,24 @@ export class ApiError extends Error {
  * feature `api.ts` files should call this with those generated request/
  * response types rather than `unknown`.
  *
- * No auth header is attached yet — see README.md "Known gap: admin auth".
+ * Staff auth is a bearer token, not a cookie the backend itself reads (see
+ * `lib/auth/session.ts` and `lib/api/admin.ts`) - pass it via `token`.
  */
 export async function apiFetch<TResponse = unknown>(
   path: string,
-  init?: RequestInit,
+  init?: RequestInit & { token?: string },
 ): Promise<TResponse> {
+  const { token, headers, ...rest } = init ?? {};
+
   const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1${path}`, {
-    ...init,
+    ...rest,
     headers: {
       "Content-Type": "application/json",
-      ...init?.headers,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...headers,
     },
-    // TODO: attach the staff session's credentials once admin auth exists.
-    credentials: "include",
+    // Admin data is per-request-fresh; nothing here should be cached across staff sessions.
+    cache: "no-store",
   });
 
   if (!response.ok) {

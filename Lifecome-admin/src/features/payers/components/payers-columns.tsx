@@ -1,45 +1,32 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { DemoPayer } from "@/lib/demo/payers";
+import type { Payer, PayerIntegrationMode } from "@/features/payers/types";
 import { StatusPill } from "@/components/shared/status-pill";
 
-const statusLabel: Record<DemoPayer["integrationStatus"], string> = {
-  connected: "Connected",
-  degraded: "Degraded",
-  not_connected: "Not connected",
+const integrationLabel: Record<PayerIntegrationMode, string> = {
+  realtime_api: "Realtime API",
+  secure_batch_file: "Secure batch file",
+  operations_portal: "Operations portal",
+  rules_configuration: "Rules configuration",
 };
 
-const statusTone: Record<
-  DemoPayer["integrationStatus"],
-  "success" | "warning" | "neutral"
-> = {
-  connected: "success",
-  degraded: "warning",
-  not_connected: "neutral",
-};
-
-export const payersColumns: ColumnDef<DemoPayer, unknown>[] = [
+export const payersColumns: ColumnDef<Payer, unknown>[] = [
   {
     accessorKey: "name",
     header: "Payer",
-    cell: (info) => (
-      <span className="font-medium text-ink">
-        {info.getValue() as string}
-      </span>
-    ),
+    cell: (info) => <span className="font-medium text-ink">{info.getValue() as string}</span>,
   },
-  { accessorKey: "shortCode", header: "Code" },
-  { accessorKey: "supportPhone", header: "Support line" },
+  { accessorKey: "code", header: "Code" },
   {
-    accessorKey: "activeMembers",
-    header: "Active members",
-    cell: (info) => (info.getValue() as number).toLocaleString("en-NG"),
-  },
-  {
-    accessorKey: "integrationStatus",
+    accessorKey: "integrationMode",
     header: "Integration",
-    cell: (info) => {
-      const status = info.getValue() as DemoPayer["integrationStatus"];
-      return <StatusPill tone={statusTone[status]} label={statusLabel[status]} />;
-    },
+    cell: (info) => integrationLabel[info.getValue() as PayerIntegrationMode],
+  },
+  { accessorKey: "displayOrder", header: "Display order" },
+  {
+    accessorKey: "isLive",
+    header: "Status",
+    cell: (info) => (
+      <StatusPill tone={info.getValue() ? "success" : "neutral"} label={info.getValue() ? "Live" : "Not live"} />
+    ),
   },
 ];

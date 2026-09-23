@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
 
 /**
- * The bare domain root. Once admin auth exists (see README.md "Known gap:
- * admin auth"), this should check the session and send an unauthenticated
- * visitor to `/login` instead of straight to the console.
+ * The bare domain root. `(console)/layout.tsx` itself checks the session and redirects an
+ * unauthenticated visitor to `/login`, so this only needs to pick the default landing page.
  */
 export default function RootPage() {
   redirect("/dashboard");

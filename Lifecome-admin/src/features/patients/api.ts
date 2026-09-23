@@ -1,5 +1,14 @@
-// TanStack Query hooks for the "patients" feature (useQuery/useMutation wrapping
-// src/lib/api/client.ts calls to Lifecome-backend's patients module). Not
-// implemented yet — this file exists so the feature folder's shape is
-// settled before the real data-fetching code is written.
-export {};
+import { adminFetch } from "@/lib/api/admin";
+import type { PaginatedResult } from "@/lib/api/pagination";
+import { toQueryString } from "@/lib/api/pagination";
+import type { Patient } from "./types";
+
+export function listPatients(
+  params: { page?: number; pageSize?: number; search?: string } = {},
+): Promise<PaginatedResult<Patient>> {
+  return adminFetch(`/admin/patients${toQueryString(params)}`);
+}
+
+export function getPatient(id: string): Promise<Patient> {
+  return adminFetch(`/admin/patients/${id}`);
+}

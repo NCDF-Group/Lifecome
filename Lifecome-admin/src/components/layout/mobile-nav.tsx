@@ -8,7 +8,7 @@ import { useState } from "react";
 import { navigation } from "@/config/navigation";
 
 /** The drawer version of `AppSidebar`, shown below the `lg` breakpoint
- * where the persistent sidebar is hidden — see `app-sidebar.tsx`. */
+ * where the persistent sidebar is hidden - see `app-sidebar.tsx`. */
 export function MobileNav() {
   const [open, setOpen] = useState(false);
 

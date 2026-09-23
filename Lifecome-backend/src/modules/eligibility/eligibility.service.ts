@@ -1,13 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { count, desc, eq, getTableColumns, sql } from 'drizzle-orm';
 
+import { paginate, type PaginatedResult } from '../../common/dto/pagination.dto';
 import { DRIZZLE, type Database } from '../../db/client';
-import { clinicalServices, eligibilityChecks, memberships, payers } from '../../db/schema';
+import { clinicalServices, eligibilityChecks, memberships, patients, payers } from '../../db/schema';
 import { NotFoundAppException } from '../../common/errors/app-exception';
 import { AuditService } from '../audit/audit.service';
 import { PayerAdapterRegistry } from '../payer/adapters/payer-adapter.registry';
+import type { ListEligibilityChecksQueryDto } from './dto/eligibility.dto';
 
 export type EligibilityCheck = typeof eligibilityChecks.$inferSelect;
+
+/** An eligibility-check row joined with the names `/admin/eligibility-checks` shows. */
+export type AdminEligibilityCheckRow = EligibilityCheck & {
+  patientName: string;
+  payerName: string;
+  serviceName: string;
+};
 
 /**
  * Service-level eligibility (view 09 — Check Service Eligibility). Kept as its own module,
@@ -60,5 +69,30 @@ export class EligibilityService {
       .returning();
 
     return check;
+  }
+
+  /** `/admin/eligibility-checks` — the "Eligibility" page in the operations console. */
+  async adminList(query: ListEligibilityChecksQueryDto): Promise<PaginatedResult<AdminEligibilityCheckRow>> {
+    const where = query.status ? eq(eligibilityChecks.status, query.status) : undefined;
+
+    const [{ total }] = await this.db.select({ total: count() }).from(eligibilityChecks).where(where);
+    const items = await this.db
+      .select({
+        ...getTableColumns(eligibilityChecks),
+        patientName: sql<string>`${patients.firstName} || ' ' || ${patients.lastName}`,
+        payerName: payers.name,
+        serviceName: clinicalServices.name,
+      })
+      .from(eligibilityChecks)
+      .innerJoin(memberships, eq(eligibilityChecks.membershipId, memberships.id))
+      .innerJoin(patients, eq(memberships.patientId, patients.id))
+      .innerJoin(payers, eq(memberships.payerId, payers.id))
+      .innerJoin(clinicalServices, eq(eligibilityChecks.clinicalServiceId, clinicalServices.id))
+      .where(where)
+      .orderBy(desc(eligibilityChecks.checkedAt))
+      .limit(query.pageSize)
+      .offset((query.page - 1) * query.pageSize);
+
+    return paginate(items, total, query.page, query.pageSize);
   }
 }

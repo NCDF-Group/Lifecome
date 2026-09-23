@@ -1,5 +1,10 @@
-// TanStack Query hooks for the "bookings" feature (useQuery/useMutation wrapping
-// src/lib/api/client.ts calls to Lifecome-backend's bookings module). Not
-// implemented yet — this file exists so the feature folder's shape is
-// settled before the real data-fetching code is written.
-export {};
+import { adminFetch } from "@/lib/api/admin";
+import type { PaginatedResult } from "@/lib/api/pagination";
+import { toQueryString } from "@/lib/api/pagination";
+import type { Appointment, BookingStatus } from "./types";
+
+export function listBookings(
+  params: { page?: number; pageSize?: number; status?: BookingStatus } = {},
+): Promise<PaginatedResult<Appointment>> {
+  return adminFetch(`/admin/bookings${toQueryString(params)}`);
+}

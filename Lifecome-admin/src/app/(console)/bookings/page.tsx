@@ -1,13 +1,15 @@
 import { CalendarDays } from "lucide-react";
-import { demoBookings } from "@/lib/demo/bookings";
+import { listBookings } from "@/features/bookings/api";
 import { BookingsTable } from "@/features/bookings/components/bookings-table";
 import { PageHeader } from "@/components/shared/page-header";
 
-export default function BookingsPage() {
+export default async function BookingsPage() {
+  const { items: bookings } = await listBookings({ pageSize: 100 });
+
   return (
     <div className="flex flex-col gap-6">
       <PageHeader icon={CalendarDays} title="Bookings" />
-      <BookingsTable bookings={demoBookings} />
+      <BookingsTable bookings={bookings} />
     </div>
   );
 }

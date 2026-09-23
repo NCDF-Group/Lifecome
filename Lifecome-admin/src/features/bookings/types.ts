@@ -1,5 +1,26 @@
-// Types for the "bookings" feature, mirroring Lifecome-backend/src/modules/bookings.
-// Once src/lib/api/generated/schema.d.ts exists (npm run generate:api),
-// prefer re-exporting/narrowing those generated types here rather than
-// hand-writing duplicates that can drift from the real API contract.
-export {};
+// Mirrors Lifecome-backend's `AdminAppointmentRow` (src/modules/booking/booking.service.ts).
+export type BookingStatus =
+  | "slot_held"
+  | "confirmed"
+  | "rescheduled"
+  | "cancelled"
+  | "doctor_unavailable"
+  | "patient_no_show";
+
+export interface Appointment {
+  id: string;
+  patientId: string;
+  providerId: string;
+  clinicalServiceId: string;
+  availabilitySlotId: string;
+  consultationMode: "video" | "audio";
+  status: BookingStatus;
+  authorisationId: string | null;
+  presentingConcern: string | null;
+  createdAt: string;
+  updatedAt: string;
+  patientName: string;
+  providerName: string;
+  serviceName: string;
+  feeKobo: number;
+}

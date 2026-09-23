@@ -4,10 +4,12 @@ import {
   CalendarClock,
   CalendarDays,
   ClipboardCheck,
+  CreditCard,
   FileText,
   Folder,
   HeartPulse,
   LayoutDashboard,
+  MapPin,
   MessagesSquare,
   Package,
   Settings,
@@ -15,6 +17,7 @@ import {
   ShieldCheck,
   ShieldQuestion,
   Stethoscope,
+  UserCog,
   Users,
   Video,
   type LucideIcon,
@@ -23,7 +26,7 @@ import {
 /**
  * The console's sidebar, one entry per section. `href` matches the route
  * under `src/app/(console)/`, and `backendModule` names the
- * `Lifecome-backend/src/modules/<name>` folder that section reads from —
+ * `Lifecome-backend/src/modules/<name>` folder that section reads from -
  * keeping the two in lockstep is the point of listing it here rather than
  * letting each page hardcode its own module name.
  */
@@ -46,7 +49,7 @@ export const navigation: NavSection[] = [
       {
         label: "Dashboard",
         href: "/dashboard",
-        backendModule: "—",
+        backendModule: "-",
         icon: LayoutDashboard,
       },
     ],
@@ -89,6 +92,12 @@ export const navigation: NavSection[] = [
         href: "/care-coordination",
         backendModule: "care-coordination",
         icon: HeartPulse,
+      },
+      {
+        label: "Locations",
+        href: "/locations",
+        backendModule: "-",
+        icon: MapPin,
       },
     ],
   },
@@ -180,12 +189,12 @@ export const navigation: NavSection[] = [
         label: "Staff & roles",
         href: "/staff",
         backendModule: "identity",
-        icon: Users,
+        icon: UserCog,
       },
       {
         label: "Settings",
         href: "/settings",
-        backendModule: "—",
+        backendModule: "-",
         icon: Settings,
       },
     ],

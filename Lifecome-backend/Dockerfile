@@ -16,4 +16,6 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/drizzle ./drizzle
 EXPOSE 3001
 USER node
-CMD ["node", "dist/main.js"]
+# Applies any pending migrations before every boot - safe to repeat (drizzle tracks what's
+# already applied), and means a fresh deploy never needs a separate manual migration step.
+CMD ["sh", "-c", "node dist/db/migrate.js && node dist/main.js"]
