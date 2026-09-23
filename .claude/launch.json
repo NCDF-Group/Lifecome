@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "Lifecome-web", "run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "lifecome-admin",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "Lifecome-admin", "run", "dev", "--", "--port", "3002"],
+      "port": 3002
     }
   ]
 }

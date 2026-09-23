@@ -15,8 +15,9 @@ LifeCome Live is the healthcare delivery and coordination platform. It is separa
 |---|---|
 | Public website (`Lifecome-web`) | Built: home page plus the full 36-page site map, with content, images and animation |
 | Backend API (`Lifecome-backend`) | Built: 19 domain modules (identity, payer, eligibility, booking, payment, clinical records and more), a 29-table database schema, and a working payer-adapter pattern |
-| Patient app (Flutter) | Scaffolded only: the full folder and file map for all 22 views plus supporting screens, no code yet. See [`Lifecome-mobile/README.md`](Lifecome-mobile/README.md) and [Building the mobile app](#building-the-mobile-app) |
-| Provider portal and operations console | Planned |
+| Patient app (Flutter) | Built: the auth flow (splash, onboarding, sign in/up, email verification, password reset). The rest of the 22 views are scaffolded — folders and files, no code yet. See [`Lifecome-mobile/README.md`](Lifecome-mobile/README.md) and [Building the mobile app](#building-the-mobile-app) |
+| Operations console (`Lifecome-admin`) | Scaffolded, with Dashboard, Patients, Bookings and Payments built against demo data as the reference pattern. Every other section (Providers, Payers, Audit log, ...) is a labelled placeholder. Needs staff auth on the backend before it can do anything real — see [`Lifecome-admin/README.md`](Lifecome-admin/README.md) |
+| Provider portal | Planned |
 
 See the [phased backlog](docs/planning/phased-backlog.md) for the delivery plan.
 
@@ -31,6 +32,11 @@ See the [phased backlog](docs/planning/phased-backlog.md) for the delivery plan.
 ## Tech stack
 
 **Website:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Lenis smooth scroll.
+
+**Operations console:** the same Next.js/React/TypeScript/Tailwind stack as the website, plus
+TanStack Table/Query for data grids and server state, Recharts for the dashboard, and Radix UI
+primitives styled by hand (the shadcn/ui pattern) rather than a full component library. See
+[`Lifecome-admin/README.md`](Lifecome-admin/README.md) for the full reasoning.
 
 **Backend:** Node.js 20+ and **TypeScript**, on [NestJS](https://nestjs.com) with the **Fastify** adapter (faster than the
 Express adapter NestJS defaults to) and the **SWC** builder instead of `tsc` (rebuilds in ~150ms instead of several
@@ -49,7 +55,15 @@ The full comparison of options considered is in the [tech stack recommendation](
 
 ```
 .
-├── Lifecome-mobile/     Flutter patient app (scaffold only — folders and file map, no code yet)
+├── Lifecome-mobile/     Flutter patient app (auth flow built; the rest is scaffold only)
+├── Lifecome-admin/      Next.js operations console (staff admin, payer ops, support, audit)
+│   ├── public/          Brand assets, copied from brand/logo/
+│   └── src/
+│       ├── app/         Routes: (auth)/login, (console)/<one folder per backend module>
+│       ├── components/  Shared shell, DataTable, charts, status/stat primitives
+│       ├── features/    One folder per backend module: types, API hooks, feature UI
+│       ├── lib/         API client, demo data, auth placeholders
+│       └── config/      Env validation and the sidebar's navigation map
 ├── Lifecome-web/        Next.js public website
 │   ├── public/          Images and brand assets
 │   └── src/
