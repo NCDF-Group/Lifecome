@@ -1,7 +1,18 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { GEO_COOKIE, REGION_COOKIE, defaultRegion, isRegion, regionForCountry, type Region } from "@/lib/region";
+import {
+  GEO_COOKIE,
+  LANGUAGE_COOKIE,
+  REGION_COOKIE,
+  defaultLanguage,
+  defaultRegion,
+  isLanguage,
+  isRegion,
+  regionForCountry,
+  type Language,
+  type Region,
+} from "@/lib/region";
 
 const listeners = new Set<() => void>();
 
@@ -27,10 +38,28 @@ function readCookie(cookies: string, name: string): string | undefined {
   return match ? decodeURIComponent(match.slice(name.length + 1)) : undefined;
 }
 
-/** Remembers the visitor's choice for a year and updates every mounted `useRegion` consumer. */
-export function setRegion(region: Region) {
+function writeCookie(name: string, value: string) {
   const secure = window.location.protocol === "https:" ? "; secure" : "";
-  document.cookie = `${REGION_COOKIE}=${region}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax${secure}`;
+  document.cookie = `${name}=${value}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax${secure}`;
+}
+
+/**
+ * Saves the visitor's region and language for a year and updates every mounted `useRegion`
+ * consumer. Saving the region is what stops the first-visit popup from showing again.
+ */
+export function setPreferences({ region, language }: { region: Region; language: Language }) {
+  writeCookie(REGION_COOKIE, region);
+  writeCookie(LANGUAGE_COOKIE, language);
+  listeners.forEach((listener) => listener());
+}
+
+/** Switching region resets language to English: only Nigeria offers a choice. */
+export function setRegion(region: Region) {
+  setPreferences({ region, language: defaultLanguage });
+}
+
+export function setLanguage(language: Language) {
+  writeCookie(LANGUAGE_COOKIE, language);
   listeners.forEach((listener) => listener());
 }
 
@@ -39,7 +68,9 @@ export interface RegionState {
   ready: boolean;
   /** The region in effect: the visitor's choice, else the default. */
   region: Region;
-  /** Whether the visitor has explicitly chosen a region. */
+  /** The preferred language: the visitor's choice, else English. */
+  language: Language;
+  /** Whether the visitor has already answered the first-visit popup. */
   hasChosen: boolean;
   /** The region their country maps to, or `null` outside both markets / when undetected. */
   detected: Region | null;
@@ -47,12 +78,16 @@ export interface RegionState {
 
 export function useRegion(): RegionState {
   const cookies = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  if (cookies === null) return { ready: false, region: defaultRegion, hasChosen: false, detected: null };
+  if (cookies === null) {
+    return { ready: false, region: defaultRegion, language: defaultLanguage, hasChosen: false, detected: null };
+  }
 
   const chosen = readCookie(cookies, REGION_COOKIE);
+  const language = readCookie(cookies, LANGUAGE_COOKIE);
   return {
     ready: true,
     region: isRegion(chosen) ? chosen : defaultRegion,
+    language: isLanguage(language) ? language : defaultLanguage,
     hasChosen: isRegion(chosen),
     detected: regionForCountry(readCookie(cookies, GEO_COOKIE)),
   };

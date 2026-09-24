@@ -15,3 +15,12 @@ export function scrollToTop() {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
 }
+
+/** Freezes the page behind a modal. Lenis handles wheel events itself, so `overflow: hidden` alone isn't enough. */
+export function pauseScroll() {
+  instance?.stop();
+}
+
+export function resumeScroll() {
+  instance?.start();
+}

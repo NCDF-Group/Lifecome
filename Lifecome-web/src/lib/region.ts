@@ -10,6 +10,33 @@ export const GEO_COOKIE = "lc_geo";
 /** Shown until a visitor chooses, and to anyone outside both markets. */
 export const defaultRegion: Region = "ng";
 
+/** Languages a visitor can prefer. Only Nigeria offers a choice; the UK is English. */
+export type Language = "en" | "yo" | "ig" | "ha";
+
+/** The visitor's preferred language, stored alongside their region. */
+export const LANGUAGE_COOKIE = "lc_lang";
+
+export const defaultLanguage: Language = "en";
+
+export interface LanguageConfig {
+  id: Language;
+  /** The language's name in English. */
+  name: string;
+  /** The language's name in itself, so speakers recognise it at a glance. */
+  native: string;
+}
+
+export const languageList: readonly LanguageConfig[] = [
+  { id: "yo", name: "Yoruba", native: "Yorùbá" },
+  { id: "ig", name: "Igbo", native: "Igbo" },
+  { id: "ha", name: "Hausa", native: "Hausa" },
+  { id: "en", name: "English", native: "English" },
+];
+
+export function isLanguage(value: string | null | undefined): value is Language {
+  return value === "en" || value === "yo" || value === "ig" || value === "ha";
+}
+
 export interface RegionConfig {
   id: Region;
   /** Full name, e.g. in the switcher menu. */

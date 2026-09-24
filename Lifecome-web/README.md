@@ -22,23 +22,33 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Regions (Nigeria and the UK)
 
-LifeCome Live is available in Nigeria and the United Kingdom, and the site detects which one a
-visitor is in and asks them to confirm: **"Stay in Nigeria"** or **"Go to UK"**, leading with the
-one their location points to. They can change it any time from the globe button in the header.
+LifeCome Live is available in Nigeria and the United Kingdom. On a visitor's first visit, a popup
+asks **"Are you in Nigeria or the UK?"** (with each country's flag), leading with the one their
+location points to. Choosing the UK finishes there; choosing Nigeria continues to **"Choose your
+language"** - Yorùbá, Igbo, Hausa or English. The popup shows once, then never again.
 
 How it works, so the pages themselves stay statically rendered:
 
 1. `src/proxy.ts` reads the country from the host's geo header (`x-vercel-ip-country` on Vercel,
    `cf-ipcountry` behind Cloudflare) and stores it in a `lc_geo` cookie. On any other host there is
    no header, so nothing is detected and the visitor is simply asked to choose.
-2. `RegionPrompt` (mounted in `(site)/layout.tsx`) shows the choice once. The answer is saved in a
-   `lc_region` cookie for a year, and the prompt never shows again.
-3. `RegionSwitcher` (in the header, and in the mobile menu) changes it later.
+2. `RegionPrompt` (mounted in `(site)/layout.tsx`) is the popup. The answers are saved for a year
+   in `lc_region` and `lc_lang` cookies, and having `lc_region` is what stops it showing again.
+   Pressing Escape counts as an answer (their detected region, in English) so it can't reappear.
+3. `RegionSwitcher` (the flag button in the header, and the mobile menu) changes region - and, in
+   Nigeria, language - later, since the popup won't come back.
 
 To make anything region-specific, call `useRegion()` from `src/lib/use-region.ts` in a client
-component; it returns `region` (`"ng"` or `"uk"`, defaulting to `"ng"` until the visitor chooses).
-Regions and the country-to-region mapping live in `src/lib/region.ts`. **Choosing a region does not
-change any page content yet** - the copy is the same for both until UK-specific content exists.
+component; it returns `region` (`"ng"` or `"uk"`, defaulting to `"ng"` until the visitor chooses)
+and `language` (`"en"`, `"yo"`, `"ig"` or `"ha"`, defaulting to `"en"`). Regions, languages and
+the country-to-region mapping live in `src/lib/region.ts`; the flags are inline SVGs in
+`src/components/ui/flag.tsx` (emoji flags don't render on Windows).
+
+**Neither choice changes any page content yet.** The copy is the same for both regions, and there
+are no Yoruba, Igbo or Hausa translations - the language step says so, and the site stays in
+English. The preference is stored and ready to use once translations exist. Note that `<html lang>`
+deliberately stays `en-NG`: setting it to `yo`/`ig`/`ha` over English text would mislead screen
+readers and trigger browser translation prompts.
 
 To try it locally (there is no geo header on `localhost`), add `?geo=GB` or `?geo=NG` to any URL,
 clearing the `lc_region` cookie first if you have already chosen. That override only works outside

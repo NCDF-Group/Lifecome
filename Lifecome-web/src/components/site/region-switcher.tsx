@@ -1,24 +1,25 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { regionList, regions } from "@/lib/region";
-import { setRegion, useRegion } from "@/lib/use-region";
+import { Flag } from "@/components/ui/flag";
+import { languageList, regionList, regions } from "@/lib/region";
+import { setLanguage, setRegion, useRegion } from "@/lib/use-region";
 
-function Globe() {
+function Check() {
   return (
-    <svg aria-hidden viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z" />
+    <svg aria-hidden viewBox="0 0 16 16" className="size-4 text-positive">
+      <path d="m3 8.5 3.2 3L13 4.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
 /**
- * Lets a visitor change region at any time. `menu` is the desktop header dropdown; `inline` lays the
- * options out as buttons for the mobile menu, where a nested popover would be awkward.
+ * Lets a visitor change region (and, in Nigeria, language) at any time - the first-visit popup only
+ * shows once. `menu` is the desktop header dropdown; `inline` lays the options out as buttons for the
+ * mobile menu, where a nested popover would be awkward.
  */
 export function RegionSwitcher({ variant = "menu" }: { variant?: "menu" | "inline" }) {
-  const { region } = useRegion();
+  const { region, language } = useRegion();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -40,21 +41,43 @@ export function RegionSwitcher({ variant = "menu" }: { variant?: "menu" | "inlin
 
   if (variant === "inline") {
     return (
-      <div role="group" aria-label="Region" className="flex flex-wrap gap-2">
-        {regionList.map((r) => (
-          <button
-            key={r.id}
-            type="button"
-            aria-pressed={region === r.id}
-            onClick={() => setRegion(r.id)}
-            className={`inline-flex min-h-11 items-center gap-2 rounded-control border-2 px-4 font-semibold ${
-              region === r.id ? "border-link bg-link text-white" : "border-line text-ink hover:bg-surface"
-            }`}
-          >
-            <Globe />
-            {r.name}
-          </button>
-        ))}
+      <div className="space-y-4">
+        <div role="group" aria-label="Region" className="flex flex-wrap gap-2">
+          {regionList.map((r) => (
+            <button
+              key={r.id}
+              type="button"
+              aria-pressed={region === r.id}
+              onClick={() => setRegion(r.id)}
+              className={`inline-flex min-h-11 items-center gap-2 rounded-control border-2 px-4 font-semibold ${
+                region === r.id ? "border-link bg-link text-white" : "border-line text-ink hover:bg-surface"
+              }`}
+            >
+              <Flag region={r.id} />
+              {r.name}
+            </button>
+          ))}
+        </div>
+        {region === "ng" && (
+          <div>
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-ink-muted">Language</p>
+            <div role="group" aria-label="Language" className="flex flex-wrap gap-2">
+              {languageList.map((l) => (
+                <button
+                  key={l.id}
+                  type="button"
+                  aria-pressed={language === l.id}
+                  onClick={() => setLanguage(l.id)}
+                  className={`inline-flex min-h-11 items-center rounded-control border-2 px-4 font-semibold ${
+                    language === l.id ? "border-link bg-link text-white" : "border-line text-ink hover:bg-surface"
+                  }`}
+                >
+                  {l.native}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -67,34 +90,58 @@ export function RegionSwitcher({ variant = "menu" }: { variant?: "menu" | "inlin
         aria-controls="region-menu"
         aria-label={`Region: ${regions[region].name}. Change region`}
         onClick={() => setOpen((o) => !o)}
-        className="flex min-h-11 items-center gap-1.5 rounded-control px-3 text-sm font-semibold text-ink hover:bg-surface"
+        className="flex min-h-11 items-center gap-2 rounded-control px-3 text-sm font-semibold text-ink hover:bg-surface"
       >
-        <Globe />
+        <Flag region={region} />
         {regions[region].shortName}
       </button>
       {open && (
-        <ul id="region-menu" className="absolute right-0 top-full mt-2 w-52 rounded-card border border-line bg-card p-2 shadow-xl shadow-ink/10">
-          {regionList.map((r) => (
-            <li key={r.id}>
-              <button
-                type="button"
-                aria-current={region === r.id ? "true" : undefined}
-                onClick={() => {
-                  setRegion(r.id);
-                  setOpen(false);
-                }}
-                className="flex w-full items-center justify-between rounded-control px-3 py-2.5 text-left text-sm font-medium text-ink hover:bg-surface hover:text-link"
-              >
-                {r.name}
-                {region === r.id && (
-                  <svg aria-hidden viewBox="0 0 16 16" className="size-4 text-positive">
-                    <path d="m3 8.5 3.2 3L13 4.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div id="region-menu" className="absolute right-0 top-full mt-2 w-56 rounded-card border border-line bg-card p-2 shadow-xl shadow-ink/10">
+          <ul>
+            {regionList.map((r) => (
+              <li key={r.id}>
+                <button
+                  type="button"
+                  aria-current={region === r.id ? "true" : undefined}
+                  onClick={() => {
+                    setRegion(r.id);
+                    setOpen(false);
+                  }}
+                  className="flex w-full items-center gap-3 rounded-control px-3 py-2.5 text-left text-sm font-medium text-ink hover:bg-surface hover:text-link"
+                >
+                  <Flag region={r.id} />
+                  <span className="flex-1">{r.name}</span>
+                  {region === r.id && <Check />}
+                </button>
+              </li>
+            ))}
+          </ul>
+          {region === "ng" && (
+            <>
+              <p className="mt-2 border-t border-line px-3 pb-1 pt-3 text-xs font-bold uppercase tracking-wider text-ink-muted">
+                Language
+              </p>
+              <ul>
+                {languageList.map((l) => (
+                  <li key={l.id}>
+                    <button
+                      type="button"
+                      aria-current={language === l.id ? "true" : undefined}
+                      onClick={() => {
+                        setLanguage(l.id);
+                        setOpen(false);
+                      }}
+                      className="flex w-full items-center justify-between rounded-control px-3 py-2 text-left text-sm font-medium text-ink hover:bg-surface hover:text-link"
+                    >
+                      {l.native}
+                      {language === l.id && <Check />}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
       )}
     </div>
   );
