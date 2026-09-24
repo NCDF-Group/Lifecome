@@ -7,6 +7,12 @@ export const REGION_COOKIE = "lc_region";
 /** The visitor's detected ISO country code, written by `src/proxy.ts` from the CDN's geo header. */
 export const GEO_COOKIE = "lc_geo";
 
+/**
+ * Set to "off" when the visitor ticks "Don't show this again" in the popup. Without it the popup
+ * shows on every page load, whether or not they've already chosen a region.
+ */
+export const POPUP_COOKIE = "lc_popup";
+
 /** Shown until a visitor chooses, and to anyone outside both markets. */
 export const defaultRegion: Region = "ng";
 

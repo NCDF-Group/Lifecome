@@ -22,21 +22,25 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Regions (Nigeria and the UK)
 
-LifeCome Live is available in Nigeria and the United Kingdom. On a visitor's first visit, a popup
-asks **"Are you in Nigeria or the UK?"** (with each country's flag), leading with the one their
-location points to. Choosing the UK finishes there; choosing Nigeria continues to **"Choose your
-language"** - Yorùbá, Igbo, Hausa or English. The popup shows once, then never again.
+LifeCome Live is available in Nigeria and the United Kingdom. A popup asks **"Are you in Nigeria or
+the UK?"** (with each country's flag). Choosing the UK finishes there; choosing Nigeria continues to
+**"Choose your language"** - Yorùbá, Igbo, Hausa or English. **It appears on every page load** (a
+reload or a fresh visit, not when clicking around the site) **until the visitor ticks "Don't show
+this again"**, so their region and language are always one tap away.
 
 How it works, so the pages themselves stay statically rendered:
 
 1. `src/proxy.ts` reads the country from the host's geo header (`x-vercel-ip-country` on Vercel,
    `cf-ipcountry` behind Cloudflare) and stores it in a `lc_geo` cookie. On any other host there is
    no header, so nothing is detected and the visitor is simply asked to choose.
-2. `RegionPrompt` (mounted in `(site)/layout.tsx`) is the popup. The answers are saved for a year
-   in `lc_region` and `lc_lang` cookies, and having `lc_region` is what stops it showing again.
-   Pressing Escape counts as an answer (their detected region, in English) so it can't reappear.
+2. `RegionPrompt` (mounted in `(site)/layout.tsx`) is the popup. Answers are saved for a year in
+   `lc_region` and `lc_lang` cookies and apply to the site straight away. The popup is **not**
+   tied to having answered: it stays away only if the visitor ticked "Don't show this again", which
+   sets a separate `lc_popup=off` cookie. Pressing Escape closes it for that visit only (and
+   honours the checkbox). A reload the site triggers itself - applying a translation - is flagged in
+   `sessionStorage` so it doesn't reopen the popup they just answered.
 3. `RegionSwitcher` (the flag button in the header, and the mobile menu) changes region - and, in
-   Nigeria, language - later, since the popup won't come back.
+   Nigeria, language - at any time, including after opting out of the popup.
 
 To make anything region-specific, call `useRegion()` from `src/lib/use-region.ts` in a client
 component; it returns `region` (`"ng"` or `"uk"`, defaulting to `"ng"` until the visitor chooses)
@@ -45,17 +49,20 @@ the country-to-region mapping live in `src/lib/region.ts`; the flags are inline 
 `src/components/ui/flag.tsx` (emoji flags don't render on Windows).
 
 The popup's **"Use my current location"** button asks the browser for the visitor's position (the
-browser shows its own permission prompt) and *suggests* a region from it - the visitor still
-confirms. It's a button, not an automatic request on load, because browsers ignore or penalise
-location prompts nobody asked for. `src/lib/locate.ts` maps coordinates to a region with rough
+browser shows its own permission prompt). If they allow it and it matches Nigeria or the UK, that
+region is applied and the popup closes on its own (Nigeria keeps a language they'd already picked,
+otherwise English - the header menu changes it). If they refuse, it can't be found, or it's
+outside both markets, a message says so and they choose manually. It's a button, not an automatic
+request on load, because browsers ignore or penalise location prompts nobody asked for. `src/lib/locate.ts` maps coordinates to a region with rough
 bounding boxes (`regionForCoordinates` in `src/lib/region.ts`), so nothing is sent to a third
 party and the coordinates are never stored - only the resulting region is kept. It's approximate on
-purpose (Dublin, for instance, falls inside the UK box) which is why it never answers for them.
+purpose (Dublin, for instance, falls inside the UK box), so treat it as a convenience: the manual
+buttons are always the precise route, and the header menu corrects a wrong guess.
 Geolocation only works on `https` (or `localhost`).
 
-**Re-testing the popup:** the answer is remembered for a year, so it won't show again in a browser
-that has already answered. Visit `/?region=reset` (any path works) to clear it and see the popup
-again, or use a private window.
+**Re-testing the popup:** it shows on every load unless "Don't show this again" was ticked. If it
+was, visit `/?region=reset` (any path works) to clear the saved region, language and opt-out and see
+it again, or use a private window.
 
 ### What changes for the UK
 

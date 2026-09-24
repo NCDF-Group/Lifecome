@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { GEO_COOKIE, LANGUAGE_COOKIE, REGION_COOKIE } from "@/lib/region";
+import { GEO_COOKIE, LANGUAGE_COOKIE, POPUP_COOKIE, REGION_COOKIE } from "@/lib/region";
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
@@ -9,7 +9,7 @@ const THIRTY_DAYS = 60 * 60 * 24 * 30;
  * anywhere else there is no header and the visitor is simply asked to choose.
  *
  * Outside production, `?geo=GB` overrides the header so the flow can be tried locally.
- * `?region=reset` clears the saved choice so the popup shows again.
+ * `?region=reset` clears the saved choice (and any "don't show again") so the popup shows again.
  */
 export function proxy(request: NextRequest) {
   // `?region=reset` forgets the saved region/language so the first-visit popup shows again (handy for
@@ -20,6 +20,7 @@ export function proxy(request: NextRequest) {
     const redirect = NextResponse.redirect(clean);
     redirect.cookies.delete(REGION_COOKIE);
     redirect.cookies.delete(LANGUAGE_COOKIE);
+    redirect.cookies.delete(POPUP_COOKIE);
     return redirect;
   }
 
