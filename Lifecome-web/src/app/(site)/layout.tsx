@@ -1,5 +1,6 @@
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
+import { RegionPrompt } from "@/components/site/region-prompt";
 
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
@@ -15,6 +16,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
         {children}
       </main>
       <Footer />
+      <RegionPrompt />
     </>
   );
 }

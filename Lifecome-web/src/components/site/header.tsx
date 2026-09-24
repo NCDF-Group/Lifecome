@@ -8,6 +8,7 @@ import { patientAppUrl } from "@/lib/site";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Container } from "@/components/ui/container";
 import { Logo } from "./logo";
+import { RegionSwitcher } from "./region-switcher";
 
 /** Open state is tied to the pathname it was opened on, so it closes on navigation without an effect. */
 interface OpenState {
@@ -104,6 +105,7 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-2 xl:flex">
+          <RegionSwitcher />
           <Link href={utilityNav.help.href} className="rounded-control px-3 py-2 text-sm font-semibold text-ink hover:bg-surface">
             {utilityNav.help.label}
           </Link>
@@ -159,6 +161,10 @@ export function Header() {
                 )}
               </div>
             ))}
+            <div className="border-t border-line pt-6">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-ink-muted">Region</p>
+              <RegionSwitcher variant="inline" />
+            </div>
             <div className="flex flex-wrap gap-3 border-t border-line pt-6">
               <ButtonLink href={utilityNav.help.href} variant="secondary" onClick={close}>
                 {utilityNav.help.label}

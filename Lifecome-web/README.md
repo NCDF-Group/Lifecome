@@ -20,6 +20,30 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Regions (Nigeria and the UK)
+
+LifeCome Live is available in Nigeria and the United Kingdom, and the site detects which one a
+visitor is in and asks them to confirm: **"Stay in Nigeria"** or **"Go to UK"**, leading with the
+one their location points to. They can change it any time from the globe button in the header.
+
+How it works, so the pages themselves stay statically rendered:
+
+1. `src/proxy.ts` reads the country from the host's geo header (`x-vercel-ip-country` on Vercel,
+   `cf-ipcountry` behind Cloudflare) and stores it in a `lc_geo` cookie. On any other host there is
+   no header, so nothing is detected and the visitor is simply asked to choose.
+2. `RegionPrompt` (mounted in `(site)/layout.tsx`) shows the choice once. The answer is saved in a
+   `lc_region` cookie for a year, and the prompt never shows again.
+3. `RegionSwitcher` (in the header, and in the mobile menu) changes it later.
+
+To make anything region-specific, call `useRegion()` from `src/lib/use-region.ts` in a client
+component; it returns `region` (`"ng"` or `"uk"`, defaulting to `"ng"` until the visitor chooses).
+Regions and the country-to-region mapping live in `src/lib/region.ts`. **Choosing a region does not
+change any page content yet** - the copy is the same for both until UK-specific content exists.
+
+To try it locally (there is no geo header on `localhost`), add `?geo=GB` or `?geo=NG` to any URL,
+clearing the `lc_region` cookie first if you have already chosen. That override only works outside
+production.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
