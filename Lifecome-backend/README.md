@@ -174,7 +174,7 @@ manually provisioning and cross-referencing each piece.
 Render's free tier works for trying this out, with caveats worth knowing before you rely on it:
 the free Postgres instance is deleted after 30 days unless upgraded, the free web service spins
 down after 15 minutes idle (the next request wakes it, slowly), and free Key Value instances have
-no persistence guarantee. None of that matters for a demo; all of it matters for anything real.
+no peristence guarantee. None of that matters for a demo; all of it matters for anything real.
 
 ## Conventions
 
