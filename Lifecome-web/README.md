@@ -76,10 +76,39 @@ For the UK today:
 payment routes exist, which regulators and insurers apply) before anyone writes copy for them - wrap
 each Nigeria-specific passage in `ForRegion` as it gets a UK counterpart.
 
-There are no Yoruba, Igbo or Hausa translations - the language step says so, and the site stays in
-English. The preference is stored (`useRegion().language`) and ready to use once translations exist.
-`<html lang>` deliberately never becomes `yo`/`ig`/`ha`: that over English text would mislead screen
-readers and trigger browser translation prompts.
+### Yoruba, Igbo and Hausa
+
+Choosing one of these actually translates the whole site. It uses **Google's website translator**
+(`src/components/site/translation-loader.tsx`, with the logic in `src/lib/translate.ts`), driven by
+our own language picker - Google's default widget UI is hidden. It is **machine translation**: the
+popup says so, wording won't always be perfect, and English is one tap away in the header menu.
+Replace it with professionally translated copy per page whenever that exists (this is a healthcare
+site - consent, privacy and emergency pages in particular deserve a native-speaker review).
+
+- **Only loaded on demand.** The Google script is added only for visitors who chose one of these
+  languages; everyone else (English, and all of the UK) never touches it. It does send the page's
+  public text to Google to translate it.
+- **How it works.** Picking a language saves `lc_lang` (a year) and sets the translator's `googtrans`
+  cookie, then reloads once. English clears the cookie and reloads, which fully restores the page.
+  The translator's cookie is a session cookie, so `TranslationLoader` re-sets it on every visit from
+  `lc_lang`.
+- **A "Translating to ..." pill** shows until the first translated text appears, because Google's
+  response time varies (typically a second or two; longer on a slow connection, and it waits while
+  the tab is in the background). After 60 seconds it says translation isn't available and the site
+  stays in English.
+- **React compatibility.** The translator rewrites text nodes behind React's back, which can make
+  React throw when it later removes or moves them. `protectReactFromTranslator` (in `translate.ts`)
+  is the standard guard against that. Language names and the status pill are marked
+  `translate="no"` so they stay readable.
+- **`<html lang>`** is set to `yo`/`ig`/`ha` by the translator once the text has actually been
+  translated, and is `en-NG`/`en-GB` otherwise.
+- **Not translated:** the browser tab title after a client-side navigation (Next.js resets it).
+
+**If the popup or translation doesn't work in `npm run dev`:** Next's dev server refuses to serve its
+client scripts to any origin other than `localhost` (for example `127.0.0.1`, or your computer's
+network address when testing on a phone) and prints "Blocked cross-origin request" - so nothing that
+needs JavaScript runs. Use `http://localhost:3000`, or list the other origin in `allowedDevOrigins`
+in `next.config.ts`. Production builds are unaffected.
 
 To try it locally (there is no geo header on `localhost`), add `?geo=GB` or `?geo=NG` to any URL,
 clearing the `lc_region` cookie first if you have already chosen. That override only works outside
