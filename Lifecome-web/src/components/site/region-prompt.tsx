@@ -147,6 +147,8 @@ function RegionDialog() {
                   type="button"
                   onClick={() => chooseLanguage(l.id)}
                   className="flex min-h-16 flex-col items-start justify-center rounded-control border-2 border-line bg-card px-4 text-left transition duration-300 ease-smooth hover:border-link hover:bg-surface active:scale-[0.98]"
+                
+                  translate="no"
                 >
                   <span className="text-base font-bold text-ink">{l.native}</span>
                   {l.native !== l.name && <span className="text-xs text-ink-muted">{l.name}</span>}
@@ -154,8 +156,8 @@ function RegionDialog() {
               ))}
             </div>
             <p className="mt-5 text-xs leading-relaxed text-ink-muted">
-              We&apos;ll remember your choice. Yoruba, Igbo and Hausa translations are still being prepared, so the site
-              shows in English until they&apos;re ready.
+              We&apos;ll remember your choice. Yoruba, Igbo and Hausa are translated automatically by Google Translate, so
+              some wording may not be perfect. You can switch back to English from the menu at any time.
             </p>
           </>
         )}

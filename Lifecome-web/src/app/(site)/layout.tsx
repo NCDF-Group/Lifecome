@@ -1,6 +1,7 @@
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { RegionPrompt } from "@/components/site/region-prompt";
+import { TranslationLoader } from "@/components/site/translation-loader";
 
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
@@ -17,6 +18,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
       </main>
       <Footer />
       <RegionPrompt />
+      <TranslationLoader />
     </>
   );
 }

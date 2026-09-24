@@ -14,6 +14,7 @@ import {
   type Language,
   type Region,
 } from "@/lib/region";
+import { setTranslationTarget } from "@/lib/translate";
 
 const listeners = new Set<() => void>();
 
@@ -53,6 +54,15 @@ export function setPreferences({ region, language }: { region: Region; language:
   writeCookie(LANGUAGE_COOKIE, language);
   applyRegionToDocument(region);
   listeners.forEach((listener) => listener());
+  applyTranslation(language);
+}
+
+/**
+ * Yoruba/Igbo/Hausa are applied by translating the page in place, and English can't be restored
+ * from that without reloading - so a change in translation reloads once. Same-language changes don't.
+ */
+function applyTranslation(language: Language) {
+  if (setTranslationTarget(language)) window.location.reload();
 }
 
 /** Switches the region-specific copy (see `ForRegion` and the rules in globals.css) without a reload. */
@@ -69,6 +79,7 @@ export function setRegion(region: Region) {
 export function setLanguage(language: Language) {
   writeCookie(LANGUAGE_COOKIE, language);
   listeners.forEach((listener) => listener());
+  applyTranslation(language);
 }
 
 export interface RegionState {

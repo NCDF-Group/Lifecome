@@ -166,3 +166,18 @@ body {
 :root[data-region="uk"] [data-region-only="ng"] {
   display: none;
 }
+
+/* Google's website translator: we drive it from our own language picker, so hide all of its own UI. */
+.skiptranslate iframe,
+.goog-te-banner-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+}
+body {
+  top: 0 !important;
+}
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}

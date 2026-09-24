@@ -281,13 +281,10 @@ export default function HomePage() {
           <p className="reveal max-w-lg text-lg leading-relaxed text-ink-muted">
             Book visits, join consultations and check your care plan from your phone. The app is in development for iOS and Android.
           </p>
-          <div className="reveal mt-2 flex flex-wrap items-center justify-center gap-4">
+          <div className="reveal mt-2 flex w-full max-w-md items-stretch justify-center gap-3 sm:w-auto sm:max-w-none sm:gap-4">
             <AppStoreBadge />
             <GooglePlayBadge />
           </div>
-          <ButtonLink href="/help/support-feedback-complaints" variant="secondary" className="reveal mt-2">
-            Get notified at launch
-          </ButtonLink>
         </Container>
       </section>
 

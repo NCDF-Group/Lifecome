@@ -61,7 +61,7 @@ export function RegionSwitcher({ variant = "menu" }: { variant?: "menu" | "inlin
         {region === "ng" && (
           <div>
             <p className="mb-2 text-xs font-bold uppercase tracking-wider text-ink-muted">Language</p>
-            <div role="group" aria-label="Language" className="flex flex-wrap gap-2">
+            <div role="group" aria-label="Language" translate="no" className="flex flex-wrap gap-2">
               {languageList.map((l) => (
                 <button
                   key={l.id}
@@ -121,7 +121,7 @@ export function RegionSwitcher({ variant = "menu" }: { variant?: "menu" | "inlin
               <p className="mt-2 border-t border-line px-3 pb-1 pt-3 text-xs font-bold uppercase tracking-wider text-ink-muted">
                 Language
               </p>
-              <ul>
+              <ul translate="no">
                 {languageList.map((l) => (
                   <li key={l.id}>
                     <button
