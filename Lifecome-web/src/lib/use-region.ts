@@ -7,6 +7,7 @@ import {
   REGION_COOKIE,
   defaultLanguage,
   defaultRegion,
+  htmlLangFor,
   isLanguage,
   isRegion,
   regionForCountry,
@@ -50,7 +51,14 @@ function writeCookie(name: string, value: string) {
 export function setPreferences({ region, language }: { region: Region; language: Language }) {
   writeCookie(REGION_COOKIE, region);
   writeCookie(LANGUAGE_COOKIE, language);
+  applyRegionToDocument(region);
   listeners.forEach((listener) => listener());
+}
+
+/** Switches the region-specific copy (see `ForRegion` and the rules in globals.css) without a reload. */
+function applyRegionToDocument(region: Region) {
+  document.documentElement.dataset.region = region;
+  document.documentElement.lang = htmlLangFor(region);
 }
 
 /** Switching region resets language to English: only Nigeria offers a choice. */

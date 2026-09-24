@@ -69,3 +69,33 @@ export function regionForCountry(country: string | null | undefined): Region | n
       return null;
   }
 }
+
+/**
+ * Runs in <head> before first paint so the right region's copy is visible immediately (no flash of
+ * Nigeria copy for a UK visitor), while every page stays statically rendered. Keep it dependency-free:
+ * it is inlined as a string. `document.cookie` is the source of truth, exactly as `useRegion` reads it.
+ */
+export const regionInitScript = `try{var m=document.cookie.match(/(?:^|; )${REGION_COOKIE}=(ng|uk)/);var r=m?m[1]:"${defaultRegion}";var e=document.documentElement;e.dataset.region=r;e.lang=r==="uk"?"en-GB":"en-NG"}catch(_){}`;
+
+/** The `<html lang>` for a region: both markets read English, spelled the British way. */
+export function htmlLangFor(region: Region): string {
+  return region === "uk" ? "en-GB" : "en-NG";
+}
+
+/**
+ * Rough bounding boxes, used only to suggest a region from browser coordinates. Deliberately
+ * approximate (no map data, and coordinates never leave the device); the visitor still confirms, so a
+ * border case such as Dublin falling inside the UK box costs one tap, not a wrong answer.
+ */
+const boxes: Record<Region, { south: number; north: number; west: number; east: number }> = {
+  ng: { south: 4.2, north: 13.9, west: 2.6, east: 14.7 },
+  uk: { south: 49.8, north: 60.9, west: -8.7, east: 1.8 },
+};
+
+export function regionForCoordinates(latitude: number, longitude: number): Region | null {
+  for (const region of ["ng", "uk"] as const) {
+    const box = boxes[region];
+    if (latitude >= box.south && latitude <= box.north && longitude >= box.west && longitude <= box.east) return region;
+  }
+  return null;
+}

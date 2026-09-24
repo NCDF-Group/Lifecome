@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { ForRegion } from "@/components/ui/for-region";
 import { AppStoreBadge, GooglePlayBadge } from "@/components/ui/store-badges";
 import { Container } from "@/components/ui/container";
 import { Icon, type IconName } from "@/components/ui/icons";
@@ -32,6 +33,32 @@ const payment = [
     cta: "See pricing",
   },
 ] as const;
+
+/** The UK has no HMOs, so it leads with paying directly; insurer routes get added when they exist. */
+const ukPayment = [
+  {
+    title: "Pay directly",
+    body: "See the price up front, pay securely online and get a receipt for every consultation.",
+    href: "/access/pay-directly",
+    cta: "See pricing",
+  },
+] as const;
+
+function PaymentCards({ items }: { items: readonly (typeof payment)[number][] | typeof ukPayment }) {
+  return (
+    <ul className="grid gap-4 sm:grid-cols-2">
+      {items.map((p, i) => (
+        <li key={p.href} style={stagger(i)} className="reveal card-motion flex flex-col rounded-card border border-line bg-card p-6">
+          <h3 className="text-lg font-bold">{p.title}</h3>
+          <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-muted">{p.body}</p>
+          <Link href={p.href} className="group mt-4 text-sm font-semibold text-link">
+            {p.cta} <span className="inline-block transition-transform duration-300 ease-smooth group-hover:translate-x-1">→</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 const services = [
   {
@@ -64,9 +91,13 @@ const services = [
   },
 ] as const;
 
-const steps: readonly { title: string; body: string; icon: IconName }[] = [
+const steps: readonly { title: string; body: ReactNode; icon: IconName }[] = [
   { title: "Create your account", body: "Sign up on the app or website in minutes.", icon: "user-plus" },
-  { title: "Choose how to pay", body: "Use your HMO or pay directly.", icon: "wallet" },
+  {
+    title: "Choose how to pay",
+    body: <ForRegion ng="Use your HMO or pay directly." uk="See the price and pay securely online." />,
+    icon: "wallet",
+  },
   { title: "Find a doctor and book", body: "Search, check availability and pick a time.", icon: "search" },
   { title: "Consult and follow up", body: "Speak to your doctor, then access your care plan.", icon: "video" },
 ] as const;
@@ -92,8 +123,8 @@ export default function HomePage() {
               Quality healthcare, anytime, <span className="text-accent">anywhere.</span>
             </h1>
             <p className="mt-6 text-pretty text-lg leading-relaxed text-ink-muted">
-              Talk to trusted doctors, get expert medical advice and access coordinated care, all in one place. Use your HMO or pay
-              directly.
+              Talk to trusted doctors, get expert medical advice and access coordinated care, all in one place.{" "}
+              <ForRegion ng="Use your HMO or pay directly." uk="Book online and pay securely." />
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <ButtonLink href="/book" size="lg" arrow>
@@ -130,7 +161,9 @@ export default function HomePage() {
               <p className="text-sm text-ink-muted">Video or audio · Today, 10:00 AM</p>
               <div className="mt-3 flex items-center justify-between gap-2 border-t border-line pt-3 text-sm">
                 <span className="text-ink-muted">Paying through</span>
-                <StatusChip tone="covered">Your HMO</StatusChip>
+                <StatusChip tone="covered">
+                  <ForRegion ng="Your HMO" uk="Pay directly" />
+                </StatusChip>
               </div>
             </div>
           </div>
@@ -142,22 +175,22 @@ export default function HomePage() {
         <Container>
           <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
             <div className="reveal">
-              <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">Use your HMO or pay directly</h2>
+              <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+                <ForRegion ng="Use your HMO or pay directly" uk="Simple, upfront payment" />
+              </h2>
               <p className="mt-3 text-ink-muted">
-                Your payment route changes how your visit is funded. Your care and your records stay the same.
+                <ForRegion
+                  ng="Your payment route changes how your visit is funded. Your care and your records stay the same."
+                  uk="See the price before you book and pay securely online. Your care and your records stay in one place."
+                />
               </p>
             </div>
-            <ul className="grid gap-4 sm:grid-cols-2">
-              {payment.map((p, i) => (
-                <li key={p.href} style={stagger(i)} className="reveal card-motion flex flex-col rounded-card border border-line bg-card p-6">
-                  <h3 className="text-lg font-bold">{p.title}</h3>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-muted">{p.body}</p>
-                  <Link href={p.href} className="group mt-4 text-sm font-semibold text-link">
-                    {p.cta} <span className="inline-block transition-transform duration-300 ease-smooth group-hover:translate-x-1">→</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div data-region-only="ng">
+              <PaymentCards items={payment} />
+            </div>
+            <div data-region-only="uk">
+              <PaymentCards items={ukPayment} />
+            </div>
           </div>
         </Container>
       </section>

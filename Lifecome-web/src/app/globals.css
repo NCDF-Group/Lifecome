@@ -153,3 +153,16 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/*
+ * Region-specific copy (see ForRegion). Both versions are in the HTML; the one for the other region
+ * is hidden. <html data-region> is set before first paint by regionInitScript, and updated when the
+ * visitor chooses, so pages stay static and nothing flashes. `contents` keeps the wrapper out of layout.
+ */
+[data-region-only] {
+  display: contents;
+}
+:root:not([data-region="uk"]) [data-region-only="uk"],
+:root[data-region="uk"] [data-region-only="ng"] {
+  display: none;
+}

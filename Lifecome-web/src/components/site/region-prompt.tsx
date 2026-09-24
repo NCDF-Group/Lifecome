@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Flag } from "@/components/ui/flag";
+import { locateRegion } from "@/lib/locate";
 import { languageList, regionList, regions, type Language, type Region } from "@/lib/region";
 import { pauseScroll, resumeScroll } from "@/lib/smooth-scroll";
 import { setPreferences, useRegion } from "@/lib/use-region";
@@ -24,6 +25,9 @@ function RegionDialog() {
   const { detected } = useRegion();
   const ref = useRef<HTMLDialogElement>(null);
   const [step, setStep] = useState<"region" | "language">("region");
+  const [locating, setLocating] = useState<"idle" | "asking" | "denied" | "unavailable" | "outside">("idle");
+  // What the browser's location says; leads over the network-based guess because it's more specific.
+  const [located, setLocated] = useState<Region | null>(null);
 
   // A native modal <dialog> gives us the focus trap, top-layer stacking and backdrop for free.
   useEffect(() => {
@@ -46,8 +50,32 @@ function RegionDialog() {
     setPreferences({ region: detected ?? "ng", language: "en" });
   };
 
-  // With nothing detected, Nigeria (the default) is the highlighted choice.
-  const lead = detected ?? "ng";
+  // Lead with the browser location, else the network-based guess; with neither, Nigeria (the default).
+  const lead = located ?? detected ?? "ng";
+
+  // Suggests rather than decides: a coarse location check shouldn't answer for the visitor.
+  const useMyLocation = async () => {
+    setLocated(null);
+    setLocating("asking");
+    const result = await locateRegion();
+    if (result.status === "found") {
+      setLocated(result.region);
+      setLocating("idle");
+    } else {
+      setLocating(result.status);
+    }
+  };
+
+  const locationMessage =
+    located !== null
+      ? `Your location matches ${regions[located].country}. Confirm below.`
+      : locating === "denied"
+        ? "Location access is blocked. You can allow it in your browser's site settings, or just choose below."
+        : locating === "unavailable"
+          ? "We couldn't get your location. Please choose below."
+          : locating === "outside"
+            ? "Your location isn't in Nigeria or the UK. Please choose below."
+            : null;
 
   return (
     <dialog
@@ -63,12 +91,25 @@ function RegionDialog() {
               Are you in Nigeria or the UK?
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-              {detected
-                ? `It looks like you're in ${regions[detected].country}. `
-                : ""}
+              {detected && !located ? `It looks like you're in ${regions[detected].country}. ` : ""}
               LifeCome Live is available in both, and some features differ between the two.
             </p>
-            <div className="mt-6 grid gap-3">
+            <button
+              type="button"
+              onClick={useMyLocation}
+              disabled={locating === "asking"}
+              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-control px-3 text-sm font-semibold text-link hover:bg-surface disabled:opacity-60"
+            >
+              <svg aria-hidden viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z" />
+                <circle cx="12" cy="10" r="2.5" />
+              </svg>
+              {locating === "asking" ? "Waiting for your permission…" : "Use my current location"}
+            </button>
+            <p role="status" className="mt-1 min-h-5 px-3 text-xs leading-relaxed text-ink-muted">
+              {locationMessage ?? "Only used on this device to suggest your region. It isn't stored or sent anywhere."}
+            </p>
+            <div className="mt-3 grid gap-3">
               {regionList.map((r) => (
                 <button
                   key={r.id}

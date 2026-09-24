@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
 import { siteDescription, siteName, siteUrl } from "@/lib/site";
+import { regionInitScript } from "@/lib/region";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 import { ScrollToTop } from "@/components/site/scroll-to-top";
@@ -31,7 +32,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-NG" data-theme="light" className={`${sans.variable} h-full antialiased`}>
+    // suppressHydrationWarning: regionInitScript sets data-region and lang on <html> before React hydrates.
+    <html lang="en-NG" data-theme="light" className={`${sans.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: regionInitScript }} />
+      </head>
       <body className="flex min-h-full flex-col">
         <SmoothScroll />
         {children}

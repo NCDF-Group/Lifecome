@@ -44,10 +44,41 @@ and `language` (`"en"`, `"yo"`, `"ig"` or `"ha"`, defaulting to `"en"`). Regions
 the country-to-region mapping live in `src/lib/region.ts`; the flags are inline SVGs in
 `src/components/ui/flag.tsx` (emoji flags don't render on Windows).
 
-**Neither choice changes any page content yet.** The copy is the same for both regions, and there
-are no Yoruba, Igbo or Hausa translations - the language step says so, and the site stays in
-English. The preference is stored and ready to use once translations exist. Note that `<html lang>`
-deliberately stays `en-NG`: setting it to `yo`/`ig`/`ha` over English text would mislead screen
+The popup's **"Use my current location"** button asks the browser for the visitor's position (the
+browser shows its own permission prompt) and *suggests* a region from it - the visitor still
+confirms. It's a button, not an automatic request on load, because browsers ignore or penalise
+location prompts nobody asked for. `src/lib/locate.ts` maps coordinates to a region with rough
+bounding boxes (`regionForCoordinates` in `src/lib/region.ts`), so nothing is sent to a third
+party and the coordinates are never stored - only the resulting region is kept. It's approximate on
+purpose (Dublin, for instance, falls inside the UK box) which is why it never answers for them.
+Geolocation only works on `https` (or `localhost`).
+
+**Re-testing the popup:** the answer is remembered for a year, so it won't show again in a browser
+that has already answered. Visit `/?region=reset` (any path works) to clear it and see the popup
+again, or use a private window.
+
+### What changes for the UK
+
+Choosing the UK switches the page immediately, with no reload and no flash. `<html data-region>` is
+set before first paint by a tiny inline script (`regionInitScript` in `src/lib/region.ts`, mounted
+in `app/layout.tsx`), and `ForRegion` (`src/components/ui/for-region.tsx`) puts both versions of a
+piece of copy in the static HTML while CSS shows the visitor's - so pages stay statically rendered.
+For the UK today:
+
+- `<html lang>` becomes `en-GB` (Nigeria: `en-NG`).
+- Home page: the hero, the payment section ("Simple, upfront payment", a single Pay directly card
+  - the UK has no HMOs), the how-it-works step, and the booking-card chip.
+- Footer: the HMO disclaimer becomes "available in Nigeria and the United Kingdom", and the
+  emergency note says "Call 999 or go to your nearest A&E department".
+
+**Not yet UK-aware:** the navigation (its "Use Your HMO" / "Participating HMOs" links), and the
+~36 content pages, which are all written for Nigeria. Those need real UK product decisions (which
+payment routes exist, which regulators and insurers apply) before anyone writes copy for them - wrap
+each Nigeria-specific passage in `ForRegion` as it gets a UK counterpart.
+
+There are no Yoruba, Igbo or Hausa translations - the language step says so, and the site stays in
+English. The preference is stored (`useRegion().language`) and ready to use once translations exist.
+`<html lang>` deliberately never becomes `yo`/`ig`/`ha`: that over English text would mislead screen
 readers and trigger browser translation prompts.
 
 To try it locally (there is no geo header on `localhost`), add `?geo=GB` or `?geo=NG` to any URL,

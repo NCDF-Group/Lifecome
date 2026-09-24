@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { footerLegalLinks, primaryNav } from "@/content/nav";
 import { siteName } from "@/lib/site";
+import { ForRegion } from "@/components/ui/for-region";
 import { Container } from "@/components/ui/container";
 import { Logo } from "./logo";
 
@@ -15,8 +16,10 @@ export function Footer() {
             <Logo />
             <p className="mt-4 text-sm font-semibold text-ink">A Healthier You, Brighter Tomorrow</p>
             <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-              {siteName} is a healthcare delivery and coordination platform. Cover and authorisation for HMO-funded care are decided by
-              your HMO and your plan.
+              <ForRegion
+                ng={`${siteName} is a healthcare delivery and coordination platform. Cover and authorisation for HMO-funded care are decided by your HMO and your plan.`}
+                uk={`${siteName} is a healthcare delivery and coordination platform, available in Nigeria and the United Kingdom.`}
+              />
             </p>
           </div>
 
@@ -39,8 +42,11 @@ export function Footer() {
         </div>
 
         <div className="mt-12 rounded-card border border-gold/50 bg-card p-4 text-sm text-ink">
-          <strong className="font-bold">In an emergency, do not use {siteName}.</strong> Go to the nearest emergency facility or call your
-          local emergency number.{" "}
+          <strong className="font-bold">In an emergency, do not use {siteName}.</strong>{" "}
+          <ForRegion
+            ng="Go to the nearest emergency facility or call your local emergency number."
+            uk="Call 999 or go to your nearest A&E department."
+          />{" "}
           <Link href="/emergency" className="font-semibold text-link underline underline-offset-2">
             Emergency &amp; urgent care guidance
           </Link>
