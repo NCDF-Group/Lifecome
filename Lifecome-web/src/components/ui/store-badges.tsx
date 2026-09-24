@@ -26,10 +26,10 @@ function GooglePlayMark() {
 
 function Badge({ mark, kicker, name }: { mark: React.ReactNode; kicker: string; name: string }) {
   return (
-    <div className="flex min-w-[13rem] items-center gap-3 rounded-control bg-ink px-4 py-2.5 text-white">
+    <div className="flex min-w-[13rem] items-center gap-3 rounded-control border border-line bg-white px-4 py-2.5 text-[#0b2540] shadow-sm">
       {mark}
       <span className="text-left leading-tight">
-        <span className="block text-[0.65rem] uppercase tracking-wide text-white/60">{kicker}</span>
+        <span className="block text-[0.65rem] uppercase tracking-wide text-[#435a70]">{kicker}</span>
         <span className="block text-base font-bold">{name}</span>
       </span>
     </div>

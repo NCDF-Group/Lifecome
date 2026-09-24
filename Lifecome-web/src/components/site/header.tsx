@@ -136,8 +136,14 @@ export function Header() {
         </div>
       </Container>
 
+      {/* data-lenis-prevent on the panel: without it Lenis takes over the wheel/touch and scrolls the page behind the menu, leaving the tall menu itself stuck at the top. */}
       {mobileOpen && (
-        <nav id="mobile-menu" aria-label="Mobile" className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-card xl:hidden">
+        <nav
+          id="mobile-menu"
+          aria-label="Mobile"
+          data-lenis-prevent
+          className="max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain border-t border-line bg-card xl:hidden"
+        >
           <Container className="space-y-6 py-6">
             {primaryNav.map((item) => (
               <div key={item.label}>

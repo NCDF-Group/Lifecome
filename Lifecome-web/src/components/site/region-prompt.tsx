@@ -90,10 +90,9 @@ function RegionDialog() {
             <h2 id="region-title" className="text-xl font-bold text-ink">
               Are you in Nigeria or the UK?
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-              {detected && !located ? `It looks like you're in ${regions[detected].country}. ` : ""}
-              LifeCome Live is available in both, and some features differ between the two.
-            </p>
+            {detected && !located && (
+              <p className="mt-2 text-sm leading-relaxed text-ink-muted">It looks like you&apos;re in {regions[detected].country}.</p>
+            )}
             <button
               type="button"
               onClick={useMyLocation}
