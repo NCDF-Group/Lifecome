@@ -4,7 +4,19 @@
  * light-first) — admins tend to run it for long stretches, and this app has no marketing surface
  * to protect a specific look on. Same brand tokens as Lifecome-web (blueprint §6.3): kept in sync
  * by hand for now — see README.md "Design tokens" for why this isn't shared as a package yet. */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+/* `data-theme` on <html> is the operator's choice (lib/theme), rendered by the server from a
+ * cookie: "light", "dark" or "system". "system" is resolved here in CSS, not script, so there is
+ * no flash on load and it follows the OS live when the OS switches. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where([data-theme="system"], [data-theme="system"] *) {
+      @slot;
+    }
+  }
+}
 
 :root {
   --brand-lime: #a2e10d;
@@ -24,8 +36,29 @@
   --positive: #2f7d00;
   --warning: #b58a35;
   --destructive: #c2261d;
+  /* Text on an `accent` fill: white on light's blue, dark ink on dark's lime. */
+  --on-accent: #ffffff;
 
   color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    --background: #071827;
+    --card: #0d2438;
+    --surface: #0a1f31;
+    --ink: #eaf2f8;
+    --ink-muted: #9db3c6;
+    --line: #1d3a52;
+    --link: #62b6f2;
+    --accent: #a2e10d;
+    --positive: #7fd63a;
+    --warning: #e0b04f;
+    --destructive: #f2685c;
+    --on-accent: #071827;
+
+    color-scheme: dark;
+  }
 }
 
 :root[data-theme="dark"] {
@@ -40,6 +73,7 @@
   --positive: #7fd63a;
   --warning: #e0b04f;
   --destructive: #f2685c;
+  --on-accent: #071827;
 
   color-scheme: dark;
 }
@@ -63,6 +97,7 @@
   --color-positive: var(--positive);
   --color-warning: var(--warning);
   --color-destructive: var(--destructive);
+  --color-on-accent: var(--on-accent);
 
   --font-sans: var(--font-sans-body);
 

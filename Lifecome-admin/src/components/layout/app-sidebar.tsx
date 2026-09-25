@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { navigation } from "@/config/navigation";
 import { useSidebar } from "@/components/layout/sidebar-context";
 import { cn } from "@/lib/utils";
@@ -26,13 +26,7 @@ export function AppSidebar() {
     >
       <div className="flex h-full w-60 flex-col gap-6 overflow-y-auto p-4">
         <Link href="/dashboard" className="flex items-center gap-2 px-2 py-1">
-          <Image
-            src="/brand/lifecome-live-logo.svg"
-            alt="LifeCome Live"
-            width={140}
-            height={28}
-            priority
-          />
+          <BrandLogo priority />
         </Link>
         {navigation.map((section) => (
           <div key={section.title} className="flex flex-col gap-1">

@@ -2,8 +2,8 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import { Menu, X } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { useState } from "react";
 import { navigation } from "@/config/navigation";
 
@@ -33,12 +33,7 @@ export function MobileNav() {
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-2"
               >
-                <Image
-                  src="/brand/lifecome-live-logo.svg"
-                  alt="LifeCome Live"
-                  width={140}
-                  height={28}
-                />
+                <BrandLogo />
               </Link>
             </Dialog.Title>
             <Dialog.Close asChild>

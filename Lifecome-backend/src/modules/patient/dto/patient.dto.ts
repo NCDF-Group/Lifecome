@@ -15,6 +15,8 @@ export const CreatePatientProfileSchema = z.object({
   sex: z.string().max(30).optional(),
   city: z.string().max(100).optional(),
   state: z.string().max(100).optional(),
+  /** ISO 3166-1 alpha-2 — the UK is `GB`, not `UK`. Omitted means `NG` (the column default). */
+  country: z.enum(['NG', 'GB']).optional(),
 });
 export class CreatePatientProfileDto extends createZodDto(CreatePatientProfileSchema) {}
 

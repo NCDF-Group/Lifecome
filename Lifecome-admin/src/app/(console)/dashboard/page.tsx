@@ -1,9 +1,11 @@
-import { CalendarDays, ClipboardList, Stethoscope, Users, Wallet } from "lucide-react";
+import { CalendarDays, ClipboardList, Globe, Stethoscope, Users, Wallet } from "lucide-react";
 import { BookingsOverviewChart } from "@/components/charts/overview-chart";
+import { Flag } from "@/components/shared/flag";
 import { StatCard } from "@/components/shared/stat-card";
 import { WelcomeBanner } from "@/components/shared/welcome-banner";
 import { listAuditEvents } from "@/features/audit/api";
 import { getDashboardSummary } from "@/features/dashboard/api";
+import type { MarketCode } from "@/features/dashboard/types";
 import { formatRelativeTime } from "@/lib/format";
 
 const bookingStatusLabel: Record<string, string> = {
@@ -26,13 +28,18 @@ const auditActionLabel: Record<string, string> = {
   admin_action: "took an admin action",
 };
 
+const markets: { code: MarketCode; name: string }[] = [
+  { code: "NG", name: "Nigeria" },
+  { code: "GB", name: "United Kingdom" },
+];
+
 export default async function DashboardPage() {
   const [summary, recentEvents] = await Promise.all([
     getDashboardSummary(),
     listAuditEvents({ pageSize: 5 }),
   ]);
 
-  const { totals, bookingsByStatus, bookingsTrend } = summary;
+  const { totals, bookingsByStatus, bookingsTrend, byMarket } = summary;
   const bookingsTotal = Object.values(bookingsByStatus).reduce((sum, value) => sum + value, 0);
 
   return (
@@ -53,6 +60,60 @@ export default async function DashboardPage() {
           hint={`${totals.successfulPayments.count.toLocaleString("en-NG")} transactions`}
           icon={Wallet}
         />
+      </div>
+
+      <div className="flex flex-col gap-4 rounded-card border border-line bg-card p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-ink">Users by market</h2>
+          <Globe className="size-4 text-ink-muted" />
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {markets.map(({ code, name }) => {
+            const market = byMarket[code];
+            const share = totals.patients > 0 ? Math.round((market.patients / totals.patients) * 100) : 0;
+            return (
+              <div key={code} className="flex flex-col gap-3 rounded-control border border-line p-4">
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-sm font-semibold text-ink">
+                    <Flag code={code} className="h-5 w-7.5" />
+                    {name}
+                  </span>
+                  <span className="rounded-full bg-blue/10 px-2 py-0.5 text-xs font-semibold text-blue">{code}</span>
+                </div>
+                <dl className="grid grid-cols-3 gap-3">
+                  <div className="flex flex-col gap-0.5">
+                    <dt className="text-xs text-ink-muted">Patients</dt>
+                    <dd className="text-2xl font-bold text-ink">{market.patients.toLocaleString("en-NG")}</dd>
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <dt className="text-xs text-ink-muted">New, 30 days</dt>
+                    <dd className="text-2xl font-bold text-ink">
+                      {market.newPatientsLast30Days.toLocaleString("en-NG")}
+                    </dd>
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <dt className="text-xs text-ink-muted">Bookings</dt>
+                    <dd className="text-2xl font-bold text-ink">{market.bookings.toLocaleString("en-NG")}</dd>
+                  </div>
+                </dl>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between text-xs text-ink-muted">
+                    <span>Share of all patients</span>
+                    <span className="font-semibold text-ink">{share}%</span>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-surface">
+                    <div className="h-full rounded-full bg-blue" style={{ width: `${share}%` }} />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {byMarket.other.patients > 0 && (
+          <p className="text-xs text-ink-muted">
+            {byMarket.other.patients.toLocaleString("en-NG")} patients are registered outside Nigeria and the UK.
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

@@ -22,7 +22,7 @@ export default async function StaffPage() {
               type="button"
               disabled
               title="Only platform administrators can invite staff"
-              className="flex items-center gap-2 rounded-control bg-accent px-4 py-2 text-sm font-semibold text-white opacity-60 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 rounded-control bg-accent px-4 py-2 text-sm font-semibold text-on-accent opacity-60 disabled:cursor-not-allowed"
             >
               <UserPlus className="size-4" />
               Invite staff member
