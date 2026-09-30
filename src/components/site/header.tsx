@@ -51,11 +51,11 @@ export function Header() {
   const mobileOpen = openId === "mobile";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header ref={navRef} className="sticky top-0 z-40 border-b border-line bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
       <Container className="flex h-16 items-center justify-between gap-4">
         <Logo />
 
-        <nav ref={navRef} aria-label="Primary" className="hidden xl:block">
+        <nav aria-label="Primary" className="hidden xl:block">
           <ul className="flex items-center gap-1">
             {primaryNav.map((item) => (
               <li key={item.label} className="relative">
@@ -106,16 +106,46 @@ export function Header() {
         {/* Desktop Utility Nav */}
         <div className="hidden items-center gap-2 xl:flex">
           <RegionSwitcher />
-          <Link href={utilityNav.help.href} className="rounded-control px-3 py-2 text-sm font-semibold text-ink hover:bg-surface">
-            {utilityNav.help.label}
-          </Link>
-          {/* Get Care - background removed */}
-          <Link
-            href={utilityNav.getCare.href}
-            className="rounded-control px-3.5 py-2 text-sm font-semibold text-link hover:bg-surface"
-          >
-            {utilityNav.getCare.label}
-          </Link>
+
+          {/* Help Dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              aria-expanded={openId === "Help"}
+              aria-controls="menu-Help"
+              onClick={() => toggle("Help")}
+              className="flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-control px-3 text-[0.92rem] font-semibold text-ink hover:bg-surface"
+            >
+              Help
+              <Chevron open={openId === "Help"} />
+            </button>
+            {openId === "Help" && (
+              <ul
+                id="menu-Help"
+                className="absolute right-0 top-full mt-2 w-48 rounded-card border border-line bg-card p-2 shadow-xl shadow-ink/10"
+              >
+                <li>
+                  <Link
+                    href={utilityNav.help.href}
+                    onClick={close}
+                    className="block rounded-control px-3 py-2.5 text-sm font-medium text-ink hover:bg-surface hover:text-link"
+                  >
+                    {utilityNav.help.label}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={utilityNav.getCare.href}
+                    onClick={close}
+                    className="block rounded-control px-3 py-2.5 text-sm font-medium text-ink hover:bg-surface hover:text-link"
+                  >
+                    {utilityNav.getCare.label}
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </div>
+
           {/* Get Started - CTA button */}
           <ButtonLink href="/sign-up" variant="primary">
             Get Started
@@ -124,12 +154,6 @@ export function Header() {
 
         {/* Mobile Action Bar */}
         <div className="flex items-center gap-2 xl:hidden">
-          <Link
-            href={utilityNav.getCare.href}
-            className="px-3 py-3 text-sm font-semibold text-link hover:bg-surface rounded-control"
-          >
-            {utilityNav.getCare.label}
-          </Link>
           <ButtonLink href="/sign-up" size="md" className="px-4">
             Get Started
           </ButtonLink>
@@ -180,18 +204,27 @@ export function Header() {
               </div>
             ))}
             <div className="border-t border-line pt-6">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-ink-muted">Help & Care</p>
+              <ul className="space-y-0.5">
+                <li>
+                  <Link href={utilityNav.help.href} onClick={close} className="block rounded-control px-3 py-3 font-medium text-ink hover:bg-surface">
+                    {utilityNav.help.label}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={utilityNav.getCare.href} onClick={close} className="block rounded-control px-3 py-3 font-medium text-ink hover:bg-surface">
+                    {utilityNav.getCare.label}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className="border-t border-line pt-6">
               <p className="mb-2 text-xs font-bold uppercase tracking-wider text-ink-muted">Region</p>
               <RegionSwitcher variant="inline" />
             </div>
             <div className="flex flex-wrap items-center gap-3 border-t border-line pt-6">
               <ButtonLink href="/sign-up" variant="primary" onClick={close} className="w-full sm:w-auto">
                 Get Started
-              </ButtonLink>
-              <ButtonLink href={utilityNav.getCare.href} variant="ghost" onClick={close}>
-                {utilityNav.getCare.label}
-              </ButtonLink>
-              <ButtonLink href={utilityNav.help.href} variant="ghost" onClick={close}>
-                {utilityNav.help.label}
               </ButtonLink>
             </div>
           </Container>
