@@ -21,6 +21,8 @@ dependencies:
 
   # SVG logo assets, shared with the website
   flutter_svg: ^2.3.0
+  local_auth: ^3.0.2
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:
@@ -32,7 +34,7 @@ flutter:
 
   assets:
     - assets/images/logo/
-    - assets/images/onboarding/
+    - assets/images/welcome/
 
   # Manrope is declared here once the .ttf files are added to assets/fonts/Manrope/
   # (see Lifecome-mobile/README.md, "Font: Manrope"). Until then, google_fonts fetches

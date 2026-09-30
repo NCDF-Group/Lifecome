@@ -1,41 +1,38 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/animation/fade_in.dart';
 import '../../../core/router/route_paths.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/buttons/primary_button.dart';
 import '../../../core/widgets/inputs/app_text_field.dart';
-import '../../../core/widgets/layout/auth_form_card.dart';
-import '../../../core/widgets/layout/brand_backdrop.dart';
+import '../../../core/widgets/layout/max_content_width.dart';
 import '../application/auth_controller.dart';
 import '../domain/models/auth_session.dart';
 import 'verify_email_screen.dart';
+import 'widgets/auth_top_bar.dart';
+import 'widgets/step_indicator.dart';
 
 /// What step 1 ([CreateAccountScreen]) collected, carried forward so step 2
-/// can send it all together when the account is actually created.
+/// can send it all together when the verification code is requested.
 class PersonalDetailsArgs {
   const PersonalDetailsArgs({
     required this.fullName,
     required this.email,
-    this.phoneNumber,
+    this.referralCode,
   });
 
   final String fullName;
   final String email;
-  final String? phoneNumber;
+  final String? referralCode;
 }
 
-const _genderOptions = ['Female', 'Male', 'Prefer not to say'];
-
-/// View 01 (Create Account) — step 2 of 2, and most of view 03's (Patient
-/// Profile) demographic fields, collected here as part of signup rather
-/// than as a separate step afterwards. Submitting here is what actually
-/// creates the account and sends the verification code.
+/// View 01 (Create Account) — step 2 of 2. Collects date of birth and
+/// phone number, then sends the verification code with everything step 1
+/// and step 2 collected together.
 class PersonalDetailsScreen extends ConsumerStatefulWidget {
   const PersonalDetailsScreen({super.key, required this.args});
 
@@ -48,19 +45,14 @@ class PersonalDetailsScreen extends ConsumerStatefulWidget {
 
 class _PersonalDetailsScreenState extends ConsumerState<PersonalDetailsScreen> {
   final _dobController = TextEditingController();
-  final _stateController = TextEditingController();
-  final _cityController = TextEditingController();
-
+  final _phoneController = TextEditingController();
   DateTime? _dateOfBirth;
-  String? _gender;
   String? _dobError;
-  String? _genderError;
 
   @override
   void dispose() {
     _dobController.dispose();
-    _stateController.dispose();
-    _cityController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -101,28 +93,22 @@ class _PersonalDetailsScreenState extends ConsumerState<PersonalDetailsScreen> {
     return names[month - 1];
   }
 
-  Future<void> _submit() async {
+  Future<void> _continue() async {
     setState(() {
       _dobError = _dateOfBirth == null ? 'Select your date of birth.' : null;
-      _genderError = _gender == null ? 'Select an option.' : null;
     });
+    if (_dobError != null) return;
 
-    if (_dobError != null || _genderError != null) return;
-
-    final state = _stateController.text.trim();
-    final city = _cityController.text.trim();
-
+    final phone = _phoneController.text.trim();
     final sent = await ref
         .read(authControllerProvider.notifier)
         .requestCode(
           flow: AuthFlow.createAccount,
           email: widget.args.email,
           fullName: widget.args.fullName,
-          phoneNumber: widget.args.phoneNumber,
+          referralCode: widget.args.referralCode,
+          phoneNumber: phone.isEmpty ? null : phone,
           dateOfBirth: _dateOfBirth,
-          gender: _gender,
-          region: state.isEmpty ? null : state,
-          city: city.isEmpty ? null : city,
         );
 
     if (!mounted) return;
@@ -140,228 +126,124 @@ class _PersonalDetailsScreenState extends ConsumerState<PersonalDetailsScreen> {
     }
   }
 
+  void _openTerms() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Terms of use are not published in the app yet.'),
+      ),
+    );
+  }
+
+  void _openPrivacy() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('The privacy notice is not published in the app yet.'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
     final submitting = authState.status == AuthStatus.submitting;
 
     return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.blue),
-          onPressed: () => context.pop(),
-        ),
-      ),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
-        child: Stack(
-          children: [
-            const Positioned.fill(child: BrandBackdrop()),
-            SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-              child: AuthFormCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FadeIn(
-                      child: Center(
-                        child: SvgPicture.asset(
-                          'assets/images/logo/lifecome-live-mark.svg',
-                          height: 44,
-                          width: 44,
-                          semanticsLabel: 'LifeCome Live',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-                    const FadeIn(
-                      delay: Duration(milliseconds: 40),
-                      child: Text(
-                        'STEP 2 OF 2',
-                        style: TextStyle(
-                          color: AppColors.blue,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.6,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    const FadeIn(
-                      delay: Duration(milliseconds: 80),
-                      child: Text(
-                        'Tell us about you',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.ink,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    const FadeIn(
-                      delay: Duration(milliseconds: 120),
-                      child: Text(
-                        'Help your care team identify you correctly.',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: AppColors.inkMuted,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 160),
-                      child: AppTextField(
-                        label: 'Date of birth',
-                        controller: _dobController,
-                        hintText: 'Select date of birth',
-                        readOnly: true,
-                        onTap: _pickDateOfBirth,
-                        prefixIcon: Icons.calendar_today_outlined,
-                        errorText: _dobError,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 200),
-                      child: _GenderField(
-                        value: _gender,
-                        errorText: _genderError,
-                        onChanged: (value) => setState(() {
-                          _gender = value;
-                          _genderError = null;
-                        }),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 240),
-                      child: AppTextField(
-                        label: 'State (optional)',
-                        controller: _stateController,
-                        hintText: 'e.g. Lagos',
-                        textInputAction: TextInputAction.next,
-                        prefixIcon: Icons.map_outlined,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 280),
-                      child: AppTextField(
-                        label: 'City or area (optional)',
-                        controller: _cityController,
-                        hintText: 'e.g. Ikeja',
-                        textInputAction: TextInputAction.done,
-                        prefixIcon: Icons.location_on_outlined,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 320),
-                      child: PrimaryButton(
-                        label: 'Create account',
-                        loading: submitting,
-                        onPressed: _submit,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    const FadeIn(
-                      delay: Duration(milliseconds: 340),
-                      child: Center(
-                        child: Text(
-                          'We will send a code to verify your email.',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.inkMuted,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.sm,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
+          child: MaxContentWidth(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AuthTopBar(
+                  onBack: () => context.pop(),
+                  trailing: const StepIndicator(step: 2, totalSteps: 2),
                 ),
-              ),
+                const SizedBox(height: AppSpacing.xl),
+                const Text(
+                  'Tell us about you',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.ink,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                const Text(
+                  'Help your care team identify you correctly.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: AppColors.inkMuted,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                AppTextField(
+                  label: 'Date of Birth',
+                  controller: _dobController,
+                  hintText: 'Select date of birth',
+                  readOnly: true,
+                  onTap: _pickDateOfBirth,
+                  errorText: _dobError,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  label: 'Phone Number (Optional)',
+                  controller: _phoneController,
+                  hintText: 'Enter phone number',
+                  keyboardType: TextInputType.phone,
+                  textInputAction: TextInputAction.done,
+                  autofillHints: const [AutofillHints.telephoneNumber],
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                FadeIn(
+                  child: PrimaryButton(
+                    label: 'Continue',
+                    icon: Icons.arrow_forward,
+                    loading: submitting,
+                    onPressed: _continue,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Text.rich(
+                  TextSpan(
+                    style: const TextStyle(
+                      color: AppColors.inkMuted,
+                      fontSize: 12,
+                      height: 1.4,
+                    ),
+                    children: [
+                      const TextSpan(
+                        text: 'By clicking continue, you agree to our ',
+                      ),
+                      TextSpan(
+                        text: 'Terms of Service',
+                        recognizer: TapGestureRecognizer()..onTap = _openTerms,
+                      ),
+                      const TextSpan(text: ' and '),
+                      TextSpan(
+                        text: 'Privacy Policy',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = _openPrivacy,
+                      ),
+                      const TextSpan(text: '.'),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-    );
-  }
-}
-
-class _GenderField extends StatelessWidget {
-  const _GenderField({
-    required this.value,
-    required this.onChanged,
-    this.errorText,
-  });
-
-  final String? value;
-  final ValueChanged<String?> onChanged;
-  final String? errorText;
-
-  @override
-  Widget build(BuildContext context) {
-    final hasError = errorText != null;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Gender',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.ink,
-          ),
-        ),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<String>(
-          initialValue: value,
-          icon: const Icon(
-            Icons.keyboard_arrow_down,
-            color: AppColors.inkMuted,
-          ),
-          decoration: InputDecoration(
-            hintText: 'Select gender',
-            errorText: errorText,
-            prefixIcon: const Icon(
-              Icons.wc_outlined,
-              size: 20,
-              color: AppColors.inkMuted,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.control),
-              borderSide: BorderSide(
-                color: hasError ? AppColors.error : AppColors.line,
-                width: 1.5,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.control),
-              borderSide: BorderSide(
-                color: hasError ? AppColors.error : AppColors.line,
-                width: 1.5,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.control),
-              borderSide: BorderSide(
-                color: hasError ? AppColors.error : AppColors.blue,
-                width: 2,
-              ),
-            ),
-          ),
-          items: _genderOptions
-              .map(
-                (option) =>
-                    DropdownMenuItem(value: option, child: Text(option)),
-              )
-              .toList(),
-          onChanged: onChanged,
-        ),
-      ],
     );
   }
 }

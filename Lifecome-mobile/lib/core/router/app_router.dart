@@ -1,16 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/app_lock_screen.dart';
 import '../../features/auth/presentation/create_account_screen.dart';
+import '../../features/auth/presentation/create_password_screen.dart';
 import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/new_password_screen.dart';
+import '../../features/auth/presentation/password_changed_screen.dart';
 import '../../features/auth/presentation/personal_details_screen.dart';
 import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/presentation/sign_in_screen.dart';
+import '../../features/auth/presentation/sign_up_success_screen.dart';
 import '../../features/auth/presentation/verify_email_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
-import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
+import '../../features/welcome/presentation/welcome_screen.dart';
 import 'route_paths.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -22,8 +26,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
-        path: RoutePaths.onboarding,
-        builder: (context, state) => const OnboardingScreen(),
+        path: RoutePaths.welcome,
+        builder: (context, state) => const WelcomeScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.appLock,
+        builder: (context, state) => const AppLockScreen(),
       ),
       GoRoute(
         path: RoutePaths.signIn,
@@ -44,6 +52,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             VerifyEmailScreen(args: state.extra! as VerifyEmailArgs),
       ),
       GoRoute(
+        path: RoutePaths.createPassword,
+        builder: (context, state) => const CreatePasswordScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.signUpSuccess,
+        builder: (context, state) => const SignUpSuccessScreen(),
+      ),
+      GoRoute(
         path: RoutePaths.forgotPassword,
         builder: (context, state) => const ForgotPasswordScreen(),
       ),
@@ -56,6 +72,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RoutePaths.newPassword,
         builder: (context, state) =>
             NewPasswordScreen(args: state.extra! as NewPasswordArgs),
+      ),
+      GoRoute(
+        path: RoutePaths.passwordChanged,
+        builder: (context, state) => const PasswordChangedScreen(),
       ),
       GoRoute(
         path: RoutePaths.home,

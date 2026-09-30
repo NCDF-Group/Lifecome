@@ -138,9 +138,32 @@ class _OtpBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: size,
-      height: size + 8,
+    return AnimatedBuilder(
+      animation: focusNode,
+      builder: (context, child) {
+        final focused = focusNode.hasFocus;
+        final ringColor = hasError
+            ? AppColors.error
+            : (focused ? AppColors.blue : Colors.transparent);
+
+        return Container(
+          width: size,
+          height: size + 8,
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(AppRadius.control),
+            border: Border.all(color: ringColor, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.ink.withValues(alpha: 0.06),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: child,
+        );
+      },
       child: TextField(
         controller: controller,
         focusNode: focusNode,
@@ -153,30 +176,18 @@ class _OtpBox extends StatelessWidget {
           color: AppColors.ink,
         ),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           counterText: '',
           contentPadding: EdgeInsets.zero,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppRadius.control),
-            borderSide: BorderSide(
-              color: hasError ? AppColors.error : AppColors.line,
-              width: 1.5,
-            ),
+          hintText: '0',
+          hintStyle: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: AppColors.line,
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppRadius.control),
-            borderSide: BorderSide(
-              color: hasError ? AppColors.error : AppColors.line,
-              width: 1.5,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppRadius.control),
-            borderSide: BorderSide(
-              color: hasError ? AppColors.error : AppColors.blue,
-              width: 2,
-            ),
-          ),
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
         ),
         onChanged: onChanged,
       ),

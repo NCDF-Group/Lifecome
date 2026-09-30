@@ -69,7 +69,7 @@ class _OtpTimerState extends State<OtpTimer> {
       return TextButton(
         onPressed: widget.onResend,
         child: const Text(
-          'Resend code',
+          "Didn't get any code? Resend",
           style: TextStyle(
             color: AppColors.blue,
             fontWeight: FontWeight.w700,
@@ -82,7 +82,7 @@ class _OtpTimerState extends State<OtpTimer> {
     final seconds = _remaining.inSeconds;
     final label = '00:${seconds.toString().padLeft(2, '0')}';
     return Text(
-      'Resend code in $label',
+      "Didn't get any code? Resend in $label",
       style: const TextStyle(color: AppColors.inkMuted, fontSize: 14),
     );
   }

@@ -86,8 +86,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.surface,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.blue),
           onPressed: () => context.pop(),

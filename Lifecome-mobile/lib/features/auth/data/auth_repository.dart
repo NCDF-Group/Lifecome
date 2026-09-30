@@ -9,18 +9,15 @@ abstract interface class AuthRepository {
     required String password,
   });
 
-  /// Registers by email and triggers a verification code. Personal details
-  /// (blueprint view 03 — Patient Profile) are collected as part of signup
-  /// here rather than as a separate later step, and sent along with the
-  /// registration. Returns the id of the account the code was sent for.
+  /// Registers by email and triggers a verification code. The account has
+  /// no password yet at this point — [completeSignUp] sets one once the
+  /// code is verified. Returns the id of the account the code was sent for.
   Future<String> requestEmailCode({
     required String email,
     String? fullName,
+    String? referralCode,
     String? phoneNumber,
     DateTime? dateOfBirth,
-    String? gender,
-    String? state,
-    String? city,
   });
 
   /// Verifies a 6-digit code sent to [email]. Throws an [AuthException] if
@@ -29,6 +26,14 @@ abstract interface class AuthRepository {
 
   /// Requests a new code for an email that already has one pending.
   Future<void> resendEmailCode({required String email});
+
+  /// Sets the new account's password once its email is verified, finishing
+  /// sign-up. Throws an [AuthException] if the password doesn't meet the
+  /// account's password rules.
+  Future<void> completeSignUp({
+    required String email,
+    required String password,
+  });
 
   /// Step 1 of the forgot-password flow: sends a reset code to [email] if
   /// an account exists for it. Never reveals whether the account exists.
@@ -85,11 +90,9 @@ class FakeAuthRepository implements AuthRepository {
   Future<String> requestEmailCode({
     required String email,
     String? fullName,
+    String? referralCode,
     String? phoneNumber,
     DateTime? dateOfBirth,
-    String? gender,
-    String? state,
-    String? city,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 700));
     return 'demo-account-id';
@@ -111,6 +114,19 @@ class FakeAuthRepository implements AuthRepository {
   @override
   Future<void> resendEmailCode({required String email}) async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
+  }
+
+  @override
+  Future<void> completeSignUp({
+    required String email,
+    required String password,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 700));
+    if (password.length < 8) {
+      throw const AuthException(
+        'Your password must be at least 8 characters.',
+      );
+    }
   }
 
   @override

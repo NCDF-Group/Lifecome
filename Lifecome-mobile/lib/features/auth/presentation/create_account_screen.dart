@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/animation/fade_in.dart';
@@ -7,21 +6,16 @@ import '../../../core/router/route_paths.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/buttons/primary_button.dart';
-import '../../../core/widgets/buttons/social_button.dart';
 import '../../../core/widgets/inputs/app_text_field.dart';
-import '../../../core/widgets/layout/auth_form_card.dart';
-import '../../../core/widgets/layout/brand_backdrop.dart';
-import '../../../core/widgets/media/google_mark.dart';
+import '../../../core/widgets/layout/max_content_width.dart';
 import 'personal_details_screen.dart';
-import 'widgets/terms_consent_checkbox.dart';
+import 'widgets/auth_top_bar.dart';
+import 'widgets/step_indicator.dart';
 
-/// View 01 (Create Account) — step 1 of 2. Collects the account basics;
-/// step 2 ([PersonalDetailsScreen]) collects the rest of view 03's
-/// (Patient Profile) details, then sends the verification code.
-/// Verification is by email rather than SMS in this build: no SMS provider
-/// is connected yet (see Lifecome-backend's README), and email needs
-/// nothing extra to work end to end. The mobile number field is kept, but
-/// optional, for appointment reminders once that channel exists.
+/// View 01 (Create Account) — step 1 of 2. Collects the account basics:
+/// full name, email and an optional referral code. Step 2
+/// ([PersonalDetailsScreen]) collects date of birth and phone number, then
+/// actually sends the verification code.
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
 
@@ -32,8 +26,7 @@ class CreateAccountScreen extends StatefulWidget {
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  bool _agreedToTerms = false;
+  final _referralController = TextEditingController();
   String? _nameError;
   String? _emailError;
 
@@ -41,7 +34,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
+    _referralController.dispose();
     super.dispose();
   }
 
@@ -62,247 +55,101 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
     if (_nameError != null || _emailError != null) return;
 
-    if (!_agreedToTerms) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Please agree to the Terms and Privacy Notice to continue.',
-          ),
-        ),
-      );
-      return;
-    }
-
-    final phone = _phoneController.text.trim();
+    final referralCode = _referralController.text.trim();
     context.push(
       RoutePaths.personalDetails,
       extra: PersonalDetailsArgs(
         fullName: name,
         email: email,
-        phoneNumber: phone.isEmpty ? null : phone,
+        referralCode: referralCode.isEmpty ? null : referralCode,
       ),
-    );
-  }
-
-  void _openTerms() {
-    // Placeholder until the legal screens are built (lib/features/legal).
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Terms of use are not published in the app yet.'),
-      ),
-    );
-  }
-
-  void _openPrivacy() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('The privacy notice is not published in the app yet.'),
-      ),
-    );
-  }
-
-  void _continueWithGoogle() {
-    // Placeholder until Google sign-in is connected on both the app and the
-    // backend's IdentityModule.
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Google sign-in is not connected yet.')),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.surface,
       body: SafeArea(
-        child: Stack(
-          children: [
-            const Positioned.fill(child: BrandBackdrop()),
-            SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-              child: AuthFormCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FadeIn(
-                      child: Center(
-                        child: SvgPicture.asset(
-                          'assets/images/logo/lifecome-live-mark.svg',
-                          height: 44,
-                          width: 44,
-                          semanticsLabel: 'LifeCome Live',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-                    const FadeIn(
-                      delay: Duration(milliseconds: 40),
-                      child: Text(
-                        'STEP 1 OF 2',
-                        style: TextStyle(
-                          color: AppColors.blue,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.6,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 80),
-                      child: Text.rich(
-                        TextSpan(
-                          style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.ink,
-                            height: 1.15,
-                          ),
-                          children: [
-                            const TextSpan(text: 'Your care '),
-                            TextSpan(
-                              text: 'starts here',
-                              style: TextStyle(color: AppColors.blue),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    const FadeIn(
-                      delay: Duration(milliseconds: 120),
-                      child: Text(
-                        'One account for your HMO and one-time care.',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: AppColors.inkMuted,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 160),
-                      child: AppTextField(
-                        label: 'Full name',
-                        controller: _nameController,
-                        hintText: 'Enter your full name',
-                        textInputAction: TextInputAction.next,
-                        autofillHints: const [AutofillHints.name],
-                        prefixIcon: Icons.person_outline,
-                        errorText: _nameError,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 200),
-                      child: AppTextField(
-                        label: 'Email',
-                        controller: _emailController,
-                        hintText: 'you@example.com',
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        autofillHints: const [AutofillHints.email],
-                        prefixIcon: Icons.mail_outline,
-                        errorText: _emailError,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 240),
-                      child: AppTextField(
-                        label: 'Mobile number (optional)',
-                        controller: _phoneController,
-                        hintText: 'Enter mobile number',
-                        keyboardType: TextInputType.phone,
-                        textInputAction: TextInputAction.done,
-                        autofillHints: const [AutofillHints.telephoneNumber],
-                        prefixIcon: Icons.phone_outlined,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 260),
-                      child: TermsConsentCheckbox(
-                        checked: _agreedToTerms,
-                        onChanged: (value) =>
-                            setState(() => _agreedToTerms = value),
-                        onTermsTap: _openTerms,
-                        onPrivacyTap: _openPrivacy,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 300),
-                      child: PrimaryButton(
-                        label: 'Continue',
-                        onPressed: _continue,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 320),
-                      child: Row(
-                        children: const [
-                          Expanded(child: Divider(color: AppColors.line)),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppSpacing.sm,
-                            ),
-                            child: Text(
-                              'or continue with',
-                              style: TextStyle(
-                                color: AppColors.inkMuted,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                          Expanded(child: Divider(color: AppColors.line)),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 340),
-                      child: SocialButton(
-                        icon: const GoogleMark(),
-                        label: 'Continue with Google',
-                        onPressed: _continueWithGoogle,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-                    FadeIn(
-                      delay: const Duration(milliseconds: 360),
-                      child: Center(
-                        child: Wrap(
-                          alignment: WrapAlignment.center,
-                          children: [
-                            const Text(
-                              'Already have an account? ',
-                              style: TextStyle(
-                                color: AppColors.inkMuted,
-                                fontSize: 14,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => context.pop(),
-                              child: const Text(
-                                'Sign in',
-                                style: TextStyle(
-                                  color: AppColors.blue,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.sm,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
+          child: MaxContentWidth(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const AuthTopBar(
+                  trailing: StepIndicator(step: 1, totalSteps: 2),
                 ),
-              ),
+                const SizedBox(height: AppSpacing.xl),
+                const Text(
+                  'Create your Account',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.ink,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                const Text(
+                  'Enter your name and email below to create your account with us.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: AppColors.inkMuted,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                AppTextField(
+                  label: 'Full Name',
+                  controller: _nameController,
+                  hintText: 'Enter Full Name',
+                  textInputAction: TextInputAction.next,
+                  autofillHints: const [AutofillHints.name],
+                  errorText: _nameError,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  label: 'Email address',
+                  controller: _emailController,
+                  hintText: 'Enter Email',
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  autofillHints: const [AutofillHints.email],
+                  errorText: _emailError,
+                ),
+                const SizedBox(height: AppSpacing.xxs),
+                const Padding(
+                  padding: EdgeInsets.only(left: AppSpacing.xxs),
+                  child: Text(
+                    'We will send a verification code to this email',
+                    style: TextStyle(fontSize: 12, color: AppColors.inkMuted),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  label: 'Referral Code (Optional)',
+                  controller: _referralController,
+                  hintText: 'Enter referral code',
+                  textInputAction: TextInputAction.done,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                FadeIn(
+                  child: PrimaryButton(
+                    label: 'Continue',
+                    icon: Icons.arrow_forward,
+                    onPressed: _continue,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

@@ -17,7 +17,6 @@ class AuthSessionState {
     this.flow = AuthFlow.createAccount,
     this.fullName,
     required this.email,
-    this.phoneNumber,
     this.errorMessage,
     this.resendAvailableAt,
   });
@@ -26,7 +25,6 @@ class AuthSessionState {
   final AuthFlow flow;
   final String? fullName;
   final String email;
-  final String? phoneNumber;
   final String? errorMessage;
 
   /// When the "resend code" action becomes available again.
@@ -39,7 +37,6 @@ class AuthSessionState {
     AuthFlow? flow,
     String? fullName,
     String? email,
-    String? phoneNumber,
     String? errorMessage,
     bool clearError = false,
     DateTime? resendAvailableAt,
@@ -49,7 +46,6 @@ class AuthSessionState {
       flow: flow ?? this.flow,
       fullName: fullName ?? this.fullName,
       email: email ?? this.email,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       resendAvailableAt: resendAvailableAt ?? this.resendAvailableAt,
     );

@@ -12,6 +12,7 @@ import '../../../core/widgets/inputs/app_text_field.dart';
 import '../../../core/widgets/layout/auth_form_card.dart';
 import '../../../core/widgets/layout/brand_backdrop.dart';
 import '../data/auth_repository.dart';
+import 'widgets/password_rules_checklist.dart';
 
 /// What this screen needs to know: which email and (already-verified)
 /// reset code to submit alongside the new password.
@@ -38,6 +39,7 @@ class _NewPasswordScreenState extends ConsumerState<NewPasswordScreen> {
   bool _obscureConfirm = true;
   String? _passwordError;
   String? _confirmError;
+  String _password = '';
   bool _loading = false;
 
   @override
@@ -70,12 +72,7 @@ class _NewPasswordScreenState extends ConsumerState<NewPasswordScreen> {
             newPassword: password,
           );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Your password has been reset. Please sign in.'),
-        ),
-      );
-      context.go(RoutePaths.signIn);
+      context.go(RoutePaths.passwordChanged);
     } on AuthException catch (error) {
       setState(() => _passwordError = error.message);
     } finally {
@@ -156,6 +153,7 @@ class _NewPasswordScreenState extends ConsumerState<NewPasswordScreen> {
                         autofillHints: const [AutofillHints.newPassword],
                         prefixIcon: Icons.lock_outline,
                         errorText: _passwordError,
+                        onChanged: (value) => setState(() => _password = value),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
@@ -169,6 +167,11 @@ class _NewPasswordScreenState extends ConsumerState<NewPasswordScreen> {
                           ),
                         ),
                       ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    FadeIn(
+                      delay: const Duration(milliseconds: 180),
+                      child: PasswordRulesChecklist(password: _password),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     FadeIn(
