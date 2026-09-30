@@ -65,7 +65,7 @@ export const primaryNav: readonly NavGroup[] = [
 ];
 
 export const utilityNav = {
-  help: { label: "Get Help", href: "/help" },
+  help: { label: "Help", href: "/help" },
   getCare: { label: "Get Care", href: "/book" },
 } as const satisfies Record<string, NavLink>;
 

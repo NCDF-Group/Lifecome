@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { primaryNav, utilityNav } from "@/content/nav";
+import { patientAppUrl } from "@/lib/site";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Container } from "@/components/ui/container";
 import { Logo } from "./logo";
@@ -51,11 +52,11 @@ export function Header() {
   const mobileOpen = openId === "mobile";
 
   return (
-    <header ref={navRef} className="sticky top-0 z-40 border-b border-line bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header className="sticky top-0 z-40 border-b border-line bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
       <Container className="flex h-16 items-center justify-between gap-4">
         <Logo />
 
-        <nav aria-label="Primary" className="hidden xl:block">
+        <nav ref={navRef} aria-label="Primary" className="hidden xl:block">
           <ul className="flex items-center gap-1">
             {primaryNav.map((item) => (
               <li key={item.label} className="relative">
@@ -103,59 +104,22 @@ export function Header() {
           </ul>
         </nav>
 
-        {/* Desktop Utility Nav */}
         <div className="hidden items-center gap-2 xl:flex">
           <RegionSwitcher />
-
-          {/* Help Dropdown */}
-          <div className="relative">
-            <button
-              type="button"
-              aria-expanded={openId === "Help"}
-              aria-controls="menu-Help"
-              onClick={() => toggle("Help")}
-              className="flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-control px-3 text-[0.92rem] font-semibold text-ink hover:bg-surface"
-            >
-              Help
-              <Chevron open={openId === "Help"} />
-            </button>
-            {openId === "Help" && (
-              <ul
-                id="menu-Help"
-                className="absolute right-0 top-full mt-2 w-48 rounded-card border border-line bg-card p-2 shadow-xl shadow-ink/10"
-              >
-                <li>
-                  <Link
-                    href={utilityNav.help.href}
-                    onClick={close}
-                    className="block rounded-control px-3 py-2.5 text-sm font-medium text-ink hover:bg-surface hover:text-link"
-                  >
-                    {utilityNav.help.label}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={utilityNav.getCare.href}
-                    onClick={close}
-                    className="block rounded-control px-3 py-2.5 text-sm font-medium text-ink hover:bg-surface hover:text-link"
-                  >
-                    {utilityNav.getCare.label}
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </div>
-
-          {/* Get Started - CTA button */}
-          <ButtonLink href="/sign-up" variant="primary">
-            Get Started
-          </ButtonLink>
+          <Link href={utilityNav.help.href} className="rounded-control px-3 py-2 text-sm font-semibold text-ink hover:bg-surface">
+            {utilityNav.help.label}
+          </Link>
+          {patientAppUrl && (
+            <a href={`${patientAppUrl}/sign-in`} className="rounded-control px-3 py-2 text-sm font-semibold text-ink hover:bg-surface">
+              Sign In
+            </a>
+          )}
+          <ButtonLink href={utilityNav.getCare.href}>{utilityNav.getCare.label}</ButtonLink>
         </div>
 
-        {/* Mobile Action Bar */}
         <div className="flex items-center gap-2 xl:hidden">
-          <ButtonLink href="/sign-up" size="md" className="px-4">
-            Get Started
+          <ButtonLink href={utilityNav.getCare.href} size="md" className="px-4">
+            {utilityNav.getCare.label}
           </ButtonLink>
           <button
             type="button"
@@ -172,7 +136,7 @@ export function Header() {
         </div>
       </Container>
 
-      {/* Mobile Menu Panel */}
+      {/* data-lenis-prevent on the panel: without it Lenis takes over the wheel/touch and scrolls the page behind the menu, leaving the tall menu itself stuck at the top. */}
       {mobileOpen && (
         <nav
           id="mobile-menu"
@@ -204,28 +168,18 @@ export function Header() {
               </div>
             ))}
             <div className="border-t border-line pt-6">
-              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-ink-muted">Help & Care</p>
-              <ul className="space-y-0.5">
-                <li>
-                  <Link href={utilityNav.help.href} onClick={close} className="block rounded-control px-3 py-3 font-medium text-ink hover:bg-surface">
-                    {utilityNav.help.label}
-                  </Link>
-                </li>
-                <li>
-                  <Link href={utilityNav.getCare.href} onClick={close} className="block rounded-control px-3 py-3 font-medium text-ink hover:bg-surface">
-                    {utilityNav.getCare.label}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div className="border-t border-line pt-6">
               <p className="mb-2 text-xs font-bold uppercase tracking-wider text-ink-muted">Region</p>
               <RegionSwitcher variant="inline" />
             </div>
-            <div className="flex flex-wrap items-center gap-3 border-t border-line pt-6">
-              <ButtonLink href="/sign-up" variant="primary" onClick={close} className="w-full sm:w-auto">
-                Get Started
+            <div className="flex flex-wrap gap-3 border-t border-line pt-6">
+              <ButtonLink href={utilityNav.help.href} variant="secondary" onClick={close}>
+                {utilityNav.help.label}
               </ButtonLink>
+              {patientAppUrl && (
+                <a href={`${patientAppUrl}/sign-in`} className="inline-flex min-h-11 items-center rounded-control border-2 border-link px-5 font-semibold text-link">
+                  Sign In
+                </a>
+              )}
             </div>
           </Container>
         </nav>
