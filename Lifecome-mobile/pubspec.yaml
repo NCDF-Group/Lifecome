@@ -24,6 +24,9 @@ dependencies:
   local_auth: ^3.0.2
   shared_preferences: ^2.5.5
 
+  # HTTP client for Lifecome-Backen (see core/network/api_client.dart)
+  dio: ^5.9.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
