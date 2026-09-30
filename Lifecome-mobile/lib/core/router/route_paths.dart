@@ -50,7 +50,20 @@ abstract final class RoutePaths {
   /// [AuthSuccessArgs] passed as `extra`.
   static const passwordChanged = '/password-changed';
 
-  /// Placeholder destination once verification succeeds. Replaced by the
-  /// real dashboard (blueprint view 04) when that feature is built.
+  /// The LifeCome Live Dashboard (blueprint view 04) — the Home tab of the
+  /// bottom-nav shell (see `AppShell`).
   static const home = '/home';
+
+  /// My Visits tab — upcoming/past appointments and their sub-flows.
+  static const visits = '/visits';
+
+  /// Messages tab — the single LifeCome care team conversation.
+  static const messages = '/messages';
+
+  /// Profile tab — account, health records, and support.
+  static const profile = '/profile';
+
+  static const healthRecords = '/profile/health-records';
+
+  static const helpAndSupport = '/profile/help';
 }

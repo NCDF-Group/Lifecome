@@ -12,9 +12,15 @@ import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/presentation/sign_in_screen.dart';
 import '../../features/auth/presentation/sign_up_success_screen.dart';
 import '../../features/auth/presentation/verify_email_screen.dart';
+import '../../features/booking/presentation/my_visits_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
+import '../../features/health_records/presentation/health_records_screen.dart';
+import '../../features/messaging/presentation/message_threads_screen.dart';
+import '../../features/profile/presentation/patient_profile_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
+import '../../features/support/presentation/help_centre_screen.dart';
 import '../../features/welcome/presentation/welcome_screen.dart';
+import 'app_shell.dart';
 import 'route_paths.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -77,9 +83,53 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RoutePaths.passwordChanged,
         builder: (context, state) => const PasswordChangedScreen(),
       ),
-      GoRoute(
-        path: RoutePaths.home,
-        builder: (context, state) => const DashboardScreen(),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            AppShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.home,
+                builder: (context, state) => const DashboardScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.visits,
+                builder: (context, state) => const MyVisitsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.messages,
+                builder: (context, state) => const MessageThreadsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.profile,
+                builder: (context, state) => const PatientProfileScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'health-records',
+                    builder: (context, state) => const HealthRecordsScreen(),
+                  ),
+                  GoRoute(
+                    path: 'help',
+                    builder: (context, state) => const HelpCentreScreen(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );
