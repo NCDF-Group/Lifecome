@@ -12,8 +12,19 @@ import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/presentation/sign_in_screen.dart';
 import '../../features/auth/presentation/sign_up_success_screen.dart';
 import '../../features/auth/presentation/verify_email_screen.dart';
+import '../../features/booking/domain/models/appointment.dart';
+import '../../features/booking/presentation/before_your_visit_screen.dart';
+import '../../features/booking/presentation/booking_confirmation_screen.dart';
+import '../../features/booking/presentation/choose_appointment_time_screen.dart';
+import '../../features/booking/presentation/choose_service_screen.dart';
 import '../../features/booking/presentation/my_visits_screen.dart';
+import '../../features/booking/presentation/review_booking_screen.dart';
+import '../../features/care_plan/presentation/care_plan_screen.dart';
+import '../../features/consultation/presentation/consultation_call_screen.dart';
+import '../../features/consultation/presentation/waiting_room_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
+import '../../features/doctors/presentation/doctor_profile_screen.dart';
+import '../../features/doctors/presentation/find_a_doctor_screen.dart';
 import '../../features/health_records/presentation/health_records_screen.dart';
 import '../../features/messaging/presentation/message_threads_screen.dart';
 import '../../features/payer/presentation/choose_payment_method_screen.dart';
@@ -104,6 +115,60 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RoutePaths.payerCoverage,
         builder: (context, state) =>
             HmoCoverageScreen(hmoName: state.extra! as String),
+      ),
+      GoRoute(
+        path: RoutePaths.bookingChooseService,
+        builder: (context, state) {
+          final args = state.extra! as (BookingAccessType, String?);
+          return ChooseServiceScreen(accessType: args.$1, hmoName: args.$2);
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.doctorsFindADoctor,
+        builder: (context, state) =>
+            FindADoctorScreen(selection: state.extra! as BookingSelection),
+      ),
+      GoRoute(
+        path: RoutePaths.doctorsProfile,
+        builder: (context, state) =>
+            DoctorProfileScreen(selection: state.extra! as BookingSelection),
+      ),
+      GoRoute(
+        path: RoutePaths.bookingAppointmentTime,
+        builder: (context, state) => ChooseAppointmentTimeScreen(
+          selection: state.extra! as BookingSelection,
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.bookingBeforeYourVisit,
+        builder: (context, state) =>
+            BeforeYourVisitScreen(selection: state.extra! as BookingSelection),
+      ),
+      GoRoute(
+        path: RoutePaths.bookingReview,
+        builder: (context, state) =>
+            ReviewBookingScreen(selection: state.extra! as BookingSelection),
+      ),
+      GoRoute(
+        path: RoutePaths.bookingConfirmation,
+        builder: (context, state) => BookingConfirmationScreen(
+          selection: state.extra! as BookingSelection,
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.consultationWaitingRoom,
+        builder: (context, state) =>
+            WaitingRoomScreen(selection: state.extra! as BookingSelection),
+      ),
+      GoRoute(
+        path: RoutePaths.consultationCall,
+        builder: (context, state) =>
+            ConsultationCallScreen(selection: state.extra! as BookingSelection),
+      ),
+      GoRoute(
+        path: RoutePaths.careplan,
+        builder: (context, state) =>
+            CarePlanScreen(selection: state.extra as BookingSelection?),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>

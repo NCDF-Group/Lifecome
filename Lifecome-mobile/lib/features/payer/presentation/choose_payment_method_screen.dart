@@ -5,6 +5,7 @@ import '../../../core/router/route_paths.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../booking/domain/models/appointment.dart';
 
 /// Blueprint view 05 — Choose How to Pay. The branch point between the HMO
 /// path (views 06-09) and paying directly for a one-time service (view 10
@@ -51,8 +52,9 @@ class ChoosePaymentMethodScreen extends StatelessWidget {
               icon: Icons.account_balance_wallet_outlined,
               title: 'Pay directly',
               description: 'No HMO required. Choose your service, see the price and pay securely.',
-              onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('This is coming soon.')),
+              onTap: () => context.push(
+                RoutePaths.bookingChooseService,
+                extra: (BookingAccessType.direct, null),
               ),
             ),
           ],

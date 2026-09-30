@@ -80,4 +80,45 @@ abstract final class RoutePaths {
   /// Blueprint view 08 — HMO Coverage & Benefits. Reached with the verified
   /// HMO's name passed as `extra`.
   static const payerCoverage = '/payer/coverage';
+
+  /// Blueprint views 09/10 — Check Service Eligibility (HMO) and Choose a
+  /// Service (direct-pay); one screen serves both (see
+  /// `ChooseServiceScreen`). Reached with a `BookingAccessType` + optional
+  /// HMO name passed as `extra`.
+  static const bookingChooseService = '/booking/choose-service';
+
+  /// Blueprint view 11 — Find a Doctor. Reached with a `BookingSelection`.
+  static const doctorsFindADoctor = '/doctors/find';
+
+  /// Blueprint view 12 — Doctor Profile. Reached with a `BookingSelection`.
+  static const doctorsProfile = '/doctors/profile';
+
+  /// Blueprint view 13 — Choose Appointment Time. Reached with a
+  /// `BookingSelection`.
+  static const bookingAppointmentTime = '/booking/appointment-time';
+
+  /// Blueprint view 14 — Before Your Visit. Reached with a
+  /// `BookingSelection`.
+  static const bookingBeforeYourVisit = '/booking/before-your-visit';
+
+  /// Blueprint views 15-16 — Review Booking & Payment / HMO Authorisation
+  /// (merged into one screen). Reached with a `BookingSelection`.
+  static const bookingReview = '/booking/review';
+
+  /// Blueprint view 17 — Booking Confirmation. Reached with a
+  /// `BookingSelection`.
+  static const bookingConfirmation = '/booking/confirmation';
+
+  /// Blueprint view 18 — Consultation Waiting Room. Reached with a
+  /// `BookingSelection`.
+  static const consultationWaitingRoom = '/consultation/waiting-room';
+
+  /// Blueprint view 19 — Video / Audio Consultation. Reached with a
+  /// `BookingSelection`.
+  static const consultationCall = '/consultation/call';
+
+  /// Blueprint view 20 — Care Plan & Visit Summary. Optionally reached with
+  /// a `BookingSelection` passed as `extra` (a just-finished visit); with
+  /// none, shows the empty state instead.
+  static const careplan = '/care-plan';
 }

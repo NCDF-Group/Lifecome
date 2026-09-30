@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/router/route_paths.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/buttons/primary_button.dart';
+import '../../booking/domain/models/appointment.dart';
 
 class _CoveredService {
   const _CoveredService({
@@ -181,8 +184,9 @@ class HmoCoverageScreen extends StatelessWidget {
             const SizedBox(height: AppSpacing.lg),
             PrimaryButton(
               label: 'Book covered care',
-              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('This is coming soon.')),
+              onPressed: () => context.push(
+                RoutePaths.bookingChooseService,
+                extra: (BookingAccessType.hmo, hmoName),
               ),
             ),
           ],
