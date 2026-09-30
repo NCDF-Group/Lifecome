@@ -66,4 +66,18 @@ abstract final class RoutePaths {
   static const healthRecords = '/profile/health-records';
 
   static const helpAndSupport = '/profile/help';
+
+  /// Blueprint view 05 — Choose How to Pay.
+  static const payerChoosePaymentMethod = '/payer/choose-payment-method';
+
+  /// Blueprint view 06 — Select Your HMO.
+  static const payerSelectHmo = '/payer/select-hmo';
+
+  /// Blueprint view 07 — Verify HMO Membership. Reached with the chosen
+  /// HMO's name passed as `extra`.
+  static const payerVerifyMembership = '/payer/verify-membership';
+
+  /// Blueprint view 08 — HMO Coverage & Benefits. Reached with the verified
+  /// HMO's name passed as `extra`.
+  static const payerCoverage = '/payer/coverage';
 }

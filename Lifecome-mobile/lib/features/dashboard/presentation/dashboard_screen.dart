@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/providers/core_providers.dart';
+import '../../../core/router/route_paths.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -117,7 +119,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               icon: Icons.health_and_safety_outlined,
               title: 'Use my LifeCome HMO',
               subtitle: 'Access care covered by your plan',
-              onTap: () => _comingSoon(context),
+              onTap: () => context.push(RoutePaths.payerSelectHmo),
             ),
             const SizedBox(height: AppSpacing.sm),
             _AccessOptionCard(
@@ -125,7 +127,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               icon: Icons.account_balance_wallet_outlined,
               title: 'Pay for a one-time service',
               subtitle: 'No HMO membership needed',
-              onTap: () => _comingSoon(context),
+              onTap: () => context.push(RoutePaths.payerChoosePaymentMethod),
             ),
             const SizedBox(height: AppSpacing.lg),
             const Text(

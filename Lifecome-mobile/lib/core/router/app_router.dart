@@ -16,6 +16,10 @@ import '../../features/booking/presentation/my_visits_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/health_records/presentation/health_records_screen.dart';
 import '../../features/messaging/presentation/message_threads_screen.dart';
+import '../../features/payer/presentation/choose_payment_method_screen.dart';
+import '../../features/payer/presentation/hmo_coverage_screen.dart';
+import '../../features/payer/presentation/select_hmo_screen.dart';
+import '../../features/payer/presentation/verify_hmo_membership_screen.dart';
 import '../../features/profile/presentation/patient_profile_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/support/presentation/help_centre_screen.dart';
@@ -82,6 +86,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.passwordChanged,
         builder: (context, state) => const PasswordChangedScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.payerChoosePaymentMethod,
+        builder: (context, state) => const ChoosePaymentMethodScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.payerSelectHmo,
+        builder: (context, state) => const SelectHmoScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.payerVerifyMembership,
+        builder: (context, state) =>
+            VerifyHmoMembershipScreen(hmoName: state.extra! as String),
+      ),
+      GoRoute(
+        path: RoutePaths.payerCoverage,
+        builder: (context, state) =>
+            HmoCoverageScreen(hmoName: state.extra! as String),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
