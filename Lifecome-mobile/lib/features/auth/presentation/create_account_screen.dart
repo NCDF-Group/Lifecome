@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/animation/fade_in.dart';
@@ -69,7 +70,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(
@@ -85,7 +86,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 const AuthTopBar(
                   trailing: StepIndicator(step: 1, totalSteps: 2),
                 ),
-                const SizedBox(height: AppSpacing.xl),
+                const SizedBox(height: AppSpacing.lg),
+                FadeIn(
+                  child: Center(
+                    child: SvgPicture.asset(
+                      'assets/images/logo/lifecome-live-logo.svg',
+                      height: 32,
+                      semanticsLabel: 'LifeCome Live',
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.lg),
                 const Text(
                   'Create your Account',
                   textAlign: TextAlign.center,
@@ -116,21 +127,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
-                  label: 'Email address',
+                  label: 'Email (for verification)',
                   controller: _emailController,
                   hintText: 'Enter Email',
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   autofillHints: const [AutofillHints.email],
                   errorText: _emailError,
-                ),
-                const SizedBox(height: AppSpacing.xxs),
-                const Padding(
-                  padding: EdgeInsets.only(left: AppSpacing.xxs),
-                  child: Text(
-                    'We will send a verification code to this email',
-                    style: TextStyle(fontSize: 12, color: AppColors.inkMuted),
-                  ),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
@@ -144,6 +147,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: PrimaryButton(
                     label: 'Continue',
                     icon: Icons.arrow_forward,
+                    squared: true,
                     onPressed: _continue,
                   ),
                 ),

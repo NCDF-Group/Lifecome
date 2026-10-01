@@ -92,9 +92,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 FadeIn(
                   child: Center(
                     child: SvgPicture.asset(
-                      'assets/images/logo/lifecome-live-mark.svg',
-                      height: 44,
-                      width: 44,
+                      'assets/images/logo/lifecome-live-logo.svg',
+                      height: 32,
                       semanticsLabel: 'LifeCome Live',
                     ),
                   ),
@@ -166,9 +165,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         size: 20,
                         color: AppColors.inkMuted,
                       ),
-                      onPressed: () => setState(
-                        () => _obscurePassword = !_obscurePassword,
-                      ),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                     ),
                     onSubmitted: (_) => _login(),
                   ),
@@ -192,9 +190,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                                 height: 20,
                                 child: Checkbox(
                                   value: _rememberMe,
-                                  onChanged: (value) =>
-                                      setState(() => _rememberMe = value ?? false),
-                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  onChanged: (value) => setState(
+                                    () => _rememberMe = value ?? false,
+                                  ),
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                               ),
                               const SizedBox(width: AppSpacing.xs),
@@ -249,8 +249,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () =>
-                              context.push(RoutePaths.createAccount),
+                          onTap: () => context.push(RoutePaths.createAccount),
                           child: const Text(
                             'Create one',
                             style: TextStyle(

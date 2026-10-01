@@ -67,7 +67,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     final verifying = authState.status == AuthStatus.verifying;
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(

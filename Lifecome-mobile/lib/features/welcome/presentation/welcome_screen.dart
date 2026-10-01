@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/animation/fade_in.dart';
-import '../../../core/animation/typewriter_text.dart';
 import '../../../core/router/route_paths.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -81,17 +80,17 @@ class WelcomeScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
-                        TypewriterText(
-                          text:
-                              'Talk to trusted doctors, get expert medical advice and '
-                              'access coordinated care, all in one place. Use your HMO '
-                              'or pay directly.',
-                          textAlign: TextAlign.center,
-                          startDelay: const Duration(milliseconds: 400),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.white70,
-                            height: 1.5,
+                        FadeIn(
+                          delay: const Duration(milliseconds: 120),
+                          child: const Text(
+                            'Talk to trusted doctors and access coordinated care, '
+                            'all in one place. Use your HMO or pay directly.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white70,
+                              height: 1.5,
+                            ),
                           ),
                         ),
                         const SizedBox(height: AppSpacing.xl),

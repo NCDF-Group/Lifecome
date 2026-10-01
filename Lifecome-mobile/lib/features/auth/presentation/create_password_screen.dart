@@ -68,7 +68,7 @@ class _CreatePasswordScreenState extends ConsumerState<CreatePasswordScreen> {
     final submitting = authState.status == AuthStatus.submitting;
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
@@ -128,6 +128,7 @@ class _CreatePasswordScreenState extends ConsumerState<CreatePasswordScreen> {
                   label: 'Continue',
                   icon: Icons.arrow_forward,
                   loading: submitting,
+                  squared: true,
                   onPressed: _submit,
                 ),
               ],

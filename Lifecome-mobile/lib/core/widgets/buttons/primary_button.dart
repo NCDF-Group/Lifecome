@@ -14,12 +14,17 @@ class PrimaryButton extends StatelessWidget {
     required this.onPressed,
     this.loading = false,
     this.icon,
+    this.squared = false,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final bool loading;
   final IconData? icon;
+
+  /// True for a square-cornered button (the sign-up flow) instead of the
+  /// usual pill shape.
+  final bool squared;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,7 @@ class PrimaryButton extends StatelessWidget {
           disabledBackgroundColor: AppColors.blue.withValues(alpha: 0.5),
           foregroundColor: AppColors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.pill),
+            borderRadius: BorderRadius.circular(squared ? 0 : AppRadius.pill),
           ),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         ),

@@ -3,9 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'app_colors.dart';
 
-/// Inter (standing in for "Inter Display" — google_fonts exposes the Inter
-/// family as a single variable font rather than separate Text/Display
-/// cuts).
+/// The brand typeface, Manrope.
 ///
 /// This uses `google_fonts`, which downloads and caches the font on first
 /// run rather than bundling it in the app. That is a deliberate, temporary
@@ -14,6 +12,6 @@ import 'app_colors.dart';
 /// this app's README), so the app never depends on a font CDN being
 /// reachable.
 TextTheme buildAppTextTheme(TextTheme base) {
-  return GoogleFonts.interTextTheme(base)
+  return GoogleFonts.manropeTextTheme(base)
       .apply(bodyColor: AppColors.ink, displayColor: AppColors.ink);
 }

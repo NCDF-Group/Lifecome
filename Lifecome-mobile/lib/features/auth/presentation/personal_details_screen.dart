@@ -9,6 +9,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/buttons/primary_button.dart';
 import '../../../core/widgets/inputs/app_text_field.dart';
+import '../../../core/widgets/inputs/phone_number_field.dart';
 import '../../../core/widgets/layout/max_content_width.dart';
 import '../application/auth_controller.dart';
 import '../domain/models/auth_session.dart';
@@ -45,14 +46,13 @@ class PersonalDetailsScreen extends ConsumerStatefulWidget {
 
 class _PersonalDetailsScreenState extends ConsumerState<PersonalDetailsScreen> {
   final _dobController = TextEditingController();
-  final _phoneController = TextEditingController();
   DateTime? _dateOfBirth;
   String? _dobError;
+  String _phoneNumber = '';
 
   @override
   void dispose() {
     _dobController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
@@ -99,7 +99,6 @@ class _PersonalDetailsScreenState extends ConsumerState<PersonalDetailsScreen> {
     });
     if (_dobError != null) return;
 
-    final phone = _phoneController.text.trim();
     final sent = await ref
         .read(authControllerProvider.notifier)
         .requestCode(
@@ -107,7 +106,7 @@ class _PersonalDetailsScreenState extends ConsumerState<PersonalDetailsScreen> {
           email: widget.args.email,
           fullName: widget.args.fullName,
           referralCode: widget.args.referralCode,
-          phoneNumber: phone.isEmpty ? null : phone,
+          phoneNumber: _phoneNumber.isEmpty ? null : _phoneNumber,
           dateOfBirth: _dateOfBirth,
         );
 
@@ -148,7 +147,7 @@ class _PersonalDetailsScreenState extends ConsumerState<PersonalDetailsScreen> {
     final submitting = authState.status == AuthStatus.submitting;
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(
@@ -195,13 +194,9 @@ class _PersonalDetailsScreenState extends ConsumerState<PersonalDetailsScreen> {
                   errorText: _dobError,
                 ),
                 const SizedBox(height: AppSpacing.md),
-                AppTextField(
+                PhoneNumberField(
                   label: 'Phone Number (Optional)',
-                  controller: _phoneController,
-                  hintText: 'Enter phone number',
-                  keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.done,
-                  autofillHints: const [AutofillHints.telephoneNumber],
+                  onChanged: (value) => _phoneNumber = value,
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 FadeIn(
@@ -209,6 +204,7 @@ class _PersonalDetailsScreenState extends ConsumerState<PersonalDetailsScreen> {
                     label: 'Continue',
                     icon: Icons.arrow_forward,
                     loading: submitting,
+                    squared: true,
                     onPressed: _continue,
                   ),
                 ),
