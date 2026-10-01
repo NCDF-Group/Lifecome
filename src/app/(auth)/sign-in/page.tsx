@@ -3,16 +3,10 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { PhoneInput } from "@/components/auth/phone-input";
 import { PasswordInput } from "@/components/auth/password-input";
-
-type AuthMethod = "phone" | "email";
 
 export default function SignInPage() {
   const router = useRouter();
-  const [method, setMethod] = useState<AuthMethod>("phone");
-  const [phone, setPhone] = useState("");
-  const [dialCode, setDialCode] = useState("+234");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -21,16 +15,9 @@ export default function SignInPage() {
     e.preventDefault();
     setError("");
 
-    if (method === "phone") {
-      if (!phone.trim() || phone.length < 7) {
-        setError("Please enter a valid mobile number.");
-        return;
-      }
-    } else {
-      if (!email.trim() || !email.includes("@")) {
-        setError("Please enter a valid email address.");
-        return;
-      }
+    if (!email.trim() || !email.includes("@")) {
+      setError("Please enter a valid email address.");
+      return;
     }
 
     if (!password) {
@@ -38,8 +25,7 @@ export default function SignInPage() {
       return;
     }
 
-    // API connection placeholder
-    setError("Sign-in API not connected yet.");
+    router.push("/auth-success?flow=sign-in");
   };
 
   return (
@@ -49,38 +35,6 @@ export default function SignInPage() {
         Sign in to your LifeCome account to continue.
       </p>
 
-      {/* Auth Method Switcher Tabs (Phone or Email) */}
-      <div className="mt-6 flex rounded-control bg-surface/70 p-1 border border-line">
-        <button
-          type="button"
-          onClick={() => {
-            setMethod("phone");
-            setError("");
-          }}
-          className={`flex-1 rounded-[calc(var(--radius-control)-2px)] py-2 text-xs font-semibold sm:text-sm outline-none focus:outline-none focus:ring-0 ${
-            method === "phone"
-              ? "bg-card text-link font-bold"
-              : "text-ink-muted"
-          }`}
-        >
-          Mobile Number
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setMethod("email");
-            setError("");
-          }}
-          className={`flex-1 rounded-[calc(var(--radius-control)-2px)] py-2 text-xs font-semibold sm:text-sm outline-none focus:outline-none focus:ring-0 ${
-            method === "email"
-              ? "bg-card text-link font-bold"
-              : "text-ink-muted"
-          }`}
-        >
-          Email Address
-        </button>
-      </div>
-
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         {error && (
           <div className="rounded-control border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -88,36 +42,20 @@ export default function SignInPage() {
           </div>
         )}
 
-        {/* Input depending on chosen method (Phone with Geolocation vs Email) */}
-        {method === "phone" ? (
-          <div>
-            <div className="mb-1.5 flex items-center justify-between">
-              <label className="block text-sm font-semibold text-ink">Mobile number</label>
-              <span className="text-xs text-ink-muted">Geo-located country code</span>
-            </div>
-            <PhoneInput
-              phone={phone}
-              onPhoneChange={setPhone}
-              dialCode={dialCode}
-              onDialCodeChange={setDialCode}
-              autoDetectLocation
-            />
-          </div>
-        ) : (
-          <div>
-            <label htmlFor="signinEmail" className="mb-1.5 block text-sm font-semibold text-ink">
-              Email address
-            </label>
-            <input
-              id="signinEmail"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email address"
-              className="w-full rounded-control border border-line bg-card px-3 py-3 text-ink outline-none focus:outline-none focus:ring-0 placeholder:text-ink-muted"
-            />
-          </div>
-        )}
+        {/* Email Address */}
+        <div>
+          <label htmlFor="signinEmail" className="mb-1.5 block text-sm font-semibold text-ink">
+            Email address
+          </label>
+          <input
+            id="signinEmail"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email address"
+            className="w-full rounded-control border border-line bg-card px-3 py-3 text-ink outline-none focus:outline-none focus:ring-0 placeholder:text-ink-muted"
+          />
+        </div>
 
         {/* Password */}
         <div>

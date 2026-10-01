@@ -3,17 +3,16 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { PhoneInput } from "@/components/auth/phone-input";
 import { PasswordInput } from "@/components/auth/password-input";
 
 export default function SignUpPage() {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [dialCode, setDialCode] = useState("+234");
+  const [dob, setDob] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [referral, setReferral] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState("");
 
@@ -25,8 +24,8 @@ export default function SignUpPage() {
       setError("Please enter your full name.");
       return;
     }
-    if (!phone.trim() || phone.length < 7) {
-      setError("Please enter a valid mobile number.");
+    if (!dob) {
+      setError("Please select your date of birth.");
       return;
     }
     if (!email.trim() || !email.includes("@")) {
@@ -46,10 +45,16 @@ export default function SignUpPage() {
       return;
     }
 
-    const fullPhone = dialCode + phone;
-    router.push(
-      `/verify?email=${encodeURIComponent(email)}&phone=${encodeURIComponent(fullPhone)}&flow=sign-up`
-    );
+    const queryParams = new URLSearchParams({
+      email,
+      dob,
+      flow: "sign-up",
+    });
+    if (referral.trim()) {
+      queryParams.set("referral", referral.trim());
+    }
+
+    router.push(`/verify?${queryParams.toString()}`);
   };
 
   return (
@@ -81,15 +86,17 @@ export default function SignUpPage() {
           />
         </div>
 
-        {/* Mobile number (Geo location) */}
+        {/* Date of birth */}
         <div>
-          <label className="mb-1 block text-sm font-semibold text-ink">Mobile number</label>
-          <PhoneInput
-            phone={phone}
-            onPhoneChange={setPhone}
-            dialCode={dialCode}
-            onDialCodeChange={setDialCode}
-            autoDetectLocation
+          <label htmlFor="dob" className="mb-1 block text-sm font-semibold text-ink">
+            Date of birth
+          </label>
+          <input
+            id="dob"
+            type="date"
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
+            className="w-full rounded-control border border-line bg-card px-3 py-2.5 text-ink outline-none focus:outline-none focus:ring-0 placeholder:text-ink-muted"
           />
         </div>
 
@@ -137,6 +144,21 @@ export default function SignUpPage() {
           />
         </div>
 
+        {/* Referral code (optional) */}
+        <div>
+          <label htmlFor="referral" className="mb-1 block text-sm font-semibold text-ink">
+            Referral code <span className="text-xs font-normal text-ink-muted">(optional)</span>
+          </label>
+          <input
+            id="referral"
+            type="text"
+            value={referral}
+            onChange={(e) => setReferral(e.target.value)}
+            placeholder="Enter referral code"
+            className="w-full rounded-control border border-line bg-card px-3 py-2.5 text-ink outline-none focus:outline-none focus:ring-0 placeholder:text-ink-muted tracking-wider"
+          />
+        </div>
+
         {/* Terms agreement */}
         <label className="flex cursor-pointer items-start gap-2.5 pt-1">
           <input
@@ -164,7 +186,6 @@ export default function SignUpPage() {
         >
           Create account
         </button>
-
       </form>
 
       <p className="mt-6 text-center text-sm text-ink">

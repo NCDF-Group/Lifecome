@@ -5,17 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { OtpInput } from "@/components/auth/otp-input";
 
-/** Show country code and last 4 digits, mask the rest. */
-function maskPhone(phone: string): string {
-  if (phone.length <= 6) return phone;
-  const last4 = phone.slice(-4);
-  let prefix = "";
-  if (phone.startsWith("+234")) prefix = "+234";
-  else if (phone.startsWith("+44")) prefix = "+44";
-  else prefix = phone.slice(0, Math.max(2, phone.length - 4));
-  return `${prefix} ••• ••• ${last4}`;
-}
-
 /** Mask email string: e.g. j***n@example.com */
 function maskEmail(email: string): string {
   if (!email || !email.includes("@")) return email;
@@ -30,12 +19,8 @@ function VerifyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") ?? "";
-  const phone = searchParams.get("phone") ?? "";
   const flow = searchParams.get("flow") ?? "sign-up";
 
-  const [verifyTarget, setVerifyTarget] = useState<"email" | "phone">(
-    email ? "email" : "phone"
-  );
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
@@ -68,7 +53,7 @@ function VerifyContent() {
     }
 
     if (flow === "reset") {
-      router.push("/reset-password");
+      router.push(`/reset-password?email=${encodeURIComponent(email)}`);
     } else {
       router.push(`/auth-success?flow=${flow}`);
     }
@@ -76,10 +61,7 @@ function VerifyContent() {
 
   const formattedCountdown = `${Math.floor(countdown / 60).toString().padStart(2, "0")}:${(countdown % 60).toString().padStart(2, "0")}`;
 
-  const currentRecipient =
-    verifyTarget === "email"
-      ? email ? maskEmail(email) : "your email address"
-      : phone ? maskPhone(phone) : "your mobile number";
+  const currentRecipient = email ? maskEmail(email) : "your email address";
 
   return (
     <>
@@ -106,44 +88,10 @@ function VerifyContent() {
 
       <h1 className="text-2xl font-bold text-ink sm:text-3xl text-center">Verify your account</h1>
       <p className="mt-2 text-center text-sm text-ink-muted sm:text-base">
-        Enter the 6-digit code sent to
+        Enter the 6-digit verification code sent to
         <br />
         <span className="font-bold text-ink">{currentRecipient}</span>
       </p>
-
-      {/* Switch channel if both available */}
-      {email && phone && (
-        <div className="mt-4 flex justify-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              setVerifyTarget("email");
-              setOtp("");
-            }}
-            className={`rounded-full px-3 py-1 text-xs font-semibold border ${
-              verifyTarget === "email"
-                ? "border-link bg-link/10 text-link"
-                : "border-line text-ink-muted bg-surface/30"
-            }`}
-          >
-            Verify via Email
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setVerifyTarget("phone");
-              setOtp("");
-            }}
-            className={`rounded-full px-3 py-1 text-xs font-semibold border ${
-              verifyTarget === "phone"
-                ? "border-link bg-link/10 text-link"
-                : "border-line text-ink-muted bg-surface/30"
-            }`}
-          >
-            Verify via SMS
-          </button>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-6">
         {error && (
@@ -177,7 +125,7 @@ function VerifyContent() {
         {/* Actions */}
         <div className="space-y-2 text-center">
           <Link href={flow === "reset" ? "/forgot-password" : "/sign-up"} className="block text-sm font-semibold text-link underline underline-offset-2">
-            Change {verifyTarget === "email" ? "email address" : "phone number"}
+            Change email address
           </Link>
 
           {canResend ? (
