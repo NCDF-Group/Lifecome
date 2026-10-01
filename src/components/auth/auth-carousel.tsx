@@ -33,20 +33,20 @@ export function AuthCarousel() {
   }, []);
 
   return (
-    <div className="relative flex h-full min-h-dvh w-full flex-col justify-end p-8 sm:p-12 lg:p-14 text-white overflow-hidden">
-      {/* Background carousel images with pure, smooth opacity crossfade */}
+    <div className="relative flex h-full min-h-dvh w-full flex-col justify-end p-8 sm:p-12 lg:p-14 text-white overflow-hidden select-none">
+      {/* Background carousel images with slow, gentle blend-in animation (no zoom/movement) */}
       {slides.map((slide, index) => {
         const isActive = index === currentSlide;
         return (
           <div
             key={slide.image}
             style={{
-              transition: "opacity 2s ease-in-out",
+              transition: "opacity 3.5s ease-in-out",
             }}
             className={`absolute inset-0 ${
               isActive
-                ? "opacity-100 z-0"
-                : "opacity-0 -z-10 pointer-events-none"
+                ? "opacity-100 z-10"
+                : "opacity-0 z-0 pointer-events-none"
             }`}
           >
             <Image
@@ -57,15 +57,15 @@ export function AuthCarousel() {
               className="object-cover object-center"
               priority={index === 0}
             />
-            {/* Gradient overlay for text contrast over pictures */}
+            {/* Dark gradient overlay for text legibility */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
           </div>
         );
       })}
 
       {/* Bottom Text Content Overlay - text directly over pictures */}
-      <div className="relative z-10 space-y-6 max-w-xl pb-2">
-        {/* Text Slides Stack with smooth opacity dissolve */}
+      <div className="relative z-20 space-y-6 max-w-xl pb-2">
+        {/* Text Slides Stack with slow, soft blend-in */}
         <div className="grid grid-cols-1 grid-rows-1">
           {slides.map((slide, index) => {
             const isActive = index === currentSlide;
@@ -73,7 +73,7 @@ export function AuthCarousel() {
               <div
                 key={slide.title}
                 style={{
-                  transition: "opacity 1.5s ease-in-out",
+                  transition: "opacity 2.5s ease-in-out",
                 }}
                 className={`col-start-1 row-start-1 space-y-2 ${
                   isActive
@@ -100,7 +100,7 @@ export function AuthCarousel() {
               type="button"
               onClick={() => setCurrentSlide(i)}
               aria-label={`Go to slide ${i + 1}`}
-              style={{ transition: "all 0.5s ease-in-out" }}
+              style={{ transition: "all 0.8s ease-in-out" }}
               className={`h-2 rounded-full ${
                 i === currentSlide ? "w-8 bg-white" : "w-2 bg-white/40 hover:bg-white/60"
               }`}
