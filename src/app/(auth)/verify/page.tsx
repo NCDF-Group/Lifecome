@@ -1,9 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense, type FormEvent } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  Suspense,
+  type FormEvent,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { OtpInput } from "@/components/auth/otp-input";
+import { verifyOtp, requestOtp } from "@/lib/api/identity";
+import { ApiError } from "@/lib/api/client";
 
 /** Mask email string: e.g. j***n@example.com */
 function maskEmail(email: string): string {
@@ -18,13 +25,17 @@ const RESEND_SECONDS = 60;
 function VerifyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const userAccountId = searchParams.get("userAccountId") ?? "";
   const email = searchParams.get("email") ?? "";
   const flow = searchParams.get("flow") ?? "sign-up";
 
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
   const [canResend, setCanResend] = useState(false);
+  const [resending, setResending] = useState(false);
 
   /* Resend countdown timer */
   useEffect(() => {
@@ -37,13 +48,23 @@ function VerifyContent() {
     return () => clearTimeout(timer);
   }, [countdown, canResend]);
 
-  const handleResend = useCallback(() => {
-    setCountdown(RESEND_SECONDS);
-    setCanResend(false);
-    setOtp("");
-  }, []);
+  const handleResend = useCallback(async () => {
+    if (!userAccountId) return;
+    setResending(true);
+    setError("");
+    try {
+      await requestOtp(userAccountId);
+      setCountdown(RESEND_SECONDS);
+      setCanResend(false);
+      setOtp("");
+    } catch (err) {
+      setError(err instanceof ApiError ? err.userMessage : "Failed to resend. Please try again.");
+    } finally {
+      setResending(false);
+    }
+  }, [userAccountId]);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -52,14 +73,41 @@ function VerifyContent() {
       return;
     }
 
-    if (flow === "reset") {
-      router.push(`/reset-password?email=${encodeURIComponent(email)}`);
-    } else {
-      router.push(`/auth-success?flow=${flow}`);
+    if (!userAccountId) {
+      setError("Session expired. Please start the sign-up process again.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Verify OTP code
+      await verifyOtp(userAccountId, otp);
+
+      // On successful verification, redirect to Create Password page
+      const nextParams = new URLSearchParams({
+        userAccountId,
+        email,
+        flow,
+      });
+      router.push(`/create-password?${nextParams.toString()}`);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        if (err.status === 400 || err.status === 422) {
+          setError("Incorrect or expired code. Please try again.");
+        } else {
+          setError(err.userMessage);
+        }
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const formattedCountdown = `${Math.floor(countdown / 60).toString().padStart(2, "0")}:${(countdown % 60).toString().padStart(2, "0")}`;
+  const formattedCountdown = `${Math.floor(countdown / 60)
+    .toString()
+    .padStart(2, "0")}:${(countdown % 60).toString().padStart(2, "0")}`;
 
   const currentRecipient = email ? maskEmail(email) : "your email address";
 
@@ -86,7 +134,9 @@ function VerifyContent() {
         </button>
       </div>
 
-      <h1 className="text-2xl font-bold text-ink sm:text-3xl text-center">Verify your account</h1>
+      <h1 className="text-2xl font-bold text-ink sm:text-3xl text-center">
+        Verify your email
+      </h1>
       <p className="mt-2 text-center text-sm text-ink-muted sm:text-base">
         Enter the 6-digit verification code sent to
         <br />
@@ -95,7 +145,9 @@ function VerifyContent() {
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-6">
         {error && (
-          <div className="rounded-control border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+          <div className="rounded-control border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
         )}
 
         <OtpInput value={otp} onChange={setOtp} />
@@ -103,37 +155,42 @@ function VerifyContent() {
         {/* Submit */}
         <button
           type="submit"
-          className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-control bg-blue py-3.5 text-base font-semibold text-white shadow-md shadow-blue/25 transition duration-300 ease-smooth hover:-translate-y-0.5 hover:bg-blue-strong hover:shadow-lg hover:shadow-blue/35 active:translate-y-0 active:scale-[0.97]"
+          disabled={loading}
+          className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-control bg-blue py-3.5 text-base font-semibold text-white shadow-md shadow-blue/25 transition duration-300 ease-smooth hover:-translate-y-0.5 hover:bg-blue-strong hover:shadow-lg hover:shadow-blue/35 active:translate-y-0 active:scale-[0.97] disabled:opacity-70 disabled:pointer-events-none"
         >
-          Verify and continue
-          <svg
-            aria-hidden
-            viewBox="0 0 16 16"
-            className="size-4 transition-transform duration-300 ease-smooth group-hover:translate-x-1"
-          >
-            <path
-              d="M3 8h10m-4-4 4 4-4 4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          {loading ? (
+            <>
+              <svg aria-hidden className="size-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+              </svg>
+              Verifying…
+            </>
+          ) : (
+            <>
+              Verify email & continue
+              <svg aria-hidden viewBox="0 0 16 16" className="size-4 transition-transform duration-300 ease-smooth group-hover:translate-x-1">
+                <path d="M3 8h10m-4-4 4 4-4 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </>
+          )}
         </button>
 
         {/* Actions */}
         <div className="space-y-2 text-center">
-          <Link href={flow === "reset" ? "/forgot-password" : "/sign-up"} className="block text-sm font-semibold text-link underline underline-offset-2">
-            Change email address
-          </Link>
-
           {canResend ? (
-            <button type="button" onClick={handleResend} className="text-sm font-semibold text-link underline underline-offset-2">
-              Resend verification code
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resending}
+              className="text-sm font-semibold text-link underline underline-offset-2 disabled:opacity-60"
+            >
+              {resending ? "Sending…" : "Resend verification code"}
             </button>
           ) : (
-            <p className="text-sm text-ink-muted">Resend code in {formattedCountdown}</p>
+            <p className="text-sm text-ink-muted">
+              Resend code in {formattedCountdown}
+            </p>
           )}
         </div>
 
@@ -151,7 +208,7 @@ function VerifyContent() {
 
 export default function VerifyPage() {
   return (
-    <Suspense fallback={<div className="py-12 text-center text-ink-muted">Loading...</div>}>
+    <Suspense fallback={<div className="py-12 text-center text-ink-muted">Loading…</div>}>
       <VerifyContent />
     </Suspense>
   );

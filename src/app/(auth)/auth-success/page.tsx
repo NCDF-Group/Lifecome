@@ -1,13 +1,32 @@
 "use client";
 
-import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
 function AuthSuccessContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const flow = searchParams.get("flow");
   const isReset = flow === "reset";
+
+  const targetPath = isReset ? "/sign-in" : "/dashboard";
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          router.push(targetPath);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [router, targetPath]);
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -65,10 +84,10 @@ function AuthSuccessContent() {
       )}
 
       <Link
-        href="/sign-in"
+        href={targetPath}
         className="group relative mt-8 flex w-full items-center justify-center gap-2 overflow-hidden rounded-control bg-blue py-3.5 text-base font-semibold text-white shadow-md shadow-blue/25 transition duration-300 ease-smooth hover:-translate-y-0.5 hover:bg-blue-strong hover:shadow-lg hover:shadow-blue/35 active:translate-y-0 active:scale-[0.97]"
       >
-        {isReset ? "Sign in" : "Continue"}
+        {isReset ? "Sign in" : "Go to Dashboard"}
         <svg
           aria-hidden
           viewBox="0 0 16 16"
@@ -84,6 +103,10 @@ function AuthSuccessContent() {
           />
         </svg>
       </Link>
+
+      <p className="mt-4 text-xs text-ink-muted">
+        Redirecting automatically in <span className="font-semibold text-ink">{countdown}s</span>…
+      </p>
 
       <style>{`
         @keyframes scale-in {
