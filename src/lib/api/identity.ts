@@ -1,16 +1,29 @@
-import { apiClient } from "./client";
+import { ApiError, apiClient } from "./client";
 
 const V1 = "/api/v1/identity";
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
 
-export interface RegisterResponse {
-  userAccountId: string;
-  [key: string]: unknown;
+type JsonObject = Record<string, unknown>;
+
+function isObject(value: unknown): value is JsonObject {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-export interface LoginResponse {
-  accessToken: string;
+function findUserAccountId(value: unknown): string | undefined {
+  if (!isObject(value)) return undefined;
+  for (const key of ["userAccountId", "id"]) {
+    if (typeof value[key] === "string" && value[key]) return value[key];
+  }
+  for (const key of ["data", "userAccount", "user"]) {
+    const nestedId = findUserAccountId(value[key]);
+    if (nestedId) return nestedId;
+  }
+  return undefined;
+}
+
+export interface RegisterResponse {
+  userAccountId: string;
   [key: string]: unknown;
 }
 
@@ -26,22 +39,16 @@ export async function register(
     payload.phoneNumber = phoneNumber.trim();
   }
 
-  const res = await apiClient.post<Record<string, any>>(`${V1}/register`, payload);
+  const response = await apiClient.post<unknown>(`${V1}/register`, payload);
   
-  const userAccountId =
-    res?.userAccountId ??
-    res?.id ??
-    res?.data?.userAccountId ??
-    res?.data?.id ??
-    res?.userAccount?.id ??
-    res?.user?.id;
+  const userAccountId = findUserAccountId(response);
 
   if (!userAccountId || typeof userAccountId !== "string") {
-    console.error("[API] Could not find userAccountId in register response:", res);
+    console.error("[API] Could not find userAccountId in register response:", response);
     throw new Error("Could not retrieve user account ID from registration response.");
   }
 
-  return { ...res, userAccountId };
+  return { ...(isObject(response) ? response : {}), userAccountId };
 }
 
 /** Step 2 – send OTP to the user's email */
@@ -59,9 +66,24 @@ export function setPassword(userAccountId: string, password: string) {
   return apiClient.post<void>(`${V1}/password`, { userAccountId, password });
 }
 
-/** Patient login */
-export function login(email: string, password: string) {
-  return apiClient.post<LoginResponse>(`${V1}/login`, { email, password });
+/** Patient login; the server stores the returned access token in an HttpOnly cookie. */
+export async function login(email: string, password: string, rememberMe = false): Promise<void> {
+  const response = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password, rememberMe }),
+    cache: "no-store",
+  });
+
+  if (response.ok) return;
+
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    body = null;
+  }
+  throw new ApiError(response.status, body);
 }
 
 /** Forgot password – request reset code (sends email) */

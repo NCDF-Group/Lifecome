@@ -1,5 +1,5 @@
 /** Base URL pulled from env – falls back to the live server so the app works without .env */
-const BASE_URL =
+export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "https://lifecome-backend.onrender.com";
 
 // ─── Error Types ─────────────────────────────────────────────────────────────
@@ -50,7 +50,7 @@ async function request<T>(
     headers["Authorization"] = `Bearer ${opts.token}`;
   }
 
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     method,
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,

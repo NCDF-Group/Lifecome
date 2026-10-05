@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PasswordInput } from "@/components/auth/password-input";
 import { login } from "@/lib/api/identity";
-import { saveToken } from "@/lib/auth/session";
 import { ApiError } from "@/lib/api/client";
 
 const REMEMBERED_EMAIL_KEY = "lc_remembered_email";
@@ -23,6 +22,8 @@ export default function SignInPage() {
     try {
       const savedEmail = localStorage.getItem(REMEMBERED_EMAIL_KEY);
       if (savedEmail) {
+        // Browser storage is only available after hydration.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setEmail(savedEmail);
         setRememberMe(true);
       }
@@ -46,7 +47,7 @@ export default function SignInPage() {
 
     setLoading(true);
     try {
-      const { accessToken } = await login(email.trim(), password);
+      await login(email.trim(), password, rememberMe);
 
       // Handle Remember Me persistence
       try {
@@ -59,7 +60,6 @@ export default function SignInPage() {
         // Ignore storage errors
       }
 
-      saveToken(accessToken, rememberMe);
       router.push("/dashboard");
     } catch (err) {
       if (err instanceof ApiError) {

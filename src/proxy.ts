@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { GEO_COOKIE, LANGUAGE_COOKIE, POPUP_COOKIE, REGION_COOKIE } from "@/lib/region";
+import { AUTH_COOKIE } from "@/lib/auth/session";
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
@@ -22,6 +23,13 @@ export function proxy(request: NextRequest) {
     redirect.cookies.delete(LANGUAGE_COOKIE);
     redirect.cookies.delete(POPUP_COOKIE);
     return redirect;
+  }
+
+  if (
+    request.nextUrl.pathname.startsWith("/dashboard") &&
+    !request.cookies.has(AUTH_COOKIE)
+  ) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
   const override = process.env.NODE_ENV !== "production" ? request.nextUrl.searchParams.get("geo") : null;
