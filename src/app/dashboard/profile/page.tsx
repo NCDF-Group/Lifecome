@@ -20,12 +20,16 @@ import {
   Save,
   Building2,
   X,
+  Sun,
+  Moon,
+  Monitor,
 } from "lucide-react";
 import StatusChip from "@/components/ui/StatusChip";
 import { usePatientProfile } from "@/components/dashboard/patient-provider";
+import { useThemePreference, type ThemePreference } from "@/components/theme/theme-provider";
 import { patientEmail, patientField, patientInitials, patientName } from "@/lib/patient/profile";
 
-type TabType = "demographics" | "hmo" | "dependants" | "security";
+type TabType = "demographics" | "hmo" | "dependants" | "security" | "appearance";
 
 interface Dependant {
   id: string;
@@ -49,8 +53,10 @@ interface DemographicsFormData {
 
 export default function PatientProfilePage() {
   const { profile, loading, error } = usePatientProfile();
+  const { preference: themePreference, setPreference: setThemePreference } = useThemePreference();
   const [activeTab, setActiveTab] = useState<TabType>("demographics");
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [themeError, setThemeError] = useState("");
 
   // ---------- TAB 1: DEMOGRAPHICS STATE ----------
   const [formOverrides, setFormOverrides] = useState<Partial<DemographicsFormData>>({});
@@ -67,6 +73,15 @@ export default function PatientProfilePage() {
   };
   const updateFormField = (field: keyof DemographicsFormData, value: string) => {
     setFormOverrides((overrides) => ({ ...overrides, [field]: value }));
+  };
+
+  const handleThemeChange = (preference: ThemePreference) => {
+    setThemeError("");
+    try {
+      setThemePreference(preference);
+    } catch {
+      setThemeError("Your theme preference could not be saved in this browser.");
+    }
   };
 
   const handleDemographicsSubmit = (e: React.FormEvent) => {
@@ -207,6 +222,18 @@ export default function PatientProfilePage() {
         >
           <Lock className="size-4" />
           Security & Consent
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("appearance")}
+          className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition whitespace-nowrap cursor-pointer ${
+            activeTab === "appearance"
+              ? "border-[#0667B8] text-[#0667B8]"
+              : "border-transparent text-slate-500 hover:text-slate-800"
+          }`}
+        >
+          <Sun className="size-4" />
+          Appearance
         </button>
       </div>
 
@@ -676,6 +703,57 @@ export default function PatientProfilePage() {
             </div>
           </div>
         </div>
+      )}
+
+      {activeTab === "appearance" && (
+        <section aria-labelledby="appearance-heading" className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
+          <div className="mb-6">
+            <h2 id="appearance-heading" className="text-lg font-bold text-slate-900">Appearance</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Choose how LifeCome Live looks on this device.
+            </p>
+          </div>
+
+          {themeError && (
+            <p role="alert" className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+              {themeError}
+            </p>
+          )}
+
+          <fieldset>
+            <legend className="mb-3 text-sm font-semibold text-slate-700">Theme</legend>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {([
+                { value: "light", label: "Light", Icon: Sun, description: "Always use light mode" },
+                { value: "dark", label: "Dark", Icon: Moon, description: "Always use dark mode" },
+                { value: "system", label: "System", Icon: Monitor, description: "Follow your device setting" },
+              ] satisfies { value: ThemePreference; label: string; Icon: typeof Sun; description: string }[]).map(
+                ({ value, label, Icon, description }) => {
+                  const selected = themePreference === value;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => handleThemeChange(value)}
+                      className={`flex items-start gap-3 rounded-xl border p-4 text-left transition ${
+                        selected
+                          ? "border-[#0667B8] bg-blue-50 ring-2 ring-[#0667B8]/15"
+                          : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                      }`}
+                    >
+                      <Icon className={`mt-0.5 size-5 shrink-0 ${selected ? "text-[#0667B8]" : "text-slate-500"}`} />
+                      <span>
+                        <span className="block text-sm font-bold text-slate-900">{label}</span>
+                        <span className="mt-1 block text-xs text-slate-500">{description}</span>
+                      </span>
+                    </button>
+                  );
+                },
+              )}
+            </div>
+          </fieldset>
+        </section>
       )}
     </div>
   );

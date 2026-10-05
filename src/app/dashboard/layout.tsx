@@ -79,7 +79,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans antialiased text-slate-800">
+    <div className="dashboard-theme min-h-screen bg-[#F8FAFC] font-sans antialiased text-slate-800">
       {/* ---------------- MOBILE OVERLAY & DRAWER ---------------- */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">

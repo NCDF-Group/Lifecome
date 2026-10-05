@@ -6,6 +6,8 @@ import "lenis/dist/lenis.css";
 import "./globals.css";
 import { ScrollToTop } from "@/components/site/scroll-to-top";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
+import { ThemeProvider } from "@/components/theme/theme-provider";
+import { themeInitScript } from "@/lib/theme";
 
 const sans = Manrope({
   variable: "--font-sans-body",
@@ -32,15 +34,18 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    // suppressHydrationWarning: regionInitScript sets data-region and lang on <html> before React hydrates.
+    // The init scripts set regional and theme attributes before React hydrates.
     <html lang="en-NG" data-theme="light" className={`${sans.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: regionInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="flex min-h-full flex-col" suppressHydrationWarning>
-        <SmoothScroll />
-        {children}
-        <ScrollToTop />
+        <ThemeProvider>
+          <SmoothScroll />
+          {children}
+          <ScrollToTop />
+        </ThemeProvider>
       </body>
     </html>
   );
