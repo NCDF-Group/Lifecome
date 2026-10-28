@@ -92,8 +92,8 @@ export default function WellbeingPage() {
             <div className="lg:col-span-6 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full max-w-lg mx-auto lg:max-w-none">
                 <Image
-                  src="/images/home-wellbeing.png"
-                  alt="Wellbeing consultation with tea"
+                  src="/images/Smiling woman having a supportive wellbeing conversation.svg"
+                  alt="Two women having a supportive wellbeing conversation"
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -355,8 +355,8 @@ export default function WellbeingPage() {
 
             <div className="lg:col-span-6 relative h-64 sm:h-80 w-full">
               <Image
-                src="/images/service-prescriptions.webp"
-                alt="Wellbeing and health products"
+                src="/images/Amber herbal supplement bottles and mortar with herbs.svg"
+                alt="Herbal supplement bottles and a mortar with herbs"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover object-center"
@@ -440,7 +440,7 @@ export default function WellbeingPage() {
 
             <div className="lg:col-span-5 relative h-64 sm:h-80 w-full">
               <Image
-                src="/images/follow-up.webp"
+                src="/images/Plant & Mug photo → Warm tea cup and green potted plant on sunny table.svg"
                 alt="Taking a quiet moment with tea at home"
                 fill
                 sizes="(max-width: 1024px) 100vw, 42vw"

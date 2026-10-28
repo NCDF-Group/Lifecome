@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/api-client"
 import { authStorage } from "@/lib/auth-storage"
-import type { PatientAccount, PatientMeResponse, PatientSession, User } from "@/types"
+import { LOGOUT_PATH } from "@/lib/constants"
+import type { PatientAccount, PatientMeResponse, PatientSession, SessionTiming, User } from "@/types"
 
 export interface LoginCredentials {
   email: string
@@ -33,6 +34,9 @@ export function toPatientUser(account: PatientAccount, displayName?: string | nu
 function saveSession(session: PatientSession): User {
   const user = toPatientUser(session.account)
   authStorage.setTokens(session.accessToken, session.expiresIn)
+  if (session.idleTimeoutSeconds) authStorage.setIdleTimeoutSeconds(session.idleTimeoutSeconds)
+  authStorage.recordActivity()
+  authStorage.recordServerTouch()
   return user
 }
 
@@ -78,7 +82,25 @@ export const authService = {
     return { response: data, user }
   },
 
-  logout(): void {
-    authStorage.clearTokens()
+  /** Restarts the server-side idle timeout ("Stay signed in" and the activity heartbeat). */
+  async refreshSession(): Promise<SessionTiming> {
+    // Timed from the request, not the response, so the client never believes the server
+    // session runs longer than it does
+    const sentAt = Date.now()
+    const { data } = await apiClient.post<SessionTiming>("/identity/session/refresh")
+    authStorage.setIdleTimeoutSeconds(data.idleTimeoutSeconds)
+    authStorage.recordServerTouch(sentAt)
+    return data
+  },
+
+  /** Ends the session on the server too, so the token stops working even if it leaked. */
+  async logout(): Promise<void> {
+    try {
+      if (authStorage.getAccessToken()) await apiClient.post(LOGOUT_PATH)
+    } catch {
+      // Already timed out or offline; the local session is cleared either way.
+    } finally {
+      authStorage.clearTokens()
+    }
   },
 }

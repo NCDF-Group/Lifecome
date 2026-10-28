@@ -27,19 +27,19 @@ function WelcomeContent() {
       {/* Header */}
       <header className="bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <BrandLogo variant="health" href="/" />
+          <BrandLogo variant="health" href="/portal/dashboard" />
 
           <nav className="hidden lg:flex items-center gap-8 text-sm font-medium text-slate-700">
-            <Link href="/gp-care" className="hover:text-[#0062F5] transition-colors">
+            <Link href="/portal/services/gp-services" className="hover:text-[#0062F5] transition-colors">
               GP services
             </Link>
-            <Link href="/wellbeing" className="hover:text-[#0062F5] transition-colors">
+            <Link href="/portal/services/wellbeing" className="hover:text-[#0062F5] transition-colors">
               Wellbeing
             </Link>
-            <Link href="/professional-care" className="hover:text-[#0062F5] transition-colors">
+            <Link href="/portal/services/professional-care" className="hover:text-[#0062F5] transition-colors">
               Professional Care
             </Link>
-            <Link href="/insurance" className="hover:text-[#0062F5] transition-colors">
+            <Link href="/portal/services/insurance" className="hover:text-[#0062F5] transition-colors">
               Insurance
             </Link>
           </nav>
@@ -120,7 +120,7 @@ function WelcomeContent() {
               </p>
             </div>
             <Link
-              href="/clinic-appointments"
+              href="/portal/appointments/book"
               className="mt-6 w-full bg-[#0062F5] hover:bg-[#0052cc] text-white text-xs font-semibold py-3 px-4 rounded-[4px] flex items-center justify-center gap-1 transition-colors"
             >
               <span>Book a GP</span>
@@ -140,7 +140,7 @@ function WelcomeContent() {
               </p>
             </div>
             <Link
-              href="/wellbeing"
+              href="/portal/services/wellbeing"
               className="mt-6 w-full bg-[#0062F5] hover:bg-[#0052cc] text-white text-xs font-semibold py-3 px-4 rounded-[4px] flex items-center justify-center gap-1 transition-colors"
             >
               <span>Explore Wellbeing</span>
@@ -160,7 +160,7 @@ function WelcomeContent() {
               </p>
             </div>
             <Link
-              href="/professional-care"
+              href="/portal/services/professional-care"
               className="mt-6 w-full bg-[#0062F5] hover:bg-[#0052cc] text-white text-xs font-semibold py-3 px-4 rounded-[4px] flex items-center justify-center gap-1 transition-colors"
             >
               <span>Explore Care</span>
@@ -180,7 +180,7 @@ function WelcomeContent() {
               </p>
             </div>
             <Link
-              href="/insurance"
+              href="/portal/services/insurance"
               className="mt-6 w-full bg-[#0062F5] hover:bg-[#0052cc] text-white text-xs font-semibold py-3 px-4 rounded-[4px] flex items-center justify-center gap-1 transition-colors"
             >
               <span>Explore Insurance</span>
@@ -242,7 +242,7 @@ function WelcomeContent() {
 
           <div className="pt-6 flex flex-col items-center gap-3">
             <Link
-              href="/portal/profile"
+              href="/portal/dashboard"
               className="bg-[#0062F5] hover:bg-[#0052cc] text-white font-medium px-8 py-3.5 rounded-[4px] flex items-center gap-1.5 transition-colors shadow-xs"
             >
               <span>Go to my dashboard</span>
@@ -263,19 +263,19 @@ function WelcomeContent() {
       {/* Footer matching Figma */}
       <footer className="bg-white border-t border-slate-100 py-8 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <BrandLogo variant="health" href="/" size="sm" />
+          <BrandLogo variant="health" href="/portal/dashboard" size="sm" />
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <Link href="/gp-care" className="hover:text-[#0062F5]">
+            <Link href="/portal/services/gp-services" className="hover:text-[#0062F5]">
               GP services
             </Link>
-            <Link href="/wellbeing" className="hover:text-[#0062F5]">
+            <Link href="/portal/services/wellbeing" className="hover:text-[#0062F5]">
               Wellbeing
             </Link>
-            <Link href="/professional-care" className="hover:text-[#0062F5]">
+            <Link href="/portal/services/professional-care" className="hover:text-[#0062F5]">
               Professional Care
             </Link>
-            <Link href="/insurance" className="hover:text-[#0062F5]">
+            <Link href="/portal/services/insurance" className="hover:text-[#0062F5]">
               Insurance
             </Link>
             <span className="text-slate-300">|</span>

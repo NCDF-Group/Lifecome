@@ -91,8 +91,8 @@ export default function HomePage() {
             <div className="lg:col-span-6 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full max-w-lg mx-auto lg:max-w-none">
                 <Image
-                  src="/images/hero.webp"
-                  alt="Woman using her phone to manage her health and wellbeing"
+                  src="/images/Smiling doctor in consultation.svg"
+                  alt="Smiling doctor in consultation with a patient"
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -293,8 +293,8 @@ export default function HomePage() {
             <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-2xs grid grid-cols-1 sm:grid-cols-12 hover:shadow-md transition-shadow">
               <div className="sm:col-span-5 relative h-48 sm:h-auto min-h-[160px]">
                 <Image
-                  src="/images/home-wellbeing.png"
-                  alt="Wellbeing consultation"
+                  src="/images/Wellbeing lifestyle support.svg"
+                  alt="Wellbeing lifestyle support"
                   fill
                   className="object-cover"
                 />
@@ -320,7 +320,7 @@ export default function HomePage() {
             <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-2xs grid grid-cols-1 sm:grid-cols-12 hover:shadow-md transition-shadow">
               <div className="sm:col-span-5 relative h-48 sm:h-auto min-h-[160px]">
                 <Image
-                  src="/images/home-profcare.png"
+                  src="/images/Container.svg"
                   alt="Professional Care assistant"
                   fill
                   className="object-cover"
@@ -515,8 +515,8 @@ export default function HomePage() {
 
             <div className="lg:col-span-5 relative h-64 sm:h-80 w-full">
               <Image
-                src="/images/home-cta-doctor.png"
-                alt="Doctor smiling at LifeCome Health"
+                src="/images/Right CTA Image.svg"
+                alt="Smiling man at LifeCome Health"
                 fill
                 className="object-cover object-center"
               />

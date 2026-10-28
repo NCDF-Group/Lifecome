@@ -58,24 +58,11 @@ function InterestsContent() {
         <h2 className="text-3xl font-extrabold text-slate-900 leading-tight">Choose what<br />matters to you.</h2>
         <p className="text-sm text-slate-600">You can change these choices later.</p>
       </div>
-      <div className="my-8 flex items-center justify-center">
-        <div className="w-56 h-56 relative flex items-center justify-center">
-          <div className="absolute w-44 h-44 rounded-full bg-emerald-100/50 -top-2 -left-2 blur-md" />
-          <div className="absolute w-36 h-36 rounded-full bg-sky-100/60 bottom-0 right-0 blur-sm" />
-          <svg className="w-48 h-48 relative z-10" viewBox="0 0 200 200" fill="none" aria-hidden="true">
-            <path d="M100 150 55 105C30 80 30 45 60 30c25-12 40 10 40 10s15-22 40-10c30 15 30 50 5 75l-45 45Z" stroke="#0062F5" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx="160" cy="65" r="14" fill="#A7F3D0" opacity=".7" />
-            <circle cx="40" cy="140" r="16" fill="#86EFAC" opacity=".6" />
-            <circle cx="155" cy="140" r="12" fill="#BAE6FD" opacity=".8" />
-          </svg>
-        </div>
-      </div>
-      <div />
     </div>
   )
 
   return (
-    <AuthLayout leftContent={leftContent}>
+    <AuthLayout leftContent={leftContent} illustration="/illustrator/image 6 (2).svg">
       <div className="space-y-6">
         <StepProgressIndicator currentStep={4} stepLabel="Your interests" />
         <div>

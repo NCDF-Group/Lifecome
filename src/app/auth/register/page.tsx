@@ -8,10 +8,6 @@ import {
   Eye,
   EyeOff,
   Info,
-  Monitor,
-  Leaf,
-  Users,
-  Shield,
 } from "lucide-react"
 import { AuthLayout } from "@/components/auth/AuthLayout"
 import { StepProgressIndicator } from "@/components/auth/StepProgressIndicator"
@@ -51,70 +47,19 @@ export default function RegisterStep1Page() {
         <p className="text-sm text-slate-600">
           Manage your health and care, all in one place.
         </p>
-
-        {/* 4 Feature Mini Cards matching Figma */}
-        <div className="grid grid-cols-2 gap-3 pt-3">
-          <div className="p-3 bg-white/80 rounded-2xl border border-slate-100 shadow-2xs">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2">
-              <Monitor className="w-4 h-4" />
-            </div>
-            <h4 className="text-xs font-bold text-slate-900">GP services</h4>
-            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
-              Appointments online and in person.
-            </p>
-          </div>
-
-          <div className="p-3 bg-white/80 rounded-2xl border border-slate-100 shadow-2xs">
-            <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center mb-2">
-              <Leaf className="w-4 h-4" />
-            </div>
-            <h4 className="text-xs font-bold text-slate-900">Wellbeing</h4>
-            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
-              Support for your everyday health.
-            </p>
-          </div>
-
-          <div className="p-3 bg-white/80 rounded-2xl border border-slate-100 shadow-2xs">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-2">
-              <Users className="w-4 h-4" />
-            </div>
-            <h4 className="text-xs font-bold text-slate-900">Professional Care</h4>
-            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
-              Support around your everyday needs.
-            </p>
-          </div>
-
-          <div className="p-3 bg-white/80 rounded-2xl border border-slate-100 shadow-2xs">
-            <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mb-2">
-              <Shield className="w-4 h-4" />
-            </div>
-            <h4 className="text-xs font-bold text-slate-900">Insurance</h4>
-            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
-              Explore cover and manage policies.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Decorative Heart Outline at bottom */}
-      <div className="pt-4 flex justify-center">
-        <svg className="w-36 h-28" viewBox="0 0 160 120" fill="none">
-          <path
-            d="M80 95 L45 60 C25 40 25 15 50 8 C68 2 80 20 80 20 C80 20 92 2 110 8 C135 15 135 40 115 60 Z"
-            stroke="#38BDF8"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <circle cx="28" cy="95" r="9" fill="#A7F3D0" opacity="0.6" />
-          <circle cx="135" cy="85" r="11" fill="#BAE6FD" opacity="0.7" />
-        </svg>
+        {/* The four service cards are part of the illustration artwork */}
+        <ul className="sr-only">
+          <li>GP services: Appointments online and in person.</li>
+          <li>Wellbeing: Support for your everyday health.</li>
+          <li>Professional Care: Support around your everyday needs.</li>
+          <li>Insurance: Explore cover and manage policies.</li>
+        </ul>
       </div>
     </div>
   )
 
   return (
-    <AuthLayout leftContent={leftContent}>
+    <AuthLayout leftContent={leftContent} illustration="/illustrator/image 2 (1).svg">
       <div className="space-y-6">
         {/* Step indicator matching Figma */}
         <StepProgressIndicator currentStep={1} stepLabel="Account" />

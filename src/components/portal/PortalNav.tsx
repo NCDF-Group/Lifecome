@@ -30,7 +30,7 @@ export function PortalNav() {
     <div className="bg-white border-b border-slate-200 sticky top-0 z-40">
       {/* Top Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href="/portal/dashboard" className="flex items-center gap-2.5">
           <div className="relative w-8 h-8">
             <Image
               src="/brand/lifecomeH.png"

@@ -86,7 +86,7 @@ export default function ProfessionalCarePage() {
             <div className="lg:col-span-6 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full max-w-lg mx-auto lg:max-w-none">
                 <Image
-                  src="/images/profcare-hero.png"
+                  src="/images/Elderly woman smiling with healthcare worker.svg"
                   alt="Professional caregiver supporting senior lady at home"
                   fill
                   priority
@@ -266,7 +266,7 @@ export default function ProfessionalCarePage() {
             {/* Left Photo */}
             <div className="lg:col-span-6 relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full">
               <Image
-                src="/images/profcare-tea.png"
+                src="/images/Elderly gentleman in glasses speaking with a carer.svg"
                 alt="Carer serving tea to elderly gentleman"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -508,7 +508,7 @@ export default function ProfessionalCarePage() {
 
             <div className="lg:col-span-4 relative h-40 sm:h-44 w-full">
               <Image
-                src="/images/profcare-banner-meeting.png"
+                src="/images/Smiling couple consultation.svg"
                 alt="Care assessment team consultation"
                 fill
                 sizes="(max-width: 1024px) 100vw, 33vw"

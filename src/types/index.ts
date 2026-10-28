@@ -20,10 +20,17 @@ export interface PatientAccount {
   status: string
 }
 
-export interface PatientSession {
+export interface PatientSession extends Partial<SessionTiming> {
   accessToken: string
   expiresIn: number
   account: PatientAccount
+}
+
+/** Server-side session timing returned at sign-in and by `/identity/session/refresh`. */
+export interface SessionTiming {
+  idleTimeoutSeconds: number
+  idleExpiresAt: string
+  expiresAt: string
 }
 
 export interface PatientMeResponse {

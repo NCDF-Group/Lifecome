@@ -42,72 +42,11 @@ export default function ForgotPasswordPage() {
           and care in one place.
         </p>
       </div>
-
-      {/* Key & Envelope Illustration matching Figma */}
-      <div className="my-8 flex items-center justify-center">
-        <div className="w-56 h-56 relative flex items-center justify-center">
-          <div className="absolute w-44 h-44 rounded-full bg-emerald-100/50 -top-2 -left-2 blur-md" />
-          <div className="absolute w-36 h-36 rounded-full bg-sky-100/60 bottom-0 right-0 blur-sm" />
-
-          <svg className="w-48 h-48 relative z-10" viewBox="0 0 200 200" fill="none">
-            {/* Soft decorative background leaf */}
-            <circle cx="50" cy="120" r="30" fill="#A7F3D0" opacity="0.6" />
-            <circle cx="160" cy="140" r="24" fill="#BAE6FD" opacity="0.7" />
-
-            {/* Envelope in Background */}
-            <rect
-              x="60"
-              y="95"
-              width="100"
-              height="70"
-              rx="10"
-              fill="white"
-              stroke="#0062F5"
-              strokeWidth="4"
-            />
-            <path
-              d="M60 100 L110 135 L160 100"
-              stroke="#0062F5"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-
-            {/* Spark lines */}
-            <path d="M165 90 L175 80" stroke="#0062F5" strokeWidth="3" strokeLinecap="round" />
-            <path d="M175 100 L188 100" stroke="#0062F5" strokeWidth="3" strokeLinecap="round" />
-            <path d="M170 115 L182 122" stroke="#0062F5" strokeWidth="3" strokeLinecap="round" />
-
-            {/* Stylized Key in Foreground */}
-            <circle
-              cx="75"
-              cy="95"
-              r="22"
-              fill="white"
-              stroke="#0062F5"
-              strokeWidth="4.5"
-            />
-            <circle cx="75" cy="95" r="7" fill="#0062F5" />
-            <path
-              d="M93 108 L55 145 C50 150 42 146 45 140 L50 135 L45 130 L55 120"
-              stroke="#0062F5"
-              strokeWidth="4.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="white"
-            />
-          </svg>
-        </div>
-
-        {error && <div role="alert" className="p-3 bg-red-50 text-red-700 text-sm rounded-xl border border-red-200">{error}</div>}
-      </div>
-
-      <div />
     </div>
   )
 
   return (
-    <AuthLayout leftContent={leftContent}>
+    <AuthLayout leftContent={leftContent} illustration="/illustrator/image 6.svg">
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
@@ -120,6 +59,8 @@ export default function ForgotPasswordPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <div role="alert" className="p-3 bg-red-50 text-red-700 text-sm rounded-xl border border-red-200">{error}</div>}
+
           <div>
             <label className="block text-xs font-semibold text-slate-900 mb-1.5">
               Email address

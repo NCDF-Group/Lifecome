@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
 
 export default function PortalIndexPage() {
-  redirect("/portal/profile")
+  redirect("/portal/dashboard")
 }

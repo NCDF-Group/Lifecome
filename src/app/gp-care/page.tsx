@@ -91,7 +91,7 @@ export default function GpCarePage() {
             <div className="lg:col-span-6 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full max-w-lg mx-auto lg:max-w-none">
                 <Image
-                  src="/images/gp-hero.png"
+                  src="/images/Female doctor smiling during consultation.svg"
                   alt="Doctor with patient discussing GP care"
                   fill
                   priority
@@ -255,7 +255,7 @@ export default function GpCarePage() {
           <div className="bg-[#F8FCFF] border border-[#EDF6FF] rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-center">
             <div className="lg:col-span-6 relative h-64 sm:h-80 w-full">
               <Image
-                src="/images/gp-menopause.png"
+                src="/images/Mature woman smiling in conversation with doctor.svg"
                 alt="Doctor listening attentively to patient during consultation"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -471,7 +471,7 @@ export default function GpCarePage() {
 
             <div className="lg:col-span-5 relative h-64 sm:h-80 w-full">
               <Image
-                src="/images/gp-banner-doctor.png"
+                src="/images/Doctor Banner Image → Male doctor smiling in medical attire.svg"
                 alt="Smiling male doctor in hospital corridor"
                 fill
                 sizes="(max-width: 1024px) 100vw, 42vw"

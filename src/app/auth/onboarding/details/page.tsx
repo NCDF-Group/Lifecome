@@ -82,65 +82,23 @@ function OnboardingDetailsContent() {
     }
   }
 
+  // Headline and avatar artwork are baked into the illustration
   const leftContent = (
-    <div className="flex flex-col justify-between h-full">
-      <div className="space-y-3">
-        <h2 className="text-3xl font-extrabold text-slate-900 leading-tight">
-          Make your<br />account your<br />own.
-        </h2>
-        <p className="text-sm text-slate-600">
-          A few details help us personalise your experience and get you to the
-          right support, faster.
-        </p>
-      </div>
-
-      {/* User profile avatar illustration matching Figma */}
-      <div className="my-8 flex items-center justify-center">
-        <div className="w-56 h-56 relative flex items-center justify-center">
-          <div className="absolute w-44 h-44 rounded-full bg-emerald-100/50 -top-2 -left-2 blur-md" />
-          <div className="absolute w-36 h-36 rounded-full bg-sky-100/60 bottom-0 right-0 blur-sm" />
-
-          <svg className="w-48 h-48 relative z-10" viewBox="0 0 200 200" fill="none">
-            {/* Circular rings */}
-            <circle
-              cx="100"
-              cy="100"
-              r="68"
-              stroke="#BAE6FD"
-              strokeWidth="2.5"
-              strokeDasharray="6 6"
-            />
-            {/* User Head */}
-            <circle
-              cx="100"
-              cy="75"
-              r="24"
-              stroke="#0062F5"
-              strokeWidth="4"
-              fill="white"
-            />
-            {/* User Shoulders */}
-            <path
-              d="M60 145 C60 115 80 108 100 108 C120 108 140 115 140 145"
-              stroke="#0062F5"
-              strokeWidth="4"
-              strokeLinecap="round"
-              fill="none"
-            />
-            {/* Decorative Leaves/Dots */}
-            <circle cx="160" cy="65" r="14" fill="#A7F3D0" opacity="0.7" />
-            <circle cx="40" cy="140" r="16" fill="#86EFAC" opacity="0.6" />
-            <circle cx="155" cy="140" r="12" fill="#BAE6FD" opacity="0.8" />
-          </svg>
-        </div>
-      </div>
-
-      <div />
+    <div className="sr-only">
+      <h2>Make your account your own.</h2>
+      <p>
+        A few details help us personalise your experience and get you to the
+        right support, faster.
+      </p>
     </div>
   )
 
   return (
-    <AuthLayout leftContent={leftContent}>
+    <AuthLayout
+      leftContent={leftContent}
+      illustration="/illustrator/Section - Left Column_ Branding, Reassurance & Illustration.svg"
+      illustrationAlign="top"
+    >
       <div className="space-y-6">
         {/* Step indicator: dot-line-dot matching Figma */}
         <StepProgressIndicator currentStep={3} stepLabel="Your details" />

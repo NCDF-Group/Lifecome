@@ -1,11 +1,12 @@
 "use client"
 
-import React, { createContext, useContext, useEffect, useState } from "react"
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import type { User } from "@/types"
 import { authService } from "@/services/auth.service"
 import type { LoginCredentials } from "@/services/auth.service"
 import { authStorage } from "@/lib/auth-storage"
+import { SessionTimeout, type SessionEndReason } from "@/components/auth/SessionTimeout"
 
 interface AuthContextType {
   user: User | null
@@ -41,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .finally(() => setIsLoading(false))
   }, [])
 
-  const login = async (credentials: LoginCredentials, redirectTo = "/portal/profile") => {
+  const login = async (credentials: LoginCredentials, redirectTo = "/portal/dashboard") => {
     setIsLoading(true)
     try {
       const authenticatedUser = await authService.login(credentials)
@@ -68,10 +69,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return currentUser
   }
 
-  const logout = () => {
-    authService.logout()
+  const endSession = useCallback(async (reason: SessionEndReason) => {
+    // Another tab already signed out, so there is no server session left to end
+    if (reason === "elsewhere") authStorage.clearTokens()
+    else await authService.logout()
     setUser(null)
-    router.replace("/auth/login")
+    router.replace(reason === "timeout" ? "/auth/login?reason=timeout" : "/auth/login")
+  }, [router])
+
+  const logout = () => {
+    void endSession("user")
   }
 
   return (
@@ -87,6 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
+      {user && <SessionTimeout onSessionEnd={endSession} />}
     </AuthContext.Provider>
   )
 }

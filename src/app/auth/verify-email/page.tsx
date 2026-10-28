@@ -88,7 +88,6 @@ function VerifyEmailContent() {
     }
   }
 
-  // Left panel matching exact Figma artwork
   const leftContent = (
     <div className="flex flex-col justify-between h-full">
       <div className="space-y-3">
@@ -99,75 +98,11 @@ function VerifyEmailContent() {
           Enter the code sent to your email to<br />verify your account.
         </p>
       </div>
-
-      {/* Exact Vector Illustration matching Figma */}
-      <div className="my-6 flex items-center justify-center relative">
-        <div className="w-64 h-64 relative flex items-center justify-center">
-          <svg className="w-full h-full" viewBox="0 0 240 240" fill="none">
-            {/* Background soft large circular glow */}
-            <circle cx="120" cy="130" r="85" fill="#E0F2FE" fillOpacity="0.4" />
-
-            {/* Top-right pastel green circle */}
-            <circle cx="190" cy="75" r="22" fill="#BBF7D0" fillOpacity="0.8" />
-
-            {/* Bottom-right pastel blue circle */}
-            <circle cx="205" cy="175" r="16" fill="#BAE6FD" fillOpacity="0.8" />
-
-            {/* Left botanical leaves */}
-            {/* Upper leaf (green) */}
-            <path
-              d="M30 145 C15 125 35 105 55 118 C65 132 50 155 30 145 Z"
-              fill="#BBF7D0"
-              fillOpacity="0.85"
-            />
-            {/* Lower leaf (cyan) */}
-            <path
-              d="M48 185 C32 170 48 150 68 160 C75 174 65 195 48 185 Z"
-              fill="#BAE6FD"
-              fillOpacity="0.85"
-            />
-
-            {/* Envelope Body (thick royal blue outline, white fill) */}
-            <rect
-              x="42"
-              y="85"
-              width="145"
-              height="100"
-              rx="16"
-              fill="white"
-              stroke="#0062F5"
-              strokeWidth="4"
-            />
-
-            {/* Envelope Flap line */}
-            <path
-              d="M44 88 L114.5 142 L185 88"
-              stroke="#0062F5"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-
-            {/* Checkmark Circle Badge overlapping bottom-right corner */}
-            <circle cx="168" cy="165" r="28" fill="#0062F5" />
-            {/* Bold white checkmark inside badge */}
-            <path
-              d="M154 165 L164 175 L182 155"
-              stroke="white"
-              strokeWidth="5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <div />
     </div>
   )
 
   return (
-    <AuthLayout leftContent={leftContent}>
+    <AuthLayout leftContent={leftContent} illustration="/illustrator/image 2.svg">
       <div className="space-y-6">
         {/* Step indicator: dot-line-dot matching Figma */}
         <StepProgressIndicator currentStep={2} stepLabel="Verify email" />

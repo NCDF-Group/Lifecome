@@ -100,7 +100,7 @@ export default function GpServicesPage() {
             <div className="lg:col-span-6 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full max-w-lg mx-auto lg:max-w-none bg-slate-50 flex items-center justify-center">
                 <Image
-                  src="/images/online-gp-hero-clean.png"
+                  src="/images/Doctor smiling on laptop video consultation screen.svg"
                   alt="Doctor during an online video consultation"
                   fill
                   priority
@@ -478,8 +478,8 @@ export default function GpServicesPage() {
 
             <div className="sm:col-span-4 relative h-40 sm:h-36 w-full">
               <Image
-                src="/images/gp-banner-doctor.png"
-                alt="GP ready to help with your online appointment"
+                src="/images/Consultation smile.svg"
+                alt="Preview of booking an online GP appointment"
                 fill
                 sizes="(max-width: 640px) 100vw, 33vw"
                 className="object-cover"

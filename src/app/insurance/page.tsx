@@ -87,7 +87,7 @@ export default function InsurancePage() {
             <div className="lg:col-span-6 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full max-w-lg mx-auto lg:max-w-none">
                 <Image
-                  src="/images/insurance-hero.png"
+                  src="/images/Smiling couple looking at laptop.svg"
                   alt="Couple reviewing insurance cover on laptop"
                   fill
                   priority
@@ -333,6 +333,18 @@ export default function InsurancePage() {
                   </div>
                 </div>
               </div>
+
+              <div className="relative flex justify-end pt-2 pr-2">
+                <div className="absolute right-0 bottom-0 w-20 h-20 rounded-full bg-indigo-50" />
+                <div className="absolute right-12 bottom-1 w-12 h-12 rounded-full bg-emerald-100" />
+                <Image
+                  src="/images/Document graphic badge.svg"
+                  alt=""
+                  width={68}
+                  height={84}
+                  className="relative mr-4"
+                />
+              </div>
             </div>
           </div>
           </div>
@@ -437,8 +449,8 @@ export default function InsurancePage() {
 
             <div className="sm:col-span-4 relative h-40 sm:h-36 w-full">
               <Image
-                src="/images/insurance-hero.png"
-                alt="Couple reviewing insurance options"
+                src="/images/Photo cutout snippet from the right.svg"
+                alt="Preview of exploring insurance options"
                 fill
                 sizes="(max-width: 640px) 100vw, 33vw"
                 className="object-cover"

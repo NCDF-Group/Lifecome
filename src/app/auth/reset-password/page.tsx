@@ -55,67 +55,11 @@ function ResetPasswordContent() {
           secure.
         </p>
       </div>
-
-      {/* Lock & Key Illustration matching Figma */}
-      <div className="my-8 flex items-center justify-center">
-        <div className="w-56 h-56 relative flex items-center justify-center">
-          <div className="absolute w-44 h-44 rounded-full bg-emerald-100/50 -top-2 -left-2 blur-md" />
-          <div className="absolute w-36 h-36 rounded-full bg-sky-100/60 bottom-0 right-0 blur-sm" />
-
-          <svg className="w-48 h-48 relative z-10" viewBox="0 0 200 200" fill="none">
-            {/* Background Decorative leaf */}
-            <circle cx="50" cy="140" r="28" fill="#A7F3D0" opacity="0.6" />
-            <circle cx="160" cy="60" r="16" fill="#86EFAC" opacity="0.6" />
-
-            {/* Big Padlock */}
-            <rect
-              x="55"
-              y="85"
-              width="90"
-              height="80"
-              rx="18"
-              fill="white"
-              stroke="#0062F5"
-              strokeWidth="4.5"
-            />
-            {/* Shackle */}
-            <path
-              d="M72 85 V60 C72 45 128 45 128 60 V85"
-              stroke="#0062F5"
-              strokeWidth="4.5"
-              fill="none"
-              strokeLinecap="round"
-            />
-            {/* Keyhole */}
-            <circle cx="100" cy="115" r="5" fill="#0062F5" />
-            <path d="M100 118 V132" stroke="#0062F5" strokeWidth="4" strokeLinecap="round" />
-
-            {/* Key beside */}
-            <circle
-              cx="145"
-              cy="140"
-              r="14"
-              fill="white"
-              stroke="#0062F5"
-              strokeWidth="3.5"
-            />
-            <path
-              d="M135 147 L115 167 L110 162 M120 162 L125 167"
-              stroke="#0062F5"
-              strokeWidth="3.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <div />
     </div>
   )
 
   return (
-    <AuthLayout leftContent={leftContent}>
+    <AuthLayout leftContent={leftContent} illustration="/illustrator/image 6 (1).svg">
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">

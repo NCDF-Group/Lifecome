@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
-import { API_BASE_URL, ROUTES } from "./constants"
+import { API_BASE_URL, LOGOUT_PATH, ROUTES, SESSION_TIMEOUT_CODE } from "./constants"
 import { authStorage } from "./auth-storage"
 
 export interface ApiError {
@@ -42,29 +42,40 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
+// The API wraps failures as `{ error: { code, message, details } }`; older responses were flat
+type ApiErrorBody = Partial<ApiError> & { error?: { code?: string; message?: string } }
+
+// Signed-out pages where a 401 (e.g. a wrong password) is shown inline, not redirected
+const GUEST_AUTH_PAGE = /^\/auth\/(login|register|forgot-password|reset-password|verify-email|verify-2fa)/
+
 // Response Interceptor: Global error & 401 handling
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
-  async (error: AxiosError<ApiError>) => {
+  async (error: AxiosError<ApiErrorBody>) => {
     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean }
+    const body = error.response?.data
+    const apiCode = body?.error?.code ?? body?.code
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true
-      // Clear token and redirect to login if session expired
+      // Clear token and redirect to login if session expired. Signing out handles its own redirect.
       authStorage.clearTokens()
-      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth/")) {
-        window.location.href = `${ROUTES.AUTH.LOGIN}?expired=true`
+      const isLogout = originalRequest.url === LOGOUT_PATH
+      if (typeof window !== "undefined" && !isLogout && !GUEST_AUTH_PAGE.test(window.location.pathname)) {
+        const reason = apiCode === SESSION_TIMEOUT_CODE ? "reason=timeout" : "expired=true"
+        window.location.href = `${ROUTES.AUTH.LOGIN}?${reason}`
       }
     }
 
     const formattedError: ApiError = {
       message:
-        error.response?.data?.message ||
+        body?.error?.message ||
+        body?.message ||
         error.message ||
         "An unexpected healthcare service error occurred.",
       status: error.response?.status,
-      code: error.code,
-      errors: error.response?.data?.errors,
+      code: apiCode ?? error.code,
+      errors: body?.errors,
     }
 
     return Promise.reject(formattedError)

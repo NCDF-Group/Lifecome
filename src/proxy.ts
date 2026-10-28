@@ -2,20 +2,35 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { TOKEN_COOKIE_NAME } from "@/lib/constants"
 
-// Routes that require patient authentication
-const PROTECTED_PREFIXES = ["/portal"]
+const DASHBOARD_PATH = "/portal/dashboard"
 
-// Authentication paths
-const AUTH_PATHS = [
+// Routes that require patient authentication. Onboarding and welcome run after the
+// email is verified, so they belong to the signed-in session rather than the guest flow.
+const PROTECTED_PREFIXES = ["/portal", "/auth/onboarding", "/auth/welcome"]
+
+// Guest-only authentication paths; a signed-in patient is sent to the dashboard
+const GUEST_AUTH_PATHS = [
   "/auth/login",
   "/auth/register",
   "/auth/forgot-password",
   "/auth/reset-password",
   "/auth/verify-2fa",
   "/auth/verify-email",
-  "/auth/onboarding",
-  "/auth/welcome",
 ]
+
+// Public landing pages; a signed-in patient stays inside the portal instead
+const LANDING_PATHS = [
+  "/",
+  "/gp-care",
+  "/gp-services",
+  "/clinic-appointments",
+  "/wellbeing",
+  "/professional-care",
+  "/insurance",
+]
+
+const matchesPath = (pathname: string, path: string) =>
+  pathname === path || pathname.startsWith(`${path}/`)
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -34,13 +49,16 @@ export async function proxy(request: NextRequest) {
   // The API owns the patient JWT signing key. The proxy only checks for a session cookie;
   // protected API requests validate the token with the backend.
   const isAuthenticated = Boolean(tokenCookie)
-  const isAuthPage = AUTH_PATHS.some((path) => pathname.startsWith(path))
-  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  const isGuestAuthPage = GUEST_AUTH_PATHS.some((path) => matchesPath(pathname, path))
+  const isLandingPage = LANDING_PATHS.some((path) =>
+    path === "/" ? pathname === "/" : matchesPath(pathname, path)
+  )
+  const isProtected = PROTECTED_PREFIXES.some((prefix) => matchesPath(pathname, prefix))
 
-  // 1. If user is logged in and tries to go to home page "/" or auth pages,
-  // do not redirect back to the home page; keep them inside the patient dashboard
-  if ((isAuthPage || pathname === "/") && isAuthenticated) {
-    return NextResponse.redirect(new URL("/portal/profile", request.url))
+  // 1. A signed-in patient never lands back on the public site or the guest auth pages;
+  // keep them inside the patient dashboard
+  if ((isGuestAuthPage || isLandingPage) && isAuthenticated) {
+    return NextResponse.redirect(new URL(DASHBOARD_PATH, request.url))
   }
 
   // 2. Protect Patient Portal routes - redirect unauthenticated users to login

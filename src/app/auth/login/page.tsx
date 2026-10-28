@@ -2,19 +2,27 @@
 
 import React, { useState, Suspense } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import { ChevronRight, Eye, EyeOff, Info } from "lucide-react"
 import { AuthLayout } from "@/components/auth/AuthLayout"
 import { useAuth } from "@/context/AuthContext"
 import { getApiErrorMessage } from "@/lib/api-client"
 
+// Only return to pages inside the signed-in session; anything else (external URLs,
+// "//host" or "/\host" tricks, public landing pages) falls back to the dashboard
+const SAFE_RETURN_PATH = /^\/(portal|auth\/onboarding|auth\/welcome)(\/[\w\-/]*)?$/
+
 function LoginContent() {
   const searchParams = useSearchParams()
-  const requestedDestination = searchParams.get("from")
-  const from = requestedDestination?.startsWith("/") && !requestedDestination.startsWith("//")
+  const requestedDestination = searchParams.get("from") ?? ""
+  const from = SAFE_RETURN_PATH.test(requestedDestination)
     ? requestedDestination
-    : "/portal/profile"
+    : "/portal/dashboard"
+  const signedOutNotice = searchParams.get("reason") === "timeout"
+    ? "For your security, you were signed out after a period of inactivity. Please log in again."
+    : searchParams.get("expired") === "true"
+      ? "Your session has ended. Please log in again."
+      : null
   const { login } = useAuth()
 
   const [email, setEmail] = useState("")
@@ -37,35 +45,20 @@ function LoginContent() {
     }
   }
 
+  // Headline and heart & shield artwork are baked into the illustration
   const leftContent = (
-    <div className="flex flex-col justify-between h-full">
-      <div className="space-y-3">
-        <h2 className="text-3xl font-extrabold text-slate-900 leading-tight">
-          Your health and<br />care, connected.
-        </h2>
-        <p className="text-sm text-slate-600">
-          Access your appointments, messages and plans.
-        </p>
-      </div>
-
-      {/* Heart and shield artwork from the Figma login design */}
-      <div className="my-8 flex flex-1 items-center justify-center relative">
-        <Image
-          src="/images/auth/auth-care-illustration.svg"
-          alt="A heart protected by a shield"
-          width={420}
-          height={320}
-          priority
-          className="relative z-10 h-auto w-full max-w-[26rem]"
-        />
-      </div>
-
-      <div />
+    <div className="sr-only">
+      <h2>Your health and care, connected.</h2>
+      <p>Access your appointments, messages and plans.</p>
     </div>
   )
 
   return (
-    <AuthLayout leftContent={leftContent}>
+    <AuthLayout
+      leftContent={leftContent}
+      illustration="/illustrator/Section - LeftPanel.svg"
+      illustrationAlign="top"
+    >
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
@@ -75,6 +68,12 @@ function LoginContent() {
             Log in to your LifeCome Health account.
           </p>
         </div>
+
+        {!error && signedOutNotice && (
+          <div role="status" className="p-3 bg-amber-50 text-amber-800 text-sm rounded-xl border border-amber-200">
+            {signedOutNotice}
+          </div>
+        )}
 
         {error && (
           <div className="p-3 bg-red-50 text-red-700 text-sm rounded-xl border border-red-200">

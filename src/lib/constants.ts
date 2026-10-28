@@ -40,7 +40,21 @@ export const ROUTES = {
 
 export const TOKEN_COOKIE_NAME = "lifecome_access_token"
 export const REFRESH_COOKIE_NAME = "lifecome_refresh_token"
-export const SESSION_MAX_AGE = 60 * 60 * 24 * 7 // 7 days in seconds
+export const SESSION_MAX_AGE = 60 * 60 * 12 // 12 hours in seconds; the API sends the real value
+
+// ─── Session timeout ─────────────────────────────────────────────────────────
+// The API owns the idle timeout and returns it at sign-in; this is only the fallback.
+export const DEFAULT_IDLE_TIMEOUT_SECONDS = 15 * 60
+/** How long before the timeout the "are you still there?" warning appears. */
+export const SESSION_WARNING_SECONDS = 2 * 60
+export const SESSION_TIMEOUT_KEY = "lifecome_idle_timeout_seconds"
+/** Shared by every open tab, so activity in one keeps the others signed in too. */
+export const LAST_ACTIVITY_KEY = "lifecome_last_activity"
+/** When the API last restarted the idle timeout (sign-in or refresh), shared across tabs. */
+export const LAST_SERVER_TOUCH_KEY = "lifecome_last_server_touch"
+export const LOGOUT_PATH = "/identity/logout"
+/** API error code for a session ended by the idle timeout. */
+export const SESSION_TIMEOUT_CODE = "SESSION_TIMEOUT"
 
 // ─── User Roles ──────────────────────────────────────────────────────────────
 
