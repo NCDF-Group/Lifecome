@@ -64,8 +64,27 @@ export const actionButtonClass = (variant: ButtonVariant, className?: string) =>
     className
   )
 
-/** Wide action with an optional leading icon, a centred label and a trailing chevron. */
-export function ActionButtonContent({ icon: Icon, children, align = "center" }: { icon?: LucideIcon; children: React.ReactNode; align?: "center" | "start" }) {
+/**
+ * Wide action with an optional leading icon, a label and a trailing chevron.
+ * `inline` keeps the chevron beside a centred label, as on the form submit buttons.
+ */
+export function ActionButtonContent({
+  icon: Icon,
+  children,
+  align = "center",
+}: {
+  icon?: LucideIcon
+  children: React.ReactNode
+  align?: "center" | "start" | "inline"
+}) {
+  if (align === "inline") {
+    return (
+      <span className="flex-1 inline-flex items-center justify-center gap-2">
+        {children}
+        <ChevronRight className="w-5 h-5 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden />
+      </span>
+    )
+  }
   return (
     <>
       {Icon ? <Icon className="w-5 h-5 shrink-0" aria-hidden /> : <span className="w-5 shrink-0" aria-hidden />}

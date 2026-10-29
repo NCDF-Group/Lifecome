@@ -222,9 +222,9 @@ export function RescheduleAppointment({ id }: { id: string }) {
               type="button"
               onClick={handleConfirm}
               disabled={!chosenSlot || isSubmitting}
-              className={actionButtonClass("primary", "justify-center")}
+              className={actionButtonClass("primary")}
             >
-              <ActionButtonContent>{isSubmitting ? "Confirming…" : chosenSlot ? "Confirm new time" : "Choose a time to continue"}</ActionButtonContent>
+              <ActionButtonContent align="inline">{isSubmitting ? "Confirming…" : chosenSlot ? "Confirm new time" : "Choose a time to continue"}</ActionButtonContent>
             </button>
           </div>
         </>

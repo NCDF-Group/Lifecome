@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Calendar, CalendarX, ChevronRight, Clock, Info, MapPin, Monitor, Video, type LucideIcon } from "lucide-react"
 import { useAppointment } from "@/hooks/useAppointments"
 import { getApiErrorMessage } from "@/lib/api-client"
-import { canManage, formatFullDate, formatTime, getCategoryLabels, getLocationLabel } from "@/lib/appointments"
+import { canManage, formatLongDate, formatTime, getCategoryLabels, getLocationLabel } from "@/lib/appointments"
 import { ROUTES } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 import { appointmentService } from "@/services/appointment.service"
@@ -96,7 +96,7 @@ export function CancelAppointment({ id }: { id: string }) {
       <dl className="space-y-2">
         <SummaryItem tone="green" icon={Monitor} label="Service" value={appointment.serviceName || labels.clinician} />
         <SummaryItem tone="blue" avatarName={appointment.providerName ?? ""} label="Clinician" value={appointment.providerName || "To be confirmed"} />
-        <SummaryItem tone="green" icon={Calendar} label="Date" value={appointment.startsAt ? formatFullDate(appointment.startsAt) : "To be confirmed"} />
+        <SummaryItem tone="green" icon={Calendar} label="Date" value={appointment.startsAt ? formatLongDate(appointment.startsAt) : "To be confirmed"} />
         <SummaryItem tone="blue" icon={Clock} label="Time" value={appointment.startsAt ? `${formatTime(appointment.startsAt)} · UK time` : "To be confirmed"} />
         <SummaryItem tone="green" icon={isInPerson ? MapPin : Video} label="Location" value={getLocationLabel(appointment)} />
       </dl>
@@ -167,10 +167,10 @@ export function CancelAppointment({ id }: { id: string }) {
 
         <div className="space-y-3 pt-2">
           <button type="submit" disabled={!isConfirmed || isSubmitting} className={actionButtonClass("danger")}>
-            <ActionButtonContent>{isSubmitting ? "Cancelling…" : "Confirm cancellation"}</ActionButtonContent>
+            <ActionButtonContent align="inline">{isSubmitting ? "Cancelling…" : "Confirm cancellation"}</ActionButtonContent>
           </button>
           <div className="text-center">
-            <Link href={appointmentPath(appointment.id)} className="inline-block rounded-lg px-3 py-2 text-[15px] font-semibold text-[#0A7CC2] hover:underline">
+            <Link href={appointmentPath(appointment.id)} className="inline-block rounded-lg px-3 py-2 text-sm font-semibold text-[#0A7CC2] hover:underline">
               Keep appointment
             </Link>
           </div>

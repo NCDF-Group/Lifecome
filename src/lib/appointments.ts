@@ -16,7 +16,13 @@ const fullDateFormat = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
   timeZone: UK_TIME_ZONE,
 })
-const shortDateFormat = new Intl.DateTimeFormat("en-GB", {
+const longDateFormat = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: UK_TIME_ZONE,
+})
+const shortDateFormat =new Intl.DateTimeFormat("en-GB", {
   weekday: "short",
   day: "numeric",
   month: "short",
@@ -51,6 +57,8 @@ const tileFormat = {
 export const formatDayDate = (iso: string) => dayDateFormat.format(new Date(iso))
 /** "Wednesday 21 October 2026" */
 export const formatFullDate = (iso: string) => fullDateFormat.format(new Date(iso))
+/** "21 October 2026" */
+export const formatLongDate = (iso: string) => longDateFormat.format(new Date(iso))
 /** "10:30" */
 export const formatTime = (iso: string) => timeFormat.format(new Date(iso))
 /** "10:30 BST" */
