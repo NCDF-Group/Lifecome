@@ -17,7 +17,7 @@ import {
 } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { ROUTES } from "@/lib/constants"
-import { ActionCard, ActionRow, PageContainer, PageHeader, PrimaryActionLink, SectionHeading, type ActionItem } from "@/components/portal/ui"
+import { ActionRow, PageContainer, PageHeader, PrimaryActionLink, SectionHeading, type ActionItem } from "@/components/portal/ui"
 
 const SERVICES: ActionItem[] = [
   { title: "GP", description: "Online, clinic & menopause care", href: `${ROUTES.PORTAL.SERVICES}/gp`, icon: Stethoscope, tone: "green" },
@@ -76,46 +76,54 @@ export default function PatientDashboardPage() {
   const firstName = user?.name && !user.name.includes("@") ? user.name.split(" ")[0] : ""
 
   return (
-    <PageContainer>
-      <PageHeader eyebrow={`${greeting}${firstName ? `, ${firstName}` : ""}`} title="How can we help today?" />
+    <PageContainer className="max-w-[1200px] space-y-6 sm:space-y-7">
+      <PageHeader
+        eyebrow={`${greeting}${firstName ? `, ${firstName}` : ""}`}
+        title="How can we help today?"
+        description={
+          <span className="block max-w-xl">Access quality healthcare, manage your appointments, and stay healthy with personalised care.</span>
+        }
+      />
 
-      <section aria-label="Services" className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+      <section aria-label="Services" className="space-y-4 sm:space-y-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {SERVICES.map((item) => (
-            <ActionCard key={item.href} item={item} iconVariant="circle" />
+            <ActionRow key={item.href} item={item} size="lg" />
           ))}
         </div>
-        <PrimaryActionLink href={ROUTES.PORTAL.BOOK} icon={CalendarPlus} className="mt-5">
+        <PrimaryActionLink href={ROUTES.PORTAL.BOOK} icon={CalendarPlus}>
           Book an appointment
         </PrimaryActionLink>
       </section>
 
       <section aria-labelledby="your-care" className="space-y-3">
-        <SectionHeading id="your-care" title="Your care" />
-        <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-3">
+        <SectionHeading id="your-care" title="Your care" action={{ label: "View all", href: ROUTES.PORTAL.APPOINTMENTS }} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {YOUR_CARE.map((item) => (
-            <ActionCard key={item.title} item={item} />
+            <ActionRow key={item.title} item={item} size="lg" />
           ))}
         </div>
       </section>
 
       <section aria-labelledby="ways-to-pay" className="space-y-3">
         <SectionHeading id="ways-to-pay" title="Ways to pay and access care" description="Choose an option when you book." />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {ACCESS_OPTIONS.map((item) => (
-            <ActionCard key={item.href} item={item} />
+            <ActionRow key={item.href} item={item} size="lg" />
           ))}
         </div>
       </section>
 
-      <section aria-labelledby="your-activity" className="space-y-3 pt-2">
+      <section aria-labelledby="your-activity" className="space-y-3">
         <SectionHeading id="your-activity" title="Your activity" />
-        <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {ACTIVITY.map((item) => (
-            <ActionCard key={item.title} item={item} iconVariant="circle" />
+            <ActionRow key={item.title} item={item} size="lg" />
           ))}
+          <div className="sm:col-span-2">
+            <ActionRow item={MEMBERSHIP} />
+          </div>
         </div>
-        <ActionRow item={MEMBERSHIP} />
       </section>
 
       <ActionRow item={URGENT_HELP} titleClassName="text-red-600" />

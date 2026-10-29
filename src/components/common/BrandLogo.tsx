@@ -34,6 +34,10 @@ export function BrandLogo({
     </div>
   )
 
+  return withLink(content, href)
+}
+
+function withLink(content: React.ReactNode, href?: string) {
   if (href) {
     return (
       <Link href={href} className="inline-flex items-center transition-opacity hover:opacity-90">
@@ -43,4 +47,24 @@ export function BrandLogo({
   }
 
   return content
+}
+
+/**
+ * Just the clover mark, for tight spaces like the collapsed sidebar. There is no separate
+ * icon asset, so this crops the wordmark (865×288) to the clover at its left edge.
+ */
+export function BrandMark({ href, className = "" }: { href?: string; className?: string }) {
+  const content = (
+    <div className={`relative w-[31px] h-9 overflow-hidden select-none shrink-0 ${className}`}>
+      <Image
+        src="/brand/lifecomeH.png"
+        alt="LifeCome Health"
+        width={160}
+        height={53}
+        className="absolute max-w-none left-[-3px] top-[-8px] w-[160px] h-[53px]"
+        priority
+      />
+    </div>
+  )
+  return withLink(content, href)
 }

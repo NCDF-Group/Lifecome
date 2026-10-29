@@ -48,7 +48,7 @@ export function IconBadge({
   icon: LucideIcon
   tone: Tone
   variant?: "square" | "circle"
-  size?: "sm" | "md" | "lg"
+  size?: "sm" | "md" | "lg" | "xl"
 }) {
   return (
     <span
@@ -59,10 +59,11 @@ export function IconBadge({
         variant === "circle" ? "rounded-full bg-white shadow-sm" : `rounded-xl ${ICON_BACKGROUNDS[tone]}`,
         size === "sm" && "w-9 h-9",
         size === "md" && "w-10 h-10",
-        size === "lg" && "w-12 h-12"
+        size === "lg" && "w-12 h-12",
+        size === "xl" && "w-12 h-12 sm:w-14 sm:h-14"
       )}
     >
-      <Icon className={size === "lg" ? "w-6 h-6" : "w-[18px] h-[18px]"} />
+      <Icon className={size === "lg" || size === "xl" ? "w-6 h-6" : "w-[18px] h-[18px]"} />
     </span>
   )
 }
@@ -102,33 +103,45 @@ export function ActionCard({ item, iconVariant = "square" }: { item: ActionItem;
   )
 }
 
-/** Full-width row with the icon beside the text. */
+/**
+ * Full-width row with the icon beside the text. `lg` is the roomier tile used on the
+ * Home screen, with the chevron lined up with the title.
+ */
 export function ActionRow({
   item,
   iconVariant = "circle",
   titleClassName,
+  size = "md",
 }: {
   item: ActionItem
   iconVariant?: "square" | "circle"
   titleClassName?: string
+  size?: "md" | "lg"
 }) {
   const tone = TONES[item.tone]
+  const large = size === "lg"
   return (
     <Link
       href={item.href}
       className={cn(
-        "group border rounded-2xl p-4 flex items-center gap-3 sm:gap-4 transition-all hover:shadow-sm",
+        "group border rounded-2xl flex items-center gap-3 sm:gap-4 transition-all hover:shadow-sm",
+        large ? "p-4 sm:p-5" : "p-4",
         tone.card,
         tone.hover,
         FOCUS_RING
       )}
     >
-      <IconBadge icon={item.icon} tone={item.tone} variant={iconVariant} />
+      <IconBadge icon={item.icon} tone={item.tone} variant={iconVariant} size={large ? "xl" : "md"} />
       <span className="flex-1 min-w-0">
-        <span className={cn("block text-[15px] font-semibold text-slate-900 leading-snug", titleClassName)}>{item.title}</span>
-        <span className="block text-sm text-slate-500 mt-0.5 leading-snug">{item.description}</span>
+        <span className={cn("block font-semibold text-slate-900 leading-snug", large ? "text-base sm:text-[17px]" : "text-[15px]", titleClassName)}>
+          {item.title}
+        </span>
+        <span className={cn("block text-sm text-slate-500 leading-snug", large ? "mt-1 sm:text-[15px]" : "mt-0.5")}>{item.description}</span>
       </span>
-      <ChevronRight className={cn("w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5", tone.chevron)} />
+      <ChevronRight
+        className={cn("w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5", large && "self-start mt-1", tone.chevron)}
+        aria-hidden
+      />
     </Link>
   )
 }
@@ -154,7 +167,7 @@ export function PrimaryActionLink({
         className
       )}
     >
-      <span aria-hidden className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
+      <span aria-hidden className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/15 flex items-center justify-center shrink-0">
         <Icon className="w-5 h-5" />
       </span>
       <span className="flex-1 font-semibold text-base sm:text-[17px]">{children}</span>
@@ -177,13 +190,35 @@ export function PageHeader({ eyebrow, title, description }: { eyebrow?: React.Re
   )
 }
 
-export function SectionHeading({ title, description, id }: { title: string; description?: string; id?: string }) {
+export function SectionHeading({
+  title,
+  description,
+  id,
+  action,
+}: {
+  title: string
+  description?: string
+  id?: string
+  /** e.g. a "View all" link, shown at the end of the heading row */
+  action?: { label: string; href: string }
+}) {
   return (
-    <div>
-      <h2 id={id} className="text-xl sm:text-[22px] font-bold text-slate-900 tracking-tight">
-        {title}
-      </h2>
-      {description && <p className="text-sm text-slate-500 mt-0.5">{description}</p>}
+    <div className="flex items-end justify-between gap-4">
+      <div className="min-w-0">
+        <h2 id={id} className="text-xl sm:text-[22px] font-bold text-slate-900 tracking-tight">
+          {title}
+        </h2>
+        {description && <p className="text-sm text-slate-500 mt-0.5">{description}</p>}
+      </div>
+      {action && (
+        <Link
+          href={action.href}
+          className={cn("inline-flex items-center gap-0.5 shrink-0 rounded-md text-sm font-medium text-[#0062F5] hover:text-[#0050C7] hover:underline", FOCUS_RING)}
+        >
+          {action.label}
+          <ChevronRight className="w-4 h-4" aria-hidden />
+        </Link>
+      )}
     </div>
   )
 }

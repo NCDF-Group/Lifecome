@@ -45,8 +45,8 @@ export function RegionSelect({ className, fullWidth = false }: { className?: str
         aria-label={`Region: ${current.name}`}
         onClick={() => setIsOpen((open) => !open)}
         className={cn(
-          "flex items-center gap-2 h-11 pl-3 pr-2.5 rounded-full bg-slate-50 border border-slate-100 hover:border-slate-200 text-sm font-semibold text-slate-800 transition-colors cursor-pointer",
-          fullWidth ? "w-full" : "min-w-[112px] lg:min-w-[136px]",
+          "flex items-center gap-2 h-10 pl-3 pr-2.5 rounded-full bg-slate-50 border border-slate-100 hover:border-slate-200 text-sm font-semibold text-slate-800 transition-colors cursor-pointer",
+          fullWidth ? "w-full" : "min-w-[96px]",
           FOCUS_RING
         )}
       >
@@ -96,12 +96,12 @@ export function NotificationsLink({ hasUnread = true }: { hasUnread?: boolean })
       href={ROUTES.PORTAL.NOTIFICATIONS}
       aria-label={hasUnread ? "Notifications, you have unread notifications" : "Notifications"}
       className={cn(
-        "relative w-11 h-11 rounded-full bg-slate-50 border border-slate-100 hover:border-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-900 transition-colors shrink-0",
+        "relative w-10 h-10 rounded-full bg-slate-50 border border-slate-100 hover:border-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-900 transition-colors shrink-0",
         FOCUS_RING
       )}
     >
       <Bell className="w-5 h-5" />
-      {hasUnread && <span aria-hidden className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#0062F5] ring-2 ring-white" />}
+      {hasUnread && <span aria-hidden className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#0062F5] ring-2 ring-white" />}
     </Link>
   )
 }
@@ -137,12 +137,12 @@ export function UserMenu() {
         aria-label="Open account menu"
         onClick={() => setIsOpen((open) => !open)}
         className={cn(
-          "flex items-center gap-2 rounded-full p-0.5 sm:pr-2.5 border border-transparent hover:border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer",
+          "flex items-center gap-2 h-10 rounded-full p-0.5 sm:pr-2.5 sm:border sm:border-slate-100 sm:bg-slate-50 hover:border-slate-200 transition-colors cursor-pointer",
           FOCUS_RING
         )}
       >
-        <Avatar name={hasName ? user!.name : user?.email} src={avatarSrc} size="md" className="ring-2 ring-white" />
-        {firstName && <span className="hidden xl:block max-w-[120px] truncate text-sm font-semibold text-slate-800">{firstName}</span>}
+        <Avatar name={hasName ? user!.name : user?.email} src={avatarSrc} size="sm" className="w-9 h-9" />
+        {firstName && <span className="hidden md:block max-w-[110px] truncate text-sm font-semibold text-slate-800">{firstName}</span>}
         <ChevronDown className={cn("hidden sm:block w-4 h-4 text-slate-500 transition-transform", isOpen && "rotate-180")} />
       </button>
 
