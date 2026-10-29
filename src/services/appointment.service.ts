@@ -115,8 +115,11 @@ export const appointmentService = {
     return data
   },
 
-  async cancelAppointment(id: string): Promise<Appointment> {
-    const { data } = await apiClient.post<Appointment>(`/appointments/${encodeURIComponent(id)}/cancel`)
+  async cancelAppointment(id: string, reason?: string): Promise<Appointment> {
+    const { data } = await apiClient.post<Appointment>(
+      `/appointments/${encodeURIComponent(id)}/cancel`,
+      reason ? { reason } : undefined
+    )
     return data
   },
 

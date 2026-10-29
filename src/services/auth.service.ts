@@ -27,6 +27,7 @@ export function toPatientUser(account: PatientAccount, displayName?: string | nu
     email: account.email,
     name: displayName || account.registeredName || registeredName || account.email,
     phone: account.phoneNumber || undefined,
+    avatarUrl: account.avatarUrl || undefined,
     role: "patient",
   }
 }

@@ -29,10 +29,16 @@ export const ROUTES = {
   // Protected Patient Portal
   PORTAL: {
     DASHBOARD: "/portal/dashboard",
+    SERVICES: "/portal/services",
     APPOINTMENTS: "/portal/appointments",
+    BOOK: "/portal/book",
+    MESSAGES: "/portal/messages",
+    NOTIFICATIONS: "/portal/notifications",
     RECORDS: "/portal/records",
     CARE_PLANS: "/portal/care-plans",
     PROFILE: "/portal/profile",
+    CANCELLATION_TERMS: "/portal/cancellation-terms",
+    URGENT_HELP: "/portal/urgent-help",
   },
 } as const
 

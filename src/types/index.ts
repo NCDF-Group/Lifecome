@@ -8,6 +8,7 @@ export interface User {
   name: string
   role: UserRole
   phone?: string
+  avatarUrl?: string
 }
 
 export interface PatientAccount {
@@ -17,6 +18,7 @@ export interface PatientAccount {
   firstName?: string | null
   lastName?: string | null
   registeredName?: string | null
+  avatarUrl?: string | null
   status: string
 }
 
@@ -97,6 +99,14 @@ export interface Appointment {
   serviceName?: string
   startsAt?: string
   durationMinutes?: number
+  // Display details the API may include; each is shown only when present
+  reference?: string | null
+  clinicName?: string | null
+  clinicAddress?: string | null
+  /** Fee in minor units (pence or kobo) */
+  feeMinor?: number | null
+  currency?: "GBP" | "NGN" | null
+  paymentStatus?: "paid" | "pending" | "refunded" | null
 }
 
 export interface MedicalRecord {
