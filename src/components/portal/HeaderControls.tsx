@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Bell, Calendar, Check, ChevronDown, LogOut, MessageSquare, User as UserIcon } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { useDismiss } from "@/hooks/useDismiss"
+import { useAvatar } from "@/lib/avatar"
 import { ROUTES } from "@/lib/constants"
 import { REGIONS, setRegion, useRegion, type RegionCode } from "@/lib/region"
 import { cn } from "@/lib/utils"
@@ -114,6 +115,7 @@ const USER_MENU_LINKS = [
 /** The signed-in patient's profile picture, which opens their account menu. */
 export function UserMenu() {
   const { user, logout } = useAuth()
+  const avatarSrc = useAvatar(user?.id) ?? user?.avatarUrl
   const [isOpen, setIsOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const menuId = useId()
@@ -139,7 +141,7 @@ export function UserMenu() {
           FOCUS_RING
         )}
       >
-        <Avatar name={hasName ? user!.name : user?.email} src={user?.avatarUrl} size="md" className="ring-2 ring-white" />
+        <Avatar name={hasName ? user!.name : user?.email} src={avatarSrc} size="md" className="ring-2 ring-white" />
         {firstName && <span className="hidden xl:block max-w-[120px] truncate text-sm font-semibold text-slate-800">{firstName}</span>}
         <ChevronDown className={cn("hidden sm:block w-4 h-4 text-slate-500 transition-transform", isOpen && "rotate-180")} />
       </button>
@@ -152,7 +154,7 @@ export function UserMenu() {
           className="absolute right-0 z-50 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-2xl border border-slate-100 bg-white p-2 shadow-lg shadow-slate-900/10"
         >
           <div className="flex items-center gap-3 px-3 py-3">
-            <Avatar name={hasName ? user!.name : user?.email} src={user?.avatarUrl} size="lg" />
+            <Avatar name={hasName ? user!.name : user?.email} src={avatarSrc} size="lg" />
             <div className="min-w-0">
               <p className="text-sm font-semibold text-slate-900 truncate">{displayName}</p>
               {user?.email && <p className="text-xs text-slate-500 truncate">{user.email}</p>}

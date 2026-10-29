@@ -33,6 +33,7 @@ export const ROUTES = {
     APPOINTMENTS: "/portal/appointments",
     BOOK: "/portal/book",
     MESSAGES: "/portal/messages",
+    NEW_MESSAGE: "/portal/messages/new",
     NOTIFICATIONS: "/portal/notifications",
     RECORDS: "/portal/records",
     CARE_PLANS: "/portal/care-plans",
@@ -62,7 +63,14 @@ export const LOGOUT_PATH = "/identity/logout"
 /** API error code for a session ended by the idle timeout. */
 export const SESSION_TIMEOUT_CODE = "SESSION_TIMEOUT"
 
-// ─── User Roles ──────────────────────────────────────────────────────────────
+// ─── Consent ─────────────────────────────────────────────────────────────────
+/**
+ * Version of the privacy notice a consent is recorded against. It must match the notice
+ * the backend holds, so confirm it with the backend team before go-live.
+ */
+export const PRIVACY_NOTICE_VERSION = process.env.NEXT_PUBLIC_PRIVACY_NOTICE_VERSION?.trim() || "1.0"
+
+// ─── User Roles──────────────────────────────────────────────────────────────
 
 export const USER_ROLES = {
   PATIENT: "patient",

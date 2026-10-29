@@ -109,6 +109,40 @@ export interface Appointment {
   paymentStatus?: "paid" | "pending" | "refunded" | null
 }
 
+// ─── Messaging ───────────────────────────────────────────────────────────────
+
+export type MessageTopic =
+  | "booking_payments"
+  | "online_appointment"
+  | "clinic_visit"
+  | "follow_up"
+  | "clinical_query"
+  | "care_support"
+  | "wellbeing_coaching"
+  | "insurance_query"
+  | "general_support"
+
+export type MessageServiceCategory = "clinical" | "care" | "wellbeing" | "insurance" | "support"
+
+export interface MessageThread {
+  id: string
+  topic: MessageTopic | null
+  serviceCategory: MessageServiceCategory
+  /** Latest message text, when the API includes it */
+  preview: string | null
+  lastActivityAt: string | null
+  unreadCount: number
+}
+
+export interface ThreadMessage {
+  id: string
+  body: string
+  createdAt: string | null
+  /** True when the signed-in patient wrote it */
+  isMine: boolean
+  senderName: string | null
+}
+
 export interface MedicalRecord {
   id: string
   patientId: string

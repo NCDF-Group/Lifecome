@@ -33,9 +33,9 @@ const YOUR_CARE: ActionItem[] = [
 
 const ACCESS_OPTIONS: ActionItem[] = [
   { title: "Pay per visit", description: "Pay for the care you need.", href: "/portal/access/pay-per-visit", icon: Globe, tone: "green" },
-  { title: "Membership", description: "Additional benefits, where available.", href: "/portal/access/membership", icon: Crown, tone: "blue" },
-  { title: "Employer access", description: "Through an eligible employer or sponsor.", href: "/portal/access/employer", icon: Building2, tone: "blue" },
-  { title: "Health plan access", description: "Check cover for your selected service.", href: "/portal/access/health-plan", icon: ShieldCheck, tone: "green" },
+  { title: "Membership", description: "Additional benefits, where available.", href: `${ROUTES.PORTAL.PROFILE}/membership/lifecome`, icon: Crown, tone: "blue" },
+  { title: "Employer access", description: "Through an eligible employer or sponsor.", href: `${ROUTES.PORTAL.PROFILE}/membership/employer`, icon: Building2, tone: "blue" },
+  { title: "Health plan access", description: "Check cover for your selected service.", href: `${ROUTES.PORTAL.PROFILE}/membership/insurance`, icon: ShieldCheck, tone: "green" },
 ]
 
 const ACTIVITY: ActionItem[] = [
@@ -46,7 +46,7 @@ const ACTIVITY: ActionItem[] = [
 const MEMBERSHIP: ActionItem = {
   title: "Membership & benefits",
   description: "View your access and funding",
-  href: "/portal/membership",
+  href: `${ROUTES.PORTAL.PROFILE}/membership`,
   icon: IdCard,
   tone: "blue",
 }

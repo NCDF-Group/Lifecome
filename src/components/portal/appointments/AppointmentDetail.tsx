@@ -29,8 +29,16 @@ import {
 } from "@/lib/appointments"
 import { ROUTES } from "@/lib/constants"
 import { cn } from "@/lib/utils"
+import type { Appointment } from "@/types"
 import { ActionRow, Avatar, PageContainer, PageHeader } from "../ui"
 import { ActionButtonContent, AppointmentFallback, DetailRow, actionButtonClass, appointmentPath } from "./shared"
+
+/** A new message to the team behind this appointment, filed under the right topic. */
+function messageTeamHref(appointment: Appointment) {
+  const team = appointment.serviceCategory === "care" || appointment.serviceCategory === "wellbeing" ? appointment.serviceCategory : "gp"
+  const topic = appointment.consultationMode === "in_person" ? "clinic_visit" : "online_appointment"
+  return `${ROUTES.PORTAL.NEW_MESSAGE}?team=${team}&topic=${topic}`
+}
 
 export function AppointmentDetail({ id, justRescheduled }: { id: string; justRescheduled: boolean }) {
   const { data: appointment, error, reload } = useAppointment(id)
@@ -126,7 +134,7 @@ export function AppointmentDetail({ id, justRescheduled }: { id: string; justRes
         item={{
           title: `Message your ${labels.team}`,
           description: "Questions about this appointment.",
-          href: ROUTES.PORTAL.MESSAGES,
+          href: messageTeamHref(appointment),
           icon: MessageCircle,
           tone: "blue",
         }}

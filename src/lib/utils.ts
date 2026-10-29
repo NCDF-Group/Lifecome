@@ -38,3 +38,19 @@ export function maskNHSNumber(nhsNumber?: string): string {
   if (!nhsNumber || nhsNumber.length < 5) return "••••••••••"
   return `${nhsNumber.slice(0, 3)} ••• ${nhsNumber.slice(-3)}`
 }
+
+/** Accepts a bare array or one wrapped as `{ items }`, `{ data }`, `{ threads }` and so on. */
+export function unwrapList(data: unknown, keys: string[] = []): unknown[] {
+  if (Array.isArray(data)) return data
+  const source = data && typeof data === "object" ? (data as Record<string, unknown>) : null
+  if (!source) return []
+  for (const key of [...keys, "items", "data", "results"]) {
+    if (Array.isArray(source[key])) return source[key] as unknown[]
+    const nested = source[key] && typeof source[key] === "object" && !Array.isArray(source[key]) ? source[key] : null
+    if (nested) {
+      const inner = unwrapList(nested, keys)
+      if (inner.length) return inner
+    }
+  }
+  return []
+}

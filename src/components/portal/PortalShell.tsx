@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { Calendar, ChevronLeft, Home, LayoutGrid, LogOut, Menu, MessageSquare, User, X } from "lucide-react"
 import { BrandLogo } from "@/components/common/BrandLogo"
 import { useAuth } from "@/context/AuthContext"
+import { useAvatar } from "@/lib/avatar"
 import { ROUTES } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 import { NotificationsLink, RegionSelect, UserMenu } from "./HeaderControls"
@@ -95,6 +96,7 @@ function BackLink({ href, className }: { href: string; className?: string }) {
 export function PortalShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { user, logout } = useAuth()
+  const avatarSrc = useAvatar(user?.id) ?? user?.avatarUrl
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -186,7 +188,7 @@ export function PortalShell({ children }: { children: React.ReactNode }) {
               onClick={() => setIsDrawerOpen(false)}
               className="mx-3 mt-4 flex items-center gap-3 rounded-2xl bg-slate-50 p-3 hover:bg-slate-100 transition-colors"
             >
-              <Avatar name={hasName ? user.name : user.email} src={user.avatarUrl} size="lg" />
+              <Avatar name={hasName ? user.name : user.email} src={avatarSrc} size="lg" />
               <span className="min-w-0">
                 <span className="block text-sm font-semibold text-slate-900 truncate">{hasName ? user.name : "Your account"}</span>
                 <span className="block text-xs text-slate-500 truncate">{user.email}</span>
