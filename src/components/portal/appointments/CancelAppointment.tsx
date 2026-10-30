@@ -55,7 +55,7 @@ export function CancelAppointment({ id }: { id: string }) {
 
   if (!canManage(appointment)) {
     return (
-      <PageContainer>
+      <PageContainer wide>
         <PageHeader title="Cancel your appointment?" />
         <EmptyState
           icon={CalendarX}
@@ -90,7 +90,7 @@ export function CancelAppointment({ id }: { id: string }) {
   }
 
   return (
-    <PageContainer className="space-y-5 sm:space-y-6">
+    <PageContainer wide className="space-y-5 sm:space-y-6">
       <PageHeader title="Cancel your appointment?" description="Review the appointment before cancelling." />
 
       <dl className="space-y-2">

@@ -102,7 +102,7 @@ function VerifyEmailContent() {
   )
 
   return (
-    <AuthLayout leftContent={leftContent} illustration="/illustrator/image 2.svg">
+    <AuthLayout leftContent={leftContent} illustration="email">
       <div className="space-y-6">
         {/* Step indicator: dot-line-dot matching Figma */}
         <StepProgressIndicator currentStep={2} stepLabel="Verify email" />

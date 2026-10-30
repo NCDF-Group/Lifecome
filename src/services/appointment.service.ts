@@ -29,8 +29,29 @@ export interface ClinicalService {
   name: string
   description: string | null
   defaultDurationMinutes: number
+  /** In pence, despite the name, which is left over from pricing in naira */
   basePriceKobo: number
   isActive: boolean
+}
+
+export type ConsultationStatus =
+  | "booked"
+  | "check_in_open"
+  | "device_check"
+  | "waiting"
+  | "clinician_joining"
+  | "connected"
+  | "reconnecting"
+  | "audio_fallback"
+  | "ended"
+
+export interface ConsultationSession {
+  id: string
+  appointmentId: string
+  status: ConsultationStatus
+  roomName: string | null
+  startedAt: string | null
+  endedAt: string | null
 }
 
 export interface CreateAppointmentInput {
@@ -129,6 +150,16 @@ export const appointmentService = {
       { newAvailabilitySlotId },
       { headers: { "Idempotency-Key": crypto.randomUUID() } }
     )
+    return data
+  },
+
+  async getConsultation(appointmentId: string): Promise<ConsultationSession> {
+    const { data } = await apiClient.get<ConsultationSession>(`/appointments/${encodeURIComponent(appointmentId)}/consultation`)
+    return data
+  },
+
+  async transitionConsultation(appointmentId: string, status: ConsultationStatus): Promise<ConsultationSession> {
+    const { data } = await apiClient.post<ConsultationSession>(`/appointments/${encodeURIComponent(appointmentId)}/consultation/transition`, { status })
     return data
   },
 

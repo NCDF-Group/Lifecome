@@ -6,39 +6,11 @@ import { useRouter } from "next/navigation"
 import { CalendarDays, CalendarX } from "lucide-react"
 import { useAppointment, useAvailability } from "@/hooks/useAppointments"
 import { getApiErrorMessage } from "@/lib/api-client"
-import { canManage, formatDateTile, formatShortDateTime, formatTime, toUkDayKey } from "@/lib/appointments"
+import { canManage, formatDateTile, formatShortDateTime, formatTime, groupOpenSlots } from "@/lib/appointments"
 import { cn } from "@/lib/utils"
-import { appointmentService, type AvailabilitySlot } from "@/services/appointment.service"
+import { appointmentService } from "@/services/appointment.service"
 import { EmptyState, ErrorState, LoadingCards, PageContainer, PageHeader } from "../ui"
 import { ActionButtonContent, AppointmentFallback, actionButtonClass, appointmentPath } from "./shared"
-
-const MAX_DAYS = 10
-
-interface DayOption {
-  key: string
-  slots: AvailabilitySlot[]
-}
-
-/** Open slots grouped by UK calendar day, soonest first. */
-function groupOpenSlots(slots: AvailabilitySlot[], currentSlotId: string): DayOption[] {
-  const now = Date.now()
-  const open = slots
-    .filter(
-      (slot) =>
-        !slot.isBooked &&
-        slot.id !== currentSlotId &&
-        new Date(slot.startsAt).getTime() > now &&
-        (!slot.heldUntil || new Date(slot.heldUntil).getTime() < now)
-    )
-    .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
-
-  const days = new Map<string, AvailabilitySlot[]>()
-  for (const slot of open) {
-    const key = toUkDayKey(slot.startsAt)
-    days.set(key, [...(days.get(key) ?? []), slot])
-  }
-  return [...days.entries()].slice(0, MAX_DAYS).map(([key, daySlots]) => ({ key, slots: daySlots }))
-}
 
 function SummaryCard({ tone, title, when, note }: { tone: "green" | "blue"; title: string; when: string; note: string }) {
   return (
@@ -84,7 +56,7 @@ export function RescheduleAppointment({ id }: { id: string }) {
 
   if (!canManage(appointment)) {
     return (
-      <PageContainer>
+      <PageContainer wide>
         <PageHeader title="Reschedule appointment" />
         <EmptyState
           icon={CalendarX}
@@ -118,7 +90,7 @@ export function RescheduleAppointment({ id }: { id: string }) {
   }
 
   return (
-    <PageContainer className="space-y-6 sm:space-y-8">
+    <PageContainer wide className="space-y-6 sm:space-y-8">
       <PageHeader title="Reschedule appointment" description="Find a new time for your appointment." />
 
       {appointment.startsAt && (

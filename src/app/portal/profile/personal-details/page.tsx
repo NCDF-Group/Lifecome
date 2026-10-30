@@ -225,7 +225,7 @@ export default function PersonalDetailsPage() {
               >
                 <option value="">Select your country</option>
                 <option value="GB">United Kingdom</option>
-                <option value="NG">Nigeria</option>
+                {country === "NG" && <option value="NG">Nigeria</option>}
               </select>
             </div>
 

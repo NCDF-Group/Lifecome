@@ -3,89 +3,27 @@
 import React, { useCallback, useId, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Bell, Calendar, Check, ChevronDown, LogOut, MessageSquare, User as UserIcon } from "lucide-react"
+import { Bell, Calendar, ChevronDown, LogOut, MessageSquare, User as UserIcon } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { useDismiss } from "@/hooks/useDismiss"
 import { useAvatar } from "@/lib/avatar"
 import { ROUTES } from "@/lib/constants"
-import { REGIONS, setRegion, useRegion, type RegionCode } from "@/lib/region"
 import { cn } from "@/lib/utils"
 import { Avatar, FOCUS_RING } from "./ui"
 
-export function RegionFlag({ code }: { code: RegionCode }) {
-  if (code === "GB") {
-    return <Image src="/images/uk-flag.svg" alt="" width={20} height={10} className="h-[10px] w-5 shrink-0" />
-  }
+/** The service only runs in the UK for now, so this states the region rather than offering a choice. */
+export function RegionBadge({ className, fullWidth = false }: { className?: string; fullWidth?: boolean }) {
   return (
-    <span aria-hidden className="flex h-[10px] w-5 shrink-0 overflow-hidden rounded-[1px]">
-      <span className="flex-1 bg-[#008751]" />
-      <span className="flex-1 bg-white border-y border-slate-200" />
-      <span className="flex-1 bg-[#008751]" />
-    </span>
-  )
-}
-
-export function RegionSelect({ className, fullWidth = false }: { className?: string; fullWidth?: boolean }) {
-  const region = useRegion()
-  const [isOpen, setIsOpen] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const menuId = useId()
-  const close = useCallback(() => setIsOpen(false), [])
-  useDismiss(containerRef, isOpen, close)
-
-  const current = REGIONS.find((option) => option.code === region) ?? REGIONS[0]
-
-  return (
-    <div ref={containerRef} className={cn("relative", className)}>
-      <button
-        type="button"
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        aria-controls={menuId}
-        aria-label={`Region: ${current.name}`}
-        onClick={() => setIsOpen((open) => !open)}
-        className={cn(
-          "flex items-center gap-2 h-10 pl-3 pr-2.5 rounded-full bg-slate-50 border border-slate-100 hover:border-slate-200 text-sm font-semibold text-slate-800 transition-colors cursor-pointer",
-          fullWidth ? "w-full" : "min-w-[96px]",
-          FOCUS_RING
-        )}
-      >
-        <RegionFlag code={current.code} />
-        <span className="flex-1 text-left">{fullWidth ? current.name : current.label}</span>
-        <ChevronDown className={cn("w-4 h-4 text-slate-500 transition-transform", isOpen && "rotate-180")} />
-      </button>
-
-      {isOpen && (
-        <ul
-          id={menuId}
-          role="listbox"
-          aria-label="Choose your region"
-          className={cn(
-            "absolute z-50 mt-2 rounded-xl border border-slate-100 bg-white p-1.5 shadow-lg shadow-slate-900/5",
-            fullWidth ? "inset-x-0" : "right-0 w-52"
-          )}
-        >
-          {REGIONS.map((option) => {
-            const isSelected = option.code === region
-            return (
-              <li key={option.code} role="option" aria-selected={isSelected}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRegion(option.code)
-                    close()
-                  }}
-                  className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer"
-                >
-                  <RegionFlag code={option.code} />
-                  <span className="flex-1 text-left">{option.name}</span>
-                  {isSelected && <Check className="w-4 h-4 text-[#0062F5]" />}
-                </button>
-              </li>
-            )
-          })}
-        </ul>
+    <div
+      aria-label="Region: United Kingdom"
+      className={cn(
+        "flex items-center gap-2 h-10 px-3 rounded-full bg-slate-50 border border-slate-100 text-sm font-semibold text-slate-800",
+        fullWidth && "w-full",
+        className
       )}
+    >
+      <Image src="/images/uk-flag.svg" alt="" width={20} height={10} className="h-[10px] w-5 shrink-0" />
+      <span>{fullWidth ? "United Kingdom" : "UK"}</span>
     </div>
   )
 }

@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Calendar, ChevronLeft, Home, LayoutGrid, LogOut, Menu, MessageSquare, Search, User, X } from "lucide-react"
+import { Calendar, ChevronLeft, Home, LogOut, Menu, MessageSquare, Search, User, X } from "lucide-react"
 import { BrandLogo, BrandMark } from "@/components/common/BrandLogo"
 import { useAuth } from "@/context/AuthContext"
 import { useMessageThreads } from "@/hooks/useMessages"
@@ -11,14 +11,13 @@ import { useAvatar } from "@/lib/avatar"
 import { ROUTES } from "@/lib/constants"
 import { createLocalStore } from "@/lib/local-store"
 import { cn } from "@/lib/utils"
-import { NotificationsLink, RegionSelect, UserMenu } from "./HeaderControls"
+import { NotificationsLink, RegionBadge, UserMenu } from "./HeaderControls"
 import { PortalSearch } from "./PortalSearch"
 import { Avatar, FOCUS_RING } from "./ui"
 
 // Navigation stays within the patient session
 const NAV_ITEMS = [
   { label: "Home", icon: Home, href: ROUTES.PORTAL.DASHBOARD },
-  { label: "Services", icon: LayoutGrid, href: ROUTES.PORTAL.SERVICES },
   { label: "Visit", icon: Calendar, href: ROUTES.PORTAL.APPOINTMENTS },
   { label: "Messages", icon: MessageSquare, href: ROUTES.PORTAL.MESSAGES },
   { label: "Profile", icon: User, href: ROUTES.PORTAL.PROFILE },
@@ -28,10 +27,16 @@ const NAV_ITEMS = [
 // returns to the visits list rather than to the appointment it just closed
 const BACK_OVERRIDES: { pattern: RegExp; href: string }[] = [
   { pattern: /^\/portal\/appointments\/[^/]+\/cancelled$/, href: ROUTES.PORTAL.APPOINTMENTS },
+  // There's no Services page, as services are listed on Home, so a service returns there
+  { pattern: /^\/portal\/services\/[^/]+$/, href: ROUTES.PORTAL.DASHBOARD },
+  // There's no list of wellbeing sessions, so one session returns to the Wellbeing page
+  { pattern: /^\/portal\/services\/wellbeing\/sessions\/[^/]+$/, href: ROUTES.PORTAL.WELLBEING },
 ]
 
 /** Pages below a top-level section get a Back link to their parent. */
 function getBackHref(pathname: string) {
+  // Booking has its own Back, which steps through it, and neither a finished booking nor a call has one
+  if (pathname === ROUTES.PORTAL.BOOK_ONLINE_GP || /^\/portal\/appointments\/[^/]+\/(booked|consultation)$/.test(pathname)) return null
   const override = BACK_OVERRIDES.find(({ pattern }) => pattern.test(pathname))
   if (override) return override.href
   const segments = pathname.split("/").filter(Boolean)
@@ -120,10 +125,15 @@ function SignOutButton({ onClick, collapsed = false }: { onClick: () => void; co
   )
 }
 
-function BackLink({ href }: { href: string }) {
+export function BackLink({ href, onNavigate }: { href: string; onNavigate?: () => void }) {
   return (
     <Link
       href={href}
+      onClick={(event) => {
+        if (!onNavigate) return
+        event.preventDefault()
+        onNavigate()
+      }}
       className={cn("inline-flex items-center gap-1 rounded-lg mb-3 sm:mb-4 -ml-1 text-[15px] font-medium text-[#0062F5] hover:text-[#0050C7]", FOCUS_RING)}
     >
       <ChevronLeft className="w-5 h-5" aria-hidden />
@@ -242,7 +252,7 @@ export function PortalShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="border-t border-slate-100 px-3 pt-3 pb-5 space-y-2">
-            <RegionSelect fullWidth className="sm:hidden" />
+            <RegionBadge fullWidth className="sm:hidden" />
             <SignOutButton onClick={logout} />
           </div>
         </div>
@@ -290,7 +300,7 @@ export function PortalShell({ children }: { children: React.ReactNode }) {
               >
                 {isMobileSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
               </button>
-              <RegionSelect className="hidden sm:block" />
+              <RegionBadge className="hidden sm:flex" />
               <NotificationsLink />
               <UserMenu />
             </div>

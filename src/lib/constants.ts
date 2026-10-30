@@ -30,8 +30,10 @@ export const ROUTES = {
   PORTAL: {
     DASHBOARD: "/portal/dashboard",
     SERVICES: "/portal/services",
+    WELLBEING: "/portal/services/wellbeing",
     APPOINTMENTS: "/portal/appointments",
     BOOK: "/portal/book",
+    BOOK_ONLINE_GP: "/portal/book/online",
     MESSAGES: "/portal/messages",
     NEW_MESSAGE: "/portal/messages/new",
     NOTIFICATIONS: "/portal/notifications",

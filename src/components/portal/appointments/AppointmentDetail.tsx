@@ -2,36 +2,14 @@
 
 import React from "react"
 import Link from "next/link"
-import {
-  Calendar,
-  CalendarPlus,
-  CircleCheck,
-  CircleCheckBig,
-  Clock,
-  CreditCard,
-  Info,
-  MapPin,
-  MessageCircle,
-  Monitor,
-  Video,
-} from "lucide-react"
+import { CalendarPlus, CircleCheckBig, Info, MessageSquareText } from "lucide-react"
 import { useAppointment } from "@/hooks/useAppointments"
-import {
-  MODE_LABELS,
-  STATUS_STYLES,
-  canManage,
-  formatFee,
-  formatFullDate,
-  formatTime,
-  getCategoryLabels,
-  getLocationLabel,
-  getReference,
-} from "@/lib/appointments"
+import { canManage, getCategoryLabels, getReference } from "@/lib/appointments"
 import { ROUTES } from "@/lib/constants"
-import { cn } from "@/lib/utils"
 import type { Appointment } from "@/types"
-import { ActionRow, Avatar, PageContainer, PageHeader } from "../ui"
-import { ActionButtonContent, AppointmentFallback, DetailRow, actionButtonClass, appointmentPath } from "./shared"
+import { ServiceRow } from "../services/shared"
+import { PageContainer, PageHeader } from "../ui"
+import { AppointmentFallback, StatusBadge, SummaryList, actionButtonClass, appointmentPath, getAppointmentRows } from "./shared"
 
 /** A new message to the team behind this appointment, filed under the right topic. */
 function messageTeamHref(appointment: Appointment) {
@@ -45,13 +23,11 @@ export function AppointmentDetail({ id, justRescheduled }: { id: string; justRes
   if (!appointment) return <AppointmentFallback error={error} onRetry={reload} />
 
   const labels = getCategoryLabels(appointment)
-  const status = STATUS_STYLES[appointment.status]
   const isManageable = canManage(appointment)
   const isVideo = appointment.consultationMode === "video"
-  const fee = formatFee(appointment)
 
   return (
-    <PageContainer className="space-y-5 sm:space-y-6">
+    <PageContainer wide className="space-y-4 sm:space-y-4">
       <PageHeader title={`Your ${labels.short} appointment`} description={`Reference ${getReference(appointment)}`} />
 
       {justRescheduled && (
@@ -61,59 +37,25 @@ export function AppointmentDetail({ id, justRescheduled }: { id: string; justRes
         </div>
       )}
 
-      <span className={cn("inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-[15px] font-semibold", status.className)}>
-        {appointment.status === "confirmed" && <CircleCheck className="w-4 h-4 fill-emerald-600 text-white" aria-hidden />}
-        {status.label}
-      </span>
-
-      <div className="flex items-center gap-3 sm:gap-4 rounded-2xl border border-[#DDF2E4] bg-[#F1F9F4] p-4">
-        <Avatar name={appointment.providerName} size="lg" />
-        <div className="min-w-0">
-          <p className="text-base sm:text-lg font-semibold text-slate-900 truncate">{appointment.providerName || "Clinician to be confirmed"}</p>
-          <p className="text-sm sm:text-[15px] text-slate-500">{labels.clinician}</p>
-        </div>
-      </div>
-
-      <dl className="rounded-2xl border border-slate-200/80 bg-white divide-y divide-slate-100">
-        <DetailRow icon={Monitor} label="Service">
-          {appointment.serviceName || labels.clinician}
-        </DetailRow>
-        <DetailRow icon={Calendar} label="Date">
-          {appointment.startsAt ? formatFullDate(appointment.startsAt) : "To be confirmed"}
-        </DetailRow>
-        <DetailRow icon={Clock} label="Time">
-          {appointment.startsAt ? `${formatTime(appointment.startsAt)} • UK time` : "To be confirmed"}
-        </DetailRow>
-        <DetailRow icon={isVideo ? Video : MapPin} label={appointment.consultationMode === "in_person" ? "Location" : "Appointment"}>
-          {appointment.consultationMode === "in_person" ? getLocationLabel(appointment) : MODE_LABELS[appointment.consultationMode].detail}
-        </DetailRow>
-        {fee && (
-          <DetailRow icon={CreditCard} label="Fee">
-            {fee}
-            {appointment.paymentStatus && (
-              <>
-                {" • "}
-                <span className={appointment.paymentStatus === "paid" ? "text-emerald-600" : "text-slate-500"}>{appointment.paymentStatus}</span>
-              </>
-            )}
-          </DetailRow>
-        )}
-      </dl>
+      <section aria-label="Appointment details" className="space-y-2">
+        <StatusBadge status={appointment.status} />
+        <SummaryList rows={getAppointmentRows(appointment)} />
+      </section>
 
       {isManageable ? (
-        <div className="space-y-3 pt-2">
+        <div className="space-y-3">
           {isVideo && (
-            <Link href={appointmentPath(appointment.id, "waiting-room")} className={actionButtonClass("primary")}>
-              <ActionButtonContent icon={Video}>Join waiting room</ActionButtonContent>
+            <Link href={appointmentPath(appointment.id, "waiting-room")} className={actionButtonClass("primary", "justify-center")}>
+              Join waiting room
             </Link>
           )}
-          <Link href={appointmentPath(appointment.id, "reschedule")} className={actionButtonClass(isVideo ? "outline" : "primary")}>
-            <ActionButtonContent icon={Calendar}>Reschedule appointment</ActionButtonContent>
+          <Link href={appointmentPath(appointment.id, "reschedule")} className={actionButtonClass(isVideo ? "outline" : "primary", "justify-center border-blue-200")}>
+            Reschedule
           </Link>
-          <div className="text-center pt-1">
+          <div className="text-center">
             <Link
               href={appointmentPath(appointment.id, "cancel")}
-              className="inline-block rounded-lg px-3 py-2 text-base font-semibold text-red-600 hover:text-red-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+              className="inline-block rounded-lg px-3 py-2 text-sm sm:text-[15px] font-medium text-[#0062F5] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0062F5]"
             >
               Cancel appointment
             </Link>
@@ -130,21 +72,19 @@ export function AppointmentDetail({ id, justRescheduled }: { id: string; justRes
         </div>
       )}
 
-      <ActionRow
+      <ServiceRow
+        size="home"
         item={{
-          title: `Message your ${labels.team}`,
-          description: "Questions about this appointment.",
+          title: "Message your care team",
+          description: "Questions about this appointment",
           href: messageTeamHref(appointment),
-          icon: MessageCircle,
+          icon: MessageSquareText,
           tone: "blue",
         }}
       />
 
       {!isManageable && (
-        <ActionRow
-          iconVariant="square"
-          item={{ title: "Book another appointment", description: "Find a time that suits you.", href: ROUTES.PORTAL.BOOK, icon: CalendarPlus, tone: "green" }}
-        />
+        <ServiceRow size="home" item={{ title: "Book another appointment", description: "Find a time that suits you", href: ROUTES.PORTAL.BOOK, icon: CalendarPlus, tone: "green" }} />
       )}
     </PageContainer>
   )

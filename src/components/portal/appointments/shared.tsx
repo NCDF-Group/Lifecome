@@ -4,16 +4,18 @@ import React from "react"
 import Link from "next/link"
 import { ChevronRight, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { STATUS_STYLES, formatLongDate, formatTime, getCategoryLabels, getLocationLabel } from "@/lib/appointments"
 import { ROUTES } from "@/lib/constants"
+import type { Appointment, AppointmentStatus } from "@/types"
 import { ErrorState, FOCUS_RING, LoadingCards, PageContainer } from "../ui"
 
-export const appointmentPath = (id: string, step?: "reschedule" | "cancel" | "cancelled" | "waiting-room") =>
+export const appointmentPath = (id: string, step?: "reschedule" | "cancel" | "cancelled" | "waiting-room" | "consultation" | "booked") =>
   `${ROUTES.PORTAL.APPOINTMENTS}/${encodeURIComponent(id)}${step ? `/${step}` : ""}`
 
 /** Shown while an appointment loads or when it can't be loaded. */
 export function AppointmentFallback({ error, onRetry }: { error: string | null; onRetry: () => void }) {
   return (
-    <PageContainer>
+    <PageContainer wide>
       {error ? (
         <div className="space-y-4">
           <ErrorState message={error} onRetry={onRetry} />
@@ -32,6 +34,36 @@ export function AppointmentFallback({ error, onRetry }: { error: string | null; 
       )}
     </PageContainer>
   )
+}
+
+export function StatusBadge({ status }: { status: AppointmentStatus }) {
+  const style = STATUS_STYLES[status]
+  return <span className={cn("inline-flex rounded-md border px-2 py-1 text-xs font-semibold", style.className)}>{style.label}</span>
+}
+
+/** Plain label and value rows summarising a booking. */
+export function SummaryList({ rows }: { rows: { label: string; value: React.ReactNode }[] }) {
+  return (
+    <dl className="divide-y divide-slate-100">
+      {rows.map(({ label, value }) => (
+        <div key={label} className="flex items-baseline justify-between gap-4 py-3">
+          <dt className="text-sm sm:text-[15px] text-slate-500 shrink-0">{label}</dt>
+          <dd className="text-sm sm:text-[15px] font-semibold text-slate-900 text-right min-w-0">{value}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+export function getAppointmentRows(appointment: Appointment) {
+  const { startsAt } = appointment
+  return [
+    { label: "Service", value: appointment.serviceName || getCategoryLabels(appointment).clinician },
+    { label: "Clinician", value: appointment.providerName || "To be confirmed" },
+    { label: "Date", value: startsAt ? formatLongDate(startsAt) : "To be confirmed" },
+    { label: "Time", value: startsAt ? `${formatTime(startsAt)} · UK time` : "To be confirmed" },
+    { label: "Location", value: getLocationLabel(appointment) },
+  ]
 }
 
 /** A label/value line in a details list; stacks on very narrow screens. */
@@ -67,6 +99,7 @@ export const actionButtonClass = (variant: ButtonVariant, className?: string) =>
 /**
  * Wide action with an optional leading icon, a label and a trailing chevron.
  * `inline` keeps the chevron beside a centred label, as on the form submit buttons.
+ * `group` centres the icon and label together, with the chevron at the end.
  */
 export function ActionButtonContent({
   icon: Icon,
@@ -75,7 +108,7 @@ export function ActionButtonContent({
 }: {
   icon?: LucideIcon
   children: React.ReactNode
-  align?: "center" | "start" | "inline"
+  align?: "center" | "start" | "inline" | "group"
 }) {
   if (align === "inline") {
     return (
@@ -83,6 +116,17 @@ export function ActionButtonContent({
         {children}
         <ChevronRight className="w-5 h-5 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden />
       </span>
+    )
+  }
+  if (align === "group") {
+    return (
+      <>
+        <span className="flex-1 inline-flex items-center justify-center gap-2">
+          {Icon && <Icon className="w-5 h-5 shrink-0" aria-hidden />}
+          {children}
+        </span>
+        <ChevronRight className="w-5 h-5 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden />
+      </>
     )
   }
   return (

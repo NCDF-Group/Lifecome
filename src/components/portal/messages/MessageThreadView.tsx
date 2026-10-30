@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from "react"
-import { Asterisk, Info, SendHorizontal } from "lucide-react"
+import { ArrowRight, FileText, Info } from "lucide-react"
+import Link from "next/link"
 import { useAuth } from "@/context/AuthContext"
 import { useMessageThreads, useThreadMessages } from "@/hooks/useMessages"
 import { ROUTES } from "@/lib/constants"
@@ -12,14 +13,14 @@ import {
   formatMessageTime,
   getTeamForCategory,
   messageDayKey,
-  type MessageTeam,
 } from "@/lib/messaging"
 import { getApiErrorMessage } from "@/lib/api-client"
 import { cn } from "@/lib/utils"
 import { messagingService } from "@/services/messaging.service"
 import type { ThreadMessage } from "@/types"
-import { ActionRow, ErrorState, FOCUS_RING, LoadingCards, PageContainer, PageHeader } from "../ui"
-import { Notice, TeamIcon } from "./shared"
+import { ServiceRow } from "../services/shared"
+import { ErrorState, FOCUS_RING, LoadingCards, PageContainer, PageHeader } from "../ui"
+import { Notice } from "./shared"
 
 const DEFAULT_TEAM = getTeamForCategory("clinical")
 const COMPOSER_MAX_HEIGHT = 200
@@ -31,29 +32,21 @@ interface PendingMessage {
   baseline: ThreadMessage[] | null
 }
 
-function Bubble({ message, team, isPending = false }: { message: ThreadMessage; team: MessageTeam; isPending?: boolean }) {
-  const time = message.createdAt ? formatMessageTime(message.createdAt) : null
-
-  if (message.isMine) {
-    return (
-      <li className="flex justify-end">
-        <div className={cn("max-w-[85%] sm:max-w-[60%] rounded-2xl rounded-br-md bg-[#E8F5EC] px-3.5 py-2.5", isPending && "opacity-70")}>
-          <p className="text-right text-xs text-slate-500">{isPending ? "Sending…" : time}</p>
-          <p className="mt-0.5 text-[15px] text-slate-900 whitespace-pre-wrap break-words">{message.body}</p>
-        </div>
-      </li>
-    )
-  }
+function Bubble({ message, isPending = false }: { message: ThreadMessage; isPending?: boolean }) {
+  const time = isPending ? "Sending…" : message.createdAt ? formatMessageTime(message.createdAt) : null
+  const sender = message.isMine ? "You" : (message.senderName ?? "Care team")
 
   return (
-    <li className="flex items-start gap-2.5 sm:gap-3">
-      <TeamIcon team={team} size="sm" className="bg-[#F0F6FF] border border-[#DCE8FB] mt-0.5" />
-      <div className="max-w-[85%] sm:max-w-[60%] min-w-0 rounded-2xl rounded-tl-md border border-[#DCE8FB] bg-[#F0F6FF] px-3.5 py-2.5">
-        <div className="flex items-baseline justify-between gap-4">
-          <p className="text-[15px] font-semibold text-slate-900 truncate">{message.senderName ?? "Care team"}</p>
-          {time && <p className="text-xs text-slate-500 shrink-0">{time}</p>}
-        </div>
-        <p className="mt-1 text-[15px] text-slate-800 whitespace-pre-wrap break-words">{message.body}</p>
+    <li className={cn("flex", message.isMine && "justify-end")}>
+      <div
+        className={cn(
+          "max-w-[85%] sm:max-w-[70%] min-w-0 rounded-2xl px-4 py-3",
+          message.isMine ? "bg-[#E8F5EC]" : "border border-[#DCE8FB] bg-[#F0F6FF]",
+          isPending && "opacity-70"
+        )}
+      >
+        <p className="text-[15px] text-slate-900 whitespace-pre-wrap break-words">{message.body}</p>
+        <p className="mt-1.5 text-xs text-slate-500">{[sender, time].filter(Boolean).join(" · ")}</p>
       </div>
     </li>
   )
@@ -129,14 +122,8 @@ export function MessageThreadView({ id }: { id: string }) {
   }
 
   return (
-    <PageContainer className="space-y-5 sm:space-y-6">
-      <PageHeader
-        eyebrow="Messages"
-        title={thread ? team.name : "Care team messages"}
-        description={thread?.topic ? TOPIC_LABELS[thread.topic] : "Patient support."}
-      />
-
-      <Notice icon={Info}>Messages are reviewed during service hours, not continuously.</Notice>
+    <PageContainer wide className="space-y-5 sm:space-y-5">
+      <PageHeader title={thread ? team.name : "Care team messages"} description={thread?.topic ? TOPIC_LABELS[thread.topic] : "Patient support."} />
 
       {isLoading && <LoadingCards count={3} label="Loading conversation" />}
       {error && messages === null && <ErrorState message={error} onRetry={refresh} />}
@@ -151,7 +138,7 @@ export function MessageThreadView({ id }: { id: string }) {
               {group.label && <p className="text-center text-sm text-slate-400">{group.label}</p>}
               <ul className="space-y-4">
                 {group.items.map((message) => (
-                  <Bubble key={message.id} message={message} team={team} />
+                  <Bubble key={message.id} message={message} />
                 ))}
               </ul>
             </section>
@@ -160,7 +147,6 @@ export function MessageThreadView({ id }: { id: string }) {
             <ul>
               <Bubble
                 message={{ id: "pending", body: pending.body, createdAt: null, isMine: true, senderName: null }}
-                team={team}
                 isPending={pending.status === "sending"}
               />
             </ul>
@@ -170,14 +156,24 @@ export function MessageThreadView({ id }: { id: string }) {
         </div>
       )}
 
-      <div className="border-t border-slate-100 pt-5 space-y-3">
+      <ServiceRow
+        item={{
+          title: "Related information",
+          description: "View the next step in your care",
+          href: ROUTES.PORTAL.RECORDS,
+          icon: FileText,
+          tone: "blue",
+        }}
+      />
+
+      <div className="space-y-3">
         {sendError && <ErrorState message={sendError} />}
         <form
           onSubmit={(event) => {
             event.preventDefault()
             void send()
           }}
-          className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-white pl-4 pr-2 py-2 focus-within:border-[#0062F5] focus-within:ring-2 focus-within:ring-blue-100"
+          className="flex items-end gap-2.5"
         >
           <label htmlFor="message-composer" className="sr-only">
             Type a message
@@ -195,31 +191,28 @@ export function MessageThreadView({ id }: { id: string }) {
             maxLength={MESSAGE_MAX_LENGTH}
             placeholder="Type a message…"
             disabled={messages === null}
-            className="flex-1 resize-none bg-transparent py-2 text-[15px] text-slate-900 placeholder:text-slate-400 focus:outline-none disabled:cursor-not-allowed"
+            className="flex-1 min-w-0 resize-none rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-500 focus:outline-none focus:border-[#0062F5] focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed"
           />
           <button
             type="submit"
             aria-label="Send message"
             disabled={!draft.trim() || pending?.status === "sending"}
             className={cn(
-              "w-10 h-10 rounded-full bg-[#0062F5] hover:bg-[#0052cc] text-white flex items-center justify-center shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer",
+              "w-[52px] h-[52px] rounded-xl bg-[#0062F5] hover:bg-[#0052cc] text-white flex items-center justify-center shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer",
               FOCUS_RING
             )}
           >
-            <SendHorizontal className="w-[18px] h-[18px]" />
+            <ArrowRight className="w-5 h-5" />
           </button>
         </form>
 
-        <ActionRow
-          titleClassName="text-red-600"
-          item={{
-            title: "Need urgent help?",
-            description: "View emergency guidance.",
-            href: ROUTES.PORTAL.URGENT_HELP,
-            icon: Asterisk,
-            tone: "red",
-          }}
-        />
+        <Notice icon={Info}>
+          For routine messages only. Messages are reviewed during service hours, not continuously. If you need help now,{" "}
+          <Link href={ROUTES.PORTAL.URGENT_HELP} className="font-semibold text-[#0062F5] underline underline-offset-2">
+            view urgent help
+          </Link>
+          .
+        </Notice>
       </div>
     </PageContainer>
   )

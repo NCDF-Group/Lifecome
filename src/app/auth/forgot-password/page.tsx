@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
   )
 
   return (
-    <AuthLayout leftContent={leftContent} illustration="/illustrator/image 6.svg">
+    <AuthLayout leftContent={leftContent} illustration="forgot-password">
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">

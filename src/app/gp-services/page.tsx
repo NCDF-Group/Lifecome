@@ -13,6 +13,7 @@ import {
   User,
   Sparkles,
   Heart,
+  Monitor,
 } from "lucide-react"
 import { Navbar } from "@/components/layout/Navbar"
 import { Footer } from "@/components/layout/Footer"
@@ -98,15 +99,22 @@ export default function GpServicesPage() {
 
             {/* Right Hero Video Mockup Image */}
             <div className="lg:col-span-6 relative">
-              <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full max-w-lg mx-auto lg:max-w-none bg-slate-50 flex items-center justify-center">
+              <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full max-w-lg mx-auto lg:max-w-none">
                 <Image
-                  src="/images/Doctor smiling on laptop video consultation screen.svg"
+                  src="/images/landing/online-gp-consultation.webp"
                   alt="Doctor during an online video consultation"
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-contain p-2"
+                  className="object-cover"
                 />
+                {/* Floating Badge matching Figma */}
+                <div className="absolute right-[2%] top-[2.5%] flex h-[16%] w-[31.5%] items-center gap-[6%] rounded-xl bg-white px-[3%] shadow-md">
+                  <div className="flex aspect-square h-[62%] shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                    <Monitor className="h-1/2 w-1/2" />
+                  </div>
+                  <span className="whitespace-nowrap text-[11px] font-semibold text-slate-800 sm:text-sm">Online GP</span>
+                </div>
               </div>
             </div>
           </div>
@@ -456,8 +464,8 @@ export default function GpServicesPage() {
 
         {/* 7. BOTTOM BANNER matching Figma */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="bg-[#EAF4FF] border border-blue-100 rounded-3xl overflow-hidden grid grid-cols-1 sm:grid-cols-12 items-center">
-            <div className="sm:col-span-8 p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="bg-[#EFF9F5] border border-emerald-100 rounded-3xl overflow-hidden grid grid-cols-1 sm:grid-cols-12 items-center">
+            <div className="sm:col-span-8 p-8 sm:p-10 flex flex-col lg:flex-row items-center sm:items-start lg:items-center justify-between gap-6">
               <div className="space-y-2 text-center sm:text-left">
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                   Find a time that works for you
@@ -476,14 +484,15 @@ export default function GpServicesPage() {
               </Link>
             </div>
 
-            <div className="sm:col-span-4 relative h-40 sm:h-36 w-full">
+            <div className="sm:col-span-4 relative h-40 sm:h-auto sm:min-h-36 sm:self-stretch w-full">
               <Image
-                src="/images/Consultation smile.svg"
-                alt="Preview of booking an online GP appointment"
+                src="/images/landing/smiling-mature-man.webp"
+                alt="Smiling man at his desk"
                 fill
                 sizes="(max-width: 640px) 100vw, 33vw"
-                className="object-cover"
+                className="object-cover object-[50%_18%]"
               />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#F0FAF7] via-[#F0FAF7]/15 via-25% to-transparent to-45%" />
             </div>
           </div>
         </section>

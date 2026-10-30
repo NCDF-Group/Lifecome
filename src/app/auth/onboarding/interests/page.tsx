@@ -62,7 +62,7 @@ function InterestsContent() {
   )
 
   return (
-    <AuthLayout leftContent={leftContent} illustration="/illustrator/image 6 (2).svg">
+    <AuthLayout leftContent={leftContent} illustration="interests">
       <div className="space-y-6">
         <StepProgressIndicator currentStep={4} stepLabel="Your interests" />
         <div>

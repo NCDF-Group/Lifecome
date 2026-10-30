@@ -20,9 +20,9 @@ import { ROUTES } from "@/lib/constants"
 import { ActionRow, PageContainer, PageHeader, PrimaryActionLink, SectionHeading, type ActionItem } from "@/components/portal/ui"
 
 const SERVICES: ActionItem[] = [
-  { title: "GP", description: "Online, clinic & menopause care", href: `${ROUTES.PORTAL.SERVICES}/gp`, icon: Stethoscope, tone: "green" },
+  { title: "GP", description: "Online, clinic & menopause care", href: ROUTES.PORTAL.BOOK, icon: Stethoscope, tone: "green" },
   { title: "Care", description: "Professional care & support", href: `${ROUTES.PORTAL.SERVICES}/care`, icon: HandHeart, tone: "blue" },
-  { title: "Wellbeing", description: "Coaching, sessions & shop", href: `${ROUTES.PORTAL.SERVICES}/wellbeing`, icon: Leaf, tone: "blue" },
+  { title: "Wellbeing", description: "Coaching, sessions & shop", href: ROUTES.PORTAL.WELLBEING, icon: Leaf, tone: "blue" },
   { title: "Insurance", description: "Explore cover & manage policies", href: `${ROUTES.PORTAL.SERVICES}/insurance`, icon: ShieldCheck, tone: "green" },
 ]
 

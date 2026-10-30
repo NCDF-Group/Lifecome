@@ -10,6 +10,7 @@ import {
   Info,
 } from "lucide-react"
 import { AuthLayout } from "@/components/auth/AuthLayout"
+import { ServiceCards } from "@/components/auth/AuthIllustration"
 import { StepProgressIndicator } from "@/components/auth/StepProgressIndicator"
 import { authService, PENDING_SIGNUP_EMAIL_KEY } from "@/services/auth.service"
 import { getApiErrorMessage } from "@/lib/api-client"
@@ -47,19 +48,16 @@ export default function RegisterStep1Page() {
         <p className="text-sm text-slate-600">
           Manage your health and care, all in one place.
         </p>
-        {/* The four service cards are part of the illustration artwork */}
-        <ul className="sr-only">
-          <li>GP services: Appointments online and in person.</li>
-          <li>Wellbeing: Support for your everyday health.</li>
-          <li>Professional Care: Support around your everyday needs.</li>
-          <li>Insurance: Explore cover and manage policies.</li>
-        </ul>
+      </div>
+      {/* Clears the heart drawn at the bottom of the panel */}
+      <div className="mb-[69px]">
+        <ServiceCards />
       </div>
     </div>
   )
 
   return (
-    <AuthLayout leftContent={leftContent} illustration="/illustrator/image 2 (1).svg">
+    <AuthLayout leftContent={leftContent} illustration="services">
       <div className="space-y-6">
         {/* Step indicator matching Figma */}
         <StepProgressIndicator currentStep={1} stepLabel="Account" />

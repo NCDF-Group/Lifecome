@@ -31,7 +31,7 @@ export const TONES: Record<Tone, { card: string; hover: string; icon: string; ch
   },
 }
 
-const ICON_BACKGROUNDS: Record<Tone, string> = {
+export const ICON_BACKGROUNDS: Record<Tone, string> = {
   green: "bg-emerald-100/70",
   blue: "bg-blue-100/70",
   red: "bg-red-100/70",
@@ -44,11 +44,13 @@ export function IconBadge({
   tone,
   variant = "square",
   size = "md",
+  className,
 }: {
   icon: LucideIcon
   tone: Tone
-  variant?: "square" | "circle"
+  variant?: "square" | "circle" | "tinted"
   size?: "sm" | "md" | "lg" | "xl"
+  className?: string
 }) {
   return (
     <span
@@ -56,11 +58,14 @@ export function IconBadge({
       className={cn(
         "flex items-center justify-center shrink-0",
         TONES[tone].icon,
-        variant === "circle" ? "rounded-full bg-white shadow-sm" : `rounded-xl ${ICON_BACKGROUNDS[tone]}`,
+        variant === "circle" && "rounded-full bg-white shadow-sm",
+        variant === "square" && `rounded-xl ${ICON_BACKGROUNDS[tone]}`,
+        variant === "tinted" && `rounded-full ${ICON_BACKGROUNDS[tone]}`,
         size === "sm" && "w-9 h-9",
         size === "md" && "w-10 h-10",
         size === "lg" && "w-12 h-12",
-        size === "xl" && "w-12 h-12 sm:w-14 sm:h-14"
+        size === "xl" && "w-12 h-12 sm:w-14 sm:h-14",
+        className
       )}
     >
       <Icon className={size === "lg" || size === "xl" ? "w-6 h-6" : "w-[18px] h-[18px]"} />
@@ -223,9 +228,9 @@ export function SectionHeading({
   )
 }
 
-/** Keeps every portal page on the same readable column width. */
-export function PageContainer({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("max-w-[968px] mx-auto w-full space-y-6 sm:space-y-8", className)}>{children}</div>
+/** Keeps every portal page on the same readable column width. `wide` stretches it to Home's card width, from the left. */
+export function PageContainer({ children, className, wide = false }: { children: React.ReactNode; className?: string; wide?: boolean }) {
+  return <div className={cn("w-full space-y-6 sm:space-y-8", wide ? "max-w-[1200px]" : "max-w-[968px] mx-auto", className)}>{children}</div>
 }
 
 // ─── People ──────────────────────────────────────────────────────────────────

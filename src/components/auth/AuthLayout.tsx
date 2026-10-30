@@ -4,22 +4,20 @@ import React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ChevronDown } from "lucide-react"
+import { AuthIllustration, type AuthArtwork } from "./AuthIllustration"
 import { BrandLogo } from "@/components/common/BrandLogo"
 
 interface AuthLayoutProps {
   children: React.ReactNode
   leftContent: React.ReactNode
-  /** Full-panel artwork from /public/illustrator, drawn behind leftContent */
-  illustration?: string
-  /** "top" for artwork with its own headline baked in, "bottom" when leftContent supplies the headline */
-  illustrationAlign?: "top" | "bottom"
+  /** Artwork drawn behind leftContent */
+  illustration?: AuthArtwork
 }
 
 export function AuthLayout({
   children,
   leftContent,
   illustration,
-  illustrationAlign = "bottom",
 }: AuthLayoutProps) {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between font-sans">
@@ -69,17 +67,8 @@ export function AuthLayout({
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
         <div className="w-full max-w-2xl lg:max-w-4xl bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
           {/* Left Decorative & Info Column */}
-          <div className="hidden lg:col-span-5 lg:flex bg-gradient-to-b from-[#F0FDF4]/90 via-[#ECFDF5]/50 to-[#F0F9FF]/90 p-8 flex-col justify-between relative border-r border-slate-100">
-            {illustration && (
-              <Image
-                src={illustration}
-                alt=""
-                fill
-                priority
-                sizes="400px"
-                className={`object-contain ${illustrationAlign === "top" ? "object-top" : "object-bottom"}`}
-              />
-            )}
+          <div className="hidden lg:col-span-5 lg:flex bg-gradient-to-br from-[#EAFBF1] via-[#E8FBF5] to-[#E7F3FF] p-8 flex-col justify-between relative border-r border-slate-100">
+            {illustration && <AuthIllustration artwork={illustration} />}
             <div className="relative z-10 flex flex-col flex-1">{leftContent}</div>
           </div>
 

@@ -136,7 +136,7 @@ export default function ClinicAppointmentsPage() {
             <div className="lg:col-span-6 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full max-w-lg mx-auto lg:max-w-none">
                 <Image
-                  src="/images/Doctor smiling during in-person patient consultation.svg"
+                  src="/images/landing/doctor-in-person-consultation.webp"
                   alt="Doctor with patient in person clinic consultation"
                   fill
                   priority
@@ -264,7 +264,7 @@ export default function ClinicAppointmentsPage() {
             {/* Left Reception Photo */}
             <div className="lg:col-span-6 relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full">
               <Image
-                src="/images/Patient checking in at modern clinic reception desk.svg"
+                src="/images/landing/clinic-reception-check-in.webp"
                 alt="Patient at LifeCome Health clinic check-in desk"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -564,7 +564,7 @@ export default function ClinicAppointmentsPage() {
 
             <div className="lg:col-span-4 relative h-64 sm:h-80 w-full">
               <Image
-                src="/images/Banner Right Image → Smiling mature man.svg"
+                src="/images/landing/smiling-mature-man.webp"
                 alt="Smiling doctor in suit"
                 fill
                 sizes="(max-width: 1024px) 100vw, 33vw"

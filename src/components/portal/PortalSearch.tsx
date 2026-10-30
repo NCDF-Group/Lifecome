@@ -19,12 +19,16 @@ const PROFILE = ROUTES.PORTAL.PROFILE
 
 // The API has no search endpoint yet, so this finds pages and services within the portal
 const ENTRIES: SearchEntry[] = [
-  { label: "Book an appointment", description: "Online GP or a clinic visit", href: ROUTES.PORTAL.BOOK, keywords: "book appointment doctor gp consultation new visit" },
-  { label: "GP", description: "Online, clinic & menopause care", href: `${ROUTES.PORTAL.SERVICES}/gp`, keywords: "gp doctor clinic online video menopause general practitioner" },
+  { label: "Book an appointment", description: "Online, clinic & menopause care", href: ROUTES.PORTAL.BOOK, keywords: "book appointment doctor gp consultation new visit clinic online video menopause general practitioner" },
   { label: "Care", description: "Professional care & support", href: `${ROUTES.PORTAL.SERVICES}/care`, keywords: "care home carer support assessment elderly" },
-  { label: "Wellbeing", description: "Coaching, sessions & shop", href: `${ROUTES.PORTAL.SERVICES}/wellbeing`, keywords: "wellbeing coaching mental health sessions shop" },
+  { label: "Wellbeing", description: "Coaching, sessions & shop", href: ROUTES.PORTAL.WELLBEING, keywords: "wellbeing coaching mental health sessions shop" },
+  { label: "Lifestyle coaching", description: "Build routines that fit your life", href: `${ROUTES.PORTAL.WELLBEING}/lifestyle-coaching`, keywords: "lifestyle coaching wellbeing routines goals habits" },
+  { label: "Healthy eating support", description: "Practical education for everyday choices", href: `${ROUTES.PORTAL.WELLBEING}/healthy-eating`, keywords: "healthy eating food diet nutrition wellbeing" },
   { label: "Insurance", description: "Explore cover & manage policies", href: `${ROUTES.PORTAL.SERVICES}/insurance`, keywords: "insurance cover policy claim" },
-  { label: "Your appointments", description: "Upcoming and past visits", href: ROUTES.PORTAL.APPOINTMENTS, keywords: "appointments visits upcoming past reschedule cancel" },
+  { label: "Stress & relaxation", description: "A supportive space for everyday pressures", href: `${ROUTES.PORTAL.WELLBEING}/stress-relaxation`, keywords: "stress relaxation calm recharge wellbeing" },
+  { label: "My wellbeing plan", description: "Set goals and track your progress", href: `${ROUTES.PORTAL.WELLBEING}/plan`, keywords: "wellbeing plan goals habits progress" },
+  { label: "Wellbeing check-in", description: "Reflect on your week", href: `${ROUTES.PORTAL.WELLBEING}/plan/check-in`, keywords: "wellbeing check in checkin reflect week routine" },
+  { label: "Your visits", description: "Upcoming, past and cancelled", href: ROUTES.PORTAL.APPOINTMENTS, keywords: "appointments visits sessions care upcoming past cancelled reschedule cancel" },
   { label: "Health records", description: "Records and care plans", href: ROUTES.PORTAL.RECORDS, keywords: "records results care plans prescriptions documents" },
   { label: "Messages", description: "Talk to your care teams", href: ROUTES.PORTAL.MESSAGES, keywords: "messages inbox chat care team" },
   { label: "New message", description: "Contact a care team", href: ROUTES.PORTAL.NEW_MESSAGE, keywords: "new message contact ask question help support" },

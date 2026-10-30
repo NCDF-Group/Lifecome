@@ -91,7 +91,7 @@ export default function HomePage() {
             <div className="lg:col-span-6 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full max-w-lg mx-auto lg:max-w-none">
                 <Image
-                  src="/images/Smiling doctor in consultation.svg"
+                  src="/images/landing/doctor-patient-consultation.webp"
                   alt="Smiling doctor in consultation with a patient"
                   fill
                   priority
@@ -293,7 +293,7 @@ export default function HomePage() {
             <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-2xs grid grid-cols-1 sm:grid-cols-12 hover:shadow-md transition-shadow">
               <div className="sm:col-span-5 relative h-48 sm:h-auto min-h-[160px]">
                 <Image
-                  src="/images/Wellbeing lifestyle support.svg"
+                  src="/images/landing/wellbeing-lifestyle.webp"
                   alt="Wellbeing lifestyle support"
                   fill
                   className="object-cover"
@@ -320,7 +320,7 @@ export default function HomePage() {
             <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-2xs grid grid-cols-1 sm:grid-cols-12 hover:shadow-md transition-shadow">
               <div className="sm:col-span-5 relative h-48 sm:h-auto min-h-[160px]">
                 <Image
-                  src="/images/Container.svg"
+                  src="/images/landing/carer-walking-support.webp"
                   alt="Professional Care assistant"
                   fill
                   className="object-cover"
@@ -515,11 +515,13 @@ export default function HomePage() {
 
             <div className="lg:col-span-5 relative h-64 sm:h-80 w-full">
               <Image
-                src="/images/Right CTA Image.svg"
+                src="/images/landing/smiling-man-office.webp"
                 alt="Smiling man at LifeCome Health"
                 fill
+                sizes="(max-width: 1024px) 100vw, 42vw"
                 className="object-cover object-center"
               />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#EBFBF5] via-[#E8F8F5]/30 to-transparent" />
             </div>
           </div>
         </section>

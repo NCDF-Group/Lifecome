@@ -86,7 +86,7 @@ export default function ProfessionalCarePage() {
             <div className="lg:col-span-6 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full max-w-lg mx-auto lg:max-w-none">
                 <Image
-                  src="/images/Elderly woman smiling with healthcare worker.svg"
+                  src="/images/landing/elderly-woman-carer.webp"
                   alt="Professional caregiver supporting senior lady at home"
                   fill
                   priority
@@ -266,7 +266,7 @@ export default function ProfessionalCarePage() {
             {/* Left Photo */}
             <div className="lg:col-span-6 relative rounded-3xl overflow-hidden shadow-lg border border-slate-100 aspect-[4/3] w-full">
               <Image
-                src="/images/Elderly gentleman in glasses speaking with a carer.svg"
+                src="/images/landing/elderly-gentleman-carer.webp"
                 alt="Carer serving tea to elderly gentleman"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -487,33 +487,35 @@ export default function ProfessionalCarePage() {
 
         {/* 7. BOTTOM BANNER matching Figma */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="bg-gradient-to-r from-[#ECFDF5] via-[#F6FAFF] to-[#EFF6FF] border border-[#DDEDFB] rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-center">
-            <div className="lg:col-span-8 p-8 sm:p-10 space-y-4">
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                Let&apos;s talk about the support you need
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-500">
-                A request does not confirm a care package or scheduled visits.
-              </p>
-              <div className="pt-2">
-                <button
-                  type="button"
-                  className="bg-[#0062F5] hover:bg-[#0052cc] text-white font-medium px-8 py-3.5 rounded-[4px] inline-flex items-center gap-1.5 transition-colors shadow-xs"
-                >
-                  <span>Request a care assessment</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+          <div className="bg-[#EFF9F5] border border-emerald-100 rounded-3xl overflow-hidden grid grid-cols-1 sm:grid-cols-12 items-center">
+            <div className="sm:col-span-8 p-8 sm:p-10 flex flex-col lg:flex-row items-center sm:items-start lg:items-center justify-between gap-6">
+              <div className="space-y-2 text-center sm:text-left">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  Let&apos;s talk about the support you need
+                </h2>
+                <p className="text-sm text-slate-600">
+                  A request does not confirm a care package or scheduled visits.
+                </p>
               </div>
+
+              <button
+                type="button"
+                className="bg-[#0062F5] hover:bg-[#0052cc] text-white font-medium px-8 py-3.5 rounded-[4px] flex items-center gap-1.5 transition-colors shadow-xs shrink-0"
+              >
+                <span>Request a care assessment</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="lg:col-span-4 relative h-40 sm:h-44 w-full">
+            <div className="sm:col-span-4 relative h-40 sm:h-auto sm:min-h-36 sm:self-stretch w-full">
               <Image
-                src="/images/Smiling couple consultation.svg"
+                src="/images/landing/care-assessment-team.webp"
                 alt="Care assessment team consultation"
                 fill
-                sizes="(max-width: 1024px) 100vw, 33vw"
-                className="object-cover object-center"
+                sizes="(max-width: 640px) 100vw, 33vw"
+                className="object-cover object-[50%_32%] sm:object-[27%_32%] lg:object-[50%_32%]"
               />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#F0FAF7] via-[#F0FAF7]/15 via-25% to-transparent to-45%" />
             </div>
           </div>
         </section>

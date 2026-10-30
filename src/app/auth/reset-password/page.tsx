@@ -59,7 +59,7 @@ function ResetPasswordContent() {
   )
 
   return (
-    <AuthLayout leftContent={leftContent} illustration="/illustrator/image 6 (1).svg">
+    <AuthLayout leftContent={leftContent} illustration="reset-password">
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">

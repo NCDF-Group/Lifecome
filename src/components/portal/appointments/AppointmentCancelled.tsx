@@ -33,7 +33,7 @@ export function AppointmentCancelled({ id }: { id: string }) {
   const refund = appointment.paymentStatus === "refunded" ? REFUND_COPY.refunded : REFUND_COPY.reviewing
 
   return (
-    <PageContainer className="space-y-5 sm:space-y-6">
+    <PageContainer wide className="space-y-5 sm:space-y-6">
       <PageHeader title="Appointment cancelled" description="Your appointment has been cancelled." />
 
       <div role="status" className="flex items-start sm:items-center gap-3 sm:gap-4 rounded-2xl border border-[#DDF2E4] bg-[#F1F9F4] p-4 sm:p-5">

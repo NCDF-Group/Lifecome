@@ -82,11 +82,12 @@ function OnboardingDetailsContent() {
     }
   }
 
-  // Headline and avatar artwork are baked into the illustration
   const leftContent = (
-    <div className="sr-only">
-      <h2>Make your account your own.</h2>
-      <p>
+    <div className="space-y-3">
+      <h2 className="text-3xl font-extrabold text-slate-900 leading-tight">
+        Make your account<br />your own.
+      </h2>
+      <p className="text-sm text-slate-600">
         A few details help us personalise your experience and get you to the
         right support, faster.
       </p>
@@ -96,8 +97,7 @@ function OnboardingDetailsContent() {
   return (
     <AuthLayout
       leftContent={leftContent}
-      illustration="/illustrator/Section - Left Column_ Branding, Reassurance & Illustration.svg"
-      illustrationAlign="top"
+      illustration="profile"
     >
       <div className="space-y-6">
         {/* Step indicator: dot-line-dot matching Figma */}
@@ -222,7 +222,7 @@ function OnboardingDetailsContent() {
                   className="appearance-none bg-transparent py-3 pr-4 text-xs font-medium text-slate-700 focus:outline-hidden"
                 >
                   <option value="GB">+44</option>
-                  <option value="NG">+234</option>
+                  {country === "NG" && <option value="NG">+234</option>}
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-2 h-3 w-3 text-slate-400" />
               </div>

@@ -1,14 +1,9 @@
+import type { AvailabilitySlot } from "@/services/appointment.service"
 import type { Appointment, AppointmentStatus, AppointmentType } from "@/types"
 
 // Appointments are booked and shown in UK time, whatever the device's own time zone
 export const UK_TIME_ZONE = "Europe/London"
 
-const dayDateFormat = new Intl.DateTimeFormat("en-GB", {
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-  timeZone: UK_TIME_ZONE,
-})
 const fullDateFormat = new Intl.DateTimeFormat("en-GB", {
   weekday: "long",
   day: "numeric",
@@ -34,12 +29,6 @@ const timeFormat = new Intl.DateTimeFormat("en-GB", {
   minute: "2-digit",
   timeZone: UK_TIME_ZONE,
 })
-const timeZoneFormat = new Intl.DateTimeFormat("en-GB", {
-  hour: "2-digit",
-  minute: "2-digit",
-  timeZoneName: "short",
-  timeZone: UK_TIME_ZONE,
-})
 // en-CA formats as YYYY-MM-DD, which groups slots by their UK calendar day
 const dayKeyFormat = new Intl.DateTimeFormat("en-CA", {
   year: "numeric",
@@ -53,19 +42,16 @@ const tileFormat = {
   month: new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: UK_TIME_ZONE }),
 }
 
-/** "Monday 12 October" */
-export const formatDayDate = (iso: string) => dayDateFormat.format(new Date(iso))
 /** "Wednesday 21 October 2026" */
 export const formatFullDate = (iso: string) => fullDateFormat.format(new Date(iso))
 /** "21 October 2026" */
 export const formatLongDate = (iso: string) => longDateFormat.format(new Date(iso))
 /** "10:30" */
 export const formatTime = (iso: string) => timeFormat.format(new Date(iso))
-/** "10:30 BST" */
-export const formatTimeWithZone = (iso: string) => timeZoneFormat.format(new Date(iso))
+/** "Wed 21 Oct 2026" */
+export const formatShortDate = (iso: string) => shortDateFormat.format(new Date(iso)).replace(",", "")
 /** "Wed 21 Oct 2026 at 10:30" */
-export const formatShortDateTime = (iso: string) =>
-  `${shortDateFormat.format(new Date(iso)).replace(",", "")} at ${formatTime(iso)}`
+export const formatShortDateTime = (iso: string) => `${formatShortDate(iso)} at ${formatTime(iso)}`
 export const toUkDayKey = (iso: string) => dayKeyFormat.format(new Date(iso))
 export const formatDateTile = (iso: string) => {
   const date = new Date(iso)
@@ -74,6 +60,34 @@ export const formatDateTile = (iso: string) => {
     day: tileFormat.day.format(date),
     month: tileFormat.month.format(date),
   }
+}
+
+const MAX_DAYS = 10
+
+export interface DayOption {
+  key: string
+  slots: AvailabilitySlot[]
+}
+
+/** Open slots grouped by UK calendar day, soonest first. */
+export function groupOpenSlots(slots: AvailabilitySlot[], currentSlotId: string): DayOption[] {
+  const now = Date.now()
+  const open = slots
+    .filter(
+      (slot) =>
+        !slot.isBooked &&
+        slot.id !== currentSlotId &&
+        new Date(slot.startsAt).getTime() > now &&
+        (!slot.heldUntil || new Date(slot.heldUntil).getTime() < now)
+    )
+    .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
+
+  const days = new Map<string, AvailabilitySlot[]>()
+  for (const slot of open) {
+    const key = toUkDayKey(slot.startsAt)
+    days.set(key, [...(days.get(key) ?? []), slot])
+  }
+  return [...days.entries()].slice(0, MAX_DAYS).map(([key, daySlots]) => ({ key, slots: daySlots }))
 }
 
 const CLOSED_STATUSES: AppointmentStatus[] = ["cancelled", "patient_no_show", "doctor_unavailable"]
@@ -87,15 +101,6 @@ export function isUpcoming(appointment: Appointment, now = Date.now()) {
 
 /** Only bookings that have not happened and are still active can be changed */
 export const canManage = (appointment: Appointment) => isUpcoming(appointment)
-
-export function sortByStart(appointments: Appointment[], direction: "asc" | "desc" = "asc") {
-  const sign = direction === "asc" ? 1 : -1
-  return [...appointments].sort((a, b) => {
-    const aTime = a.startsAt ? new Date(a.startsAt).getTime() : Number.POSITIVE_INFINITY
-    const bTime = b.startsAt ? new Date(b.startsAt).getTime() : Number.POSITIVE_INFINITY
-    return (aTime - bTime) * sign
-  })
-}
 
 const CATEGORY_LABELS: Record<Appointment["serviceCategory"], { short: string; clinician: string; team: string }> = {
   gp: { short: "GP", clinician: "General practitioner", team: "GP team" },
@@ -133,9 +138,9 @@ export function getInitials(name?: string | null) {
   return `${first}${last}`.toUpperCase()
 }
 
-export function formatFee(appointment: Appointment) {
+export function formatFee(appointment: Pick<Appointment, "feeMinor" | "currency">) {
   if (appointment.feeMinor == null) return null
-  return new Intl.NumberFormat(appointment.currency === "NGN" ? "en-NG" : "en-GB", {
+  return new Intl.NumberFormat("en-GB", {
     style: "currency",
     currency: appointment.currency ?? "GBP",
   }).format(appointment.feeMinor / 100)

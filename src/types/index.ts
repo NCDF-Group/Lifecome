@@ -103,10 +103,22 @@ export interface Appointment {
   reference?: string | null
   clinicName?: string | null
   clinicAddress?: string | null
-  /** Fee in minor units (pence or kobo) */
+  /** Fee in pence */
   feeMinor?: number | null
-  currency?: "GBP" | "NGN" | null
+  currency?: "GBP" | null
   paymentStatus?: "paid" | "pending" | "refunded" | null
+}
+
+/** One row of `/me/visits`, which brings GP appointments, wellbeing sessions and care visits together. */
+export interface Visit {
+  id: string
+  service: "gp" | "care" | "wellbeing"
+  title: string
+  scheduledStartsAt: string
+  durationMinutes: number
+  providerOrWorkerName: string
+  deliveryChannel: "online" | "clinic" | "in_person_home"
+  status: string
 }
 
 // ─── Messaging ───────────────────────────────────────────────────────────────

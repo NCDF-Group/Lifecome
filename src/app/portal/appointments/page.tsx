@@ -2,139 +2,139 @@
 
 import React, { useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { CalendarClock, CalendarPlus, CalendarX } from "lucide-react"
-import { AppointmentCard } from "@/components/portal/AppointmentCard"
-import {
-  ActionRow,
-  EmptyState,
-  ErrorState,
-  LoadingCards,
-  PageContainer,
-  PageHeader,
-  PrimaryActionLink,
-  SectionHeading,
-} from "@/components/portal/ui"
-import { useAppointments } from "@/hooks/useAppointments"
-import { isUpcoming, sortByStart } from "@/lib/appointments"
+import { CalendarDays, HeartPulse, Sprout, Stethoscope, Video } from "lucide-react"
+import { actionButtonClass } from "@/components/portal/appointments/shared"
+import { ServiceRow } from "@/components/portal/services/shared"
+import { ErrorState, FOCUS_RING, LoadingCards, PageContainer, PageHeader } from "@/components/portal/ui"
+import { useVisits } from "@/hooks/useVisits"
+import { formatLongDate, formatTime } from "@/lib/appointments"
 import { ROUTES } from "@/lib/constants"
 import { cn } from "@/lib/utils"
+import { getVisitHref, getVisitTab, type VisitTab } from "@/lib/visits"
+import type { Visit } from "@/types"
 
-type Tab = "upcoming" | "past"
-const TABS: Tab[] = ["upcoming", "past"]
+const TABS: { id: VisitTab; label: string }[] = [
+  { id: "upcoming", label: "Upcoming" },
+  { id: "past", label: "Past" },
+  { id: "cancelled", label: "Cancelled" },
+]
 
-export default function AppointmentsPage() {
-  const { data, error, isLoading, loadedAt, reload } = useAppointments()
-  const [tab, setTab] = useState<Tab>("upcoming")
-  const tabRefs = useRef<Record<Tab, HTMLButtonElement | null>>({ upcoming: null, past: null })
+const EMPTY_STATES: Record<VisitTab, { title: string; description: string }> = {
+  upcoming: { title: "No upcoming appointments", description: "Upcoming visits will be listed here." },
+  past: { title: "No past appointments", description: "Past visits will be listed here." },
+  cancelled: { title: "No cancelled appointments", description: "Cancelled visits will be listed here." },
+}
 
-  const { upcoming, past } = useMemo(() => {
+const BOOK_BUTTON = actionButtonClass("outline", "justify-center border-blue-200")
+
+function getVisitIcon(visit: Visit, tab: VisitTab) {
+  if (visit.service === "wellbeing") return Sprout
+  if (visit.service === "care") return HeartPulse
+  return tab === "upcoming" && visit.deliveryChannel === "online" ? Video : Stethoscope
+}
+
+export default function VisitsPage() {
+  const { data, error, isLoading, loadedAt, reload } = useVisits()
+  const [tab, setTab] = useState<VisitTab>("upcoming")
+  const tabRefs = useRef<Partial<Record<VisitTab, HTMLButtonElement | null>>>({})
+
+  const visible = useMemo(() => {
     const now = loadedAt ?? 0
-    const all = data ?? []
-    return {
-      upcoming: sortByStart(all.filter((appointment) => isUpcoming(appointment, now))),
-      past: sortByStart(all.filter((appointment) => !isUpcoming(appointment, now)), "desc"),
-    }
-  }, [data, loadedAt])
+    const order = tab === "upcoming" ? 1 : -1
+    return (data ?? [])
+      .filter((visit) => getVisitTab(visit, now) === tab)
+      .sort((a, b) => (new Date(a.scheduledStartsAt).getTime() - new Date(b.scheduledStartsAt).getTime()) * order)
+  }, [data, loadedAt, tab])
 
-  const visible = tab === "upcoming" ? upcoming : past
-  const nextAppointment = upcoming[0]
-
-  // Arrow keys move between the two tabs, as in a native tab list
+  // Arrow keys move between the tabs, as in a native tab list
   const handleTabKey = (event: React.KeyboardEvent<HTMLButtonElement>) => {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return
     event.preventDefault()
-    const next = TABS[(TABS.indexOf(tab) + 1) % TABS.length]
+    const step = event.key === "ArrowRight" ? 1 : -1
+    const next = TABS[(TABS.findIndex(({ id }) => id === tab) + step + TABS.length) % TABS.length].id
     setTab(next)
     tabRefs.current[next]?.focus()
   }
 
+  const showEmpty = data && visible.length === 0
+
   return (
-    <PageContainer>
-      <PageHeader title="Your appointments" description="View and manage your upcoming and past appointments." />
+    <PageContainer wide className="space-y-5 sm:space-y-5">
+      <PageHeader title="Your visits" description="Appointments, sessions and care in one place." />
 
-      <PrimaryActionLink href={ROUTES.PORTAL.BOOK} icon={CalendarPlus}>
-        Book an appointment
-      </PrimaryActionLink>
-
-      <div role="tablist" aria-label="Appointments" className="grid grid-cols-2 gap-1 rounded-2xl bg-slate-100/80 p-1">
-        {TABS.map((option) => {
-          const selected = tab === option
-          const count = option === "upcoming" ? upcoming.length : past.length
+      <div role="tablist" aria-label="Visits" className="flex gap-2">
+        {TABS.map(({ id, label }) => {
+          const selected = tab === id
           return (
             <button
-              key={option}
+              key={id}
               ref={(node) => {
-                tabRefs.current[option] = node
+                tabRefs.current[id] = node
               }}
-              id={`tab-${option}`}
+              id={`tab-${id}`}
               type="button"
               role="tab"
               aria-selected={selected}
-              aria-controls={`panel-${option}`}
+              aria-controls="visits-panel"
               tabIndex={selected ? 0 : -1}
-              onClick={() => setTab(option)}
+              onClick={() => setTab(id)}
               onKeyDown={handleTabKey}
               className={cn(
-                "rounded-xl py-3 text-[15px] sm:text-base font-semibold transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0062F5]",
-                selected ? "bg-[#E3F5E9] text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                "rounded-full border px-4 py-2.5 text-sm font-medium transition-colors cursor-pointer",
+                selected ? "bg-[#0062F5] border-[#0062F5] text-white" : "bg-white border-slate-200 text-slate-500 hover:text-slate-700",
+                FOCUS_RING
               )}
             >
-              {option === "upcoming" ? "Upcoming" : "Past"}
-              {data && ` (${count})`}
+              {label}
             </button>
           )
         })}
       </div>
 
-      <section id={`panel-${tab}`} role="tabpanel" aria-labelledby={`tab-${tab}`} className="space-y-3">
-        <SectionHeading title={tab === "upcoming" ? "Upcoming appointments" : "Past appointments"} />
-
-        {isLoading && <LoadingCards label="Loading your appointments" />}
+      <section id="visits-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="space-y-3">
+        {isLoading && <LoadingCards label="Loading your visits" />}
         {error && <ErrorState message={error} onRetry={reload} />}
 
-        {data && visible.length === 0 && (
-          <EmptyState
-            icon={tab === "upcoming" ? CalendarClock : CalendarX}
-            title={tab === "upcoming" ? "No upcoming appointments" : "No past appointments"}
-            description={
-              tab === "upcoming"
-                ? "When you book an appointment, it will appear here."
-                : "Appointments you've attended or cancelled will appear here."
-            }
-            action={
-              tab === "upcoming" && (
-                <Link
-                  href={ROUTES.PORTAL.BOOK}
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#0062F5] hover:bg-[#0052cc] px-5 py-2.5 text-sm font-semibold text-white"
-                >
-                  <CalendarPlus className="w-4 h-4" aria-hidden />
-                  Book an appointment
-                </Link>
-              )
-            }
-          />
+        {showEmpty && (
+          <div className="text-center pt-8 pb-6">
+            <CalendarDays aria-hidden className="mx-auto w-14 h-14 text-blue-300" strokeWidth={1.75} />
+            <h2 className="mt-5 text-xl sm:text-[22px] font-bold text-slate-900 tracking-tight">{EMPTY_STATES[tab].title}</h2>
+            <p className="mt-3 text-sm sm:text-[15px] text-slate-500">{EMPTY_STATES[tab].description}</p>
+          </div>
         )}
 
-        {visible.map((appointment) => (
-          <AppointmentCard key={appointment.id} appointment={appointment} />
-        ))}
-      </section>
+        {visible.length > 0 && (
+          <ul className="space-y-3">
+            {visible.map((visit) => (
+              <li key={`${visit.service}-${visit.id}`}>
+                <ServiceRow
+                  size="home"
+                  item={{
+                    title: visit.title,
+                    description: [formatLongDate(visit.scheduledStartsAt), formatTime(visit.scheduledStartsAt), visit.providerOrWorkerName].join(" · "),
+                    href: getVisitHref(visit),
+                    icon: getVisitIcon(visit, tab),
+                    tone: "blue",
+                  }}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
 
-      {nextAppointment && (
-        <section aria-labelledby="manage-booking" className="space-y-3">
-          <SectionHeading id="manage-booking" title="Manage your booking" />
-          <ActionRow
-            iconVariant="square"
-            item={{
-              title: "Reschedule or cancel",
-              description: "Change or cancel an upcoming appointment.",
-              href: `${ROUTES.PORTAL.APPOINTMENTS}/${encodeURIComponent(nextAppointment.id)}`,
-              icon: CalendarClock,
-              tone: "blue",
-            }}
-          />
-        </section>
-      )}
+        {data && (
+          <div className="space-y-3 pt-1">
+            {showEmpty && tab !== "upcoming" && (
+              <button type="button" onClick={() => setTab("upcoming")} className={actionButtonClass("primary", "justify-center")}>
+                View upcoming visits
+              </button>
+            )}
+            <Link href={ROUTES.PORTAL.BOOK} className={BOOK_BUTTON}>
+              Book an appointment
+            </Link>
+          </div>
+        )}
+      </section>
     </PageContainer>
   )
 }

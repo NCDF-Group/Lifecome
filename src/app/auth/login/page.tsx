@@ -45,19 +45,19 @@ function LoginContent() {
     }
   }
 
-  // Headline and heart & shield artwork are baked into the illustration
   const leftContent = (
-    <div className="sr-only">
-      <h2>Your health and care, connected.</h2>
-      <p>Access your appointments, messages and plans.</p>
+    <div className="space-y-3">
+      <h2 className="text-3xl font-extrabold text-slate-900 leading-tight">
+        Your health and<br />care, connected.
+      </h2>
+      <p className="text-sm text-slate-600">Access your appointments, messages and plans.</p>
     </div>
   )
 
   return (
     <AuthLayout
       leftContent={leftContent}
-      illustration="/illustrator/Section - LeftPanel.svg"
-      illustrationAlign="top"
+      illustration="care"
     >
       <div className="space-y-6">
         <div>
